@@ -39,6 +39,10 @@ OpenJDK-Builder 是一个使用 Bash 脚本开发的 OpenJDK 构建器
 
 本项目遵循相关依赖项目的开源协议。详细内容请查阅各依赖项目的 LICENSE。
 
+## F&Q
+
+详见doc
+
 ## 联系与交流
 
 如有问题或建议，欢迎提交 Issue 或发起 Pull Request！
