@@ -6,9 +6,6 @@ OpenJDK-Builder 只是一个简单的使用 Bash 脚本开发的 OpenJDK 自动�
 
 - 一键自动构建 OpenJDK
 - 当前支持 Android 和 iOS 平台
-- 简明易用，适合快速集成到各类开发环境
-- 后续计划支持更多目标系统
-- 易于扩展和定制
 
 ## 系统兼容性
 
