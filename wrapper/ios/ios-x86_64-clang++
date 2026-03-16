@@ -1,0 +1,2 @@
+#echo $@
+exec $(xcrun -find -sdk iphonesimulator clang++) -arch x86_64 -isysroot $thesysroot -miphoneos-version-min=12.0 "$@"
