@@ -16,6 +16,7 @@ Set_C_CPPFLAGS -DLE_STANDALONE
 
 cd_to_script_dir
 bash ./clone_jdk.bash
+
 cd_to_script_dir
 bash ./apply_jdk_patches.bash
 cd ${CURRENT_DIR}/openjdk
