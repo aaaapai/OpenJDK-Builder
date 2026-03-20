@@ -100,3 +100,5 @@ git diff --stat --exit-code || true
 
 echo ""
 echo "成功: JDK ${TARGET_JAVA_VERSION} 补丁处理完成"
+
+cd ..
