@@ -181,6 +181,11 @@ Set_CPPFLAGS() {
     fi
 }
 
+Set_C_CPPFLAGS() {
+    Set_CFLAGS "$@"
+    Set_CPPFLAGS "$@"
+}
+
 Set_LDFLAGS() {
     if [[ -z "${LDFLAGS}" ]]; then
       export LDFLAGS="$*"
