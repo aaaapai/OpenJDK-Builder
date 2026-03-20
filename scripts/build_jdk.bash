@@ -16,6 +16,7 @@ Set_C_CPPFLAGS -DLE_STANDALONE
 
 cd_to_script_dir
 bash ./clone_jdk.bash
+cd_to_script_dir
 bash ./apply_jdk_patches.bash
 cd ${CURRENT_DIR}/openjdk
 
@@ -67,7 +68,7 @@ bash ./configure \
 	  BUILD_STRIP="/usr/bin/llvm-strip" \
 	  --with-jobs=6
 
-cd ./build
+cd ./openjdk-build
 make -j6 images JOBS=6 || \
 error_code=$?
 
