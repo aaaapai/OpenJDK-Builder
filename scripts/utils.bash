@@ -215,4 +215,4 @@ PrintConfigurationInfo() {
   echo "  Assembler: ${AS}"
 }
 
-bash ./setdevkitpath.bash
+bash ./set_devkit.bash
