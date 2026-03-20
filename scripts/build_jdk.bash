@@ -69,12 +69,12 @@ bash ./configure \
       LD="${LD}" \
       CXXFILT="llvm-cxxfilt" \
       BUILD_CC="/usr/bin/clang" \
-	  	BUILD_CXX="/usr/bin/clang++" \
+	  BUILD_CXX="/usr/bin/clang++" \
       BUILD_NM="/usr/bin/llvm-nm" \
-	  	BUILD_AR="/usr/bin/llvm-ar" \
-	  	BUILD_OBJCOPY="/usr/bin/llvm-objcopy" \
-	  	BUILD_STRIP="/usr/bin/llvm-strip" \
-	  	--with-jobs=6
+	  BUILD_AR="/usr/bin/llvm-ar" \
+	  BUILD_OBJCOPY="/usr/bin/llvm-objcopy" \
+	  BUILD_STRIP="/usr/bin/llvm-strip" \
+	  --with-jobs=6
 
 cd ./build
 make -j6 images JOBS=6 || \
