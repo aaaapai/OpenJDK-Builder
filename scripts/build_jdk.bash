@@ -5,16 +5,14 @@ bash ./scripts/utils.bash
 cp -R /usr/include/X11 ${DEPS_INCLUDE_DIR}
 
 if [[ "$TARGET_ARCH" == "arm32" ]]; then
-  Set_CFLAGS -D__thumb__
-  Set_CPPFLAGS -D__thumb__
+  Set_C_CPPFLAGS -D__thumb__
 else
   if [[ "$TARGET_ARCH" == "x86" ]]; then
-     Set_CFLAGS -mstackrealign
-     Set_CPPFLAGS -mstackrealign
+     Set_C_CPPFLAGS -mstackrealign
   fi
 fi
 
-Set_CFLAGS -DLE_STANDALONE
+Set_C_CPPFLAGS -DLE_STANDALONE
 
 cd_to_script_dir
 bash ./clone_jdk.bash
