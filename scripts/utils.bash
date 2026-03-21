@@ -8,7 +8,8 @@ cd_to_script_dir() {
     }
 }
 cd_to_script_dir
-export CURRENT_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")" && cd "$(dirname "$(readlink -f "$0")")"
+export CURRENT_DIR="$(dirname "$(pwd)")"
+
 export DEPS_LIB_DIR="${CURRENT_DIR}/libs/${TARGET_OS}/${TARGET_ARCH}"
 export DEPS_INCLUDE_DIR="${CURRENT_DIR}/include"
 
