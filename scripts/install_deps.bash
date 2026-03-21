@@ -41,7 +41,6 @@ if [[ "${error_code}" -ne 0 ]]; then
 fi
 
 make -j6
-make install DESTDIR=${CURRENT_DIR}/freetype
 find ${CURRENT_DIR}/freetype -name "libfreetype.so*" -exec cp -v {} ${DEPS_LIB_DIR}/ \;
 
 
@@ -99,7 +98,7 @@ iconv_cmake_build () {
     ${LDFLAGS:+-DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS"}
 
   cmake --build  . --config Release --parallel 6
-  cmake --install
+  cmake --install ${CURRENT_DIR}/libiconv/${TARGET}/install
 }
 
 cd ${CURRENT_DIR}/libiconv
