@@ -86,6 +86,7 @@ iconv_cmake_build () {
   cmake --build . --config Release --parallel 6
 }
 
+cd ${CURRENT_DIR}/libiconv
 iconv_cmake_build
 cp ./${TARGET}/build/libiconv.a ${DEPS_LIB_DIR}
 cp ./${TARGET}/build/libcharset.a ${DEPS_LIB_DIR}
