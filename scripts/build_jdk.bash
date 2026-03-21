@@ -43,6 +43,8 @@ bash ./configure \
       --with-devkit="${NDK_TOOLCHAIN}" \
 	  --with-toolchain-path="${NDK_TOOLCHAIN}/bin" \
 	  --with-sysroot="${NDK_TOOLCHAIN}/sysroot" \
+	  --with-build-cflags="-std=c17 -D_XOPEN_SOURCE=700" \
+--with-build-cxxflags="-std=c++20 -D_XOPEN_SOURCE=700" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-cups-include="${CUPS_DIR}" \
       --with-extra-cflags="${CFLAGS}" \
