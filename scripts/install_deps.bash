@@ -43,11 +43,11 @@ cd ${CURRENT_DIR}
 git clone --depth 1 -b "$([ -n "${CUPS_VERSION}" ] && echo "v${CUPS_VERSION}" || echo "master")" https://github.com/OpenPrinting/cups
 
 echo "Building libiconv..."
-git clone --depth 1 https://github.com/aaaapai/libiconv
+git clone --depth 1 https://github.com/aaaapai/libiconv libiconv
 cd ./libiconv
 
 bash ./autogen.sh
-mkdir -p build_tools
+mkdir -p ./build_tools
 cd ./build_tools
 gcc -o genaliases ../lib/genaliases.c
 gcc -DUSE_AIX_ALIASES -o genaliases_sysaix ../lib/genaliases.c
@@ -63,13 +63,13 @@ gcc -DUSE_ZOS -o genaliases_zos ../lib/genaliases2.c
 gcc -DUSE_EXTRA -o genaliases_extra ../lib/genaliases2.c
 gcc -o genflags ../lib/genflags.c
 gcc -o gentranslit ../lib/gentranslit.c
-cd ..
+cd ${CURRENT_DIR}/libiconv
 
 iconv_cmake_build () {
-  mkdir -p ${TARGET}/build
-  cd ${TARGET}/build
+  mkdir -p ./${TARGET}/build
+  cd ./${TARGET}/build
 
-  cmake ../.. \
+  cmake ${CURRENT_DIR}/libiconv \
     -DANDROID_PLATFORM=${ANDROID_API} \
     -DANDROID_TOOLCHAIN_NAME=${TARGET} \
     -DCMAKE_ANDROID_STL_TYPE=c++_static \
@@ -84,11 +84,10 @@ iconv_cmake_build () {
     ${LDFLAGS:+-DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS"}
 
   cmake --build . --config Release --parallel 6
-  cd ../..
 }
 
 iconv_cmake_build
-cp ${TARGET}/build/libiconv.a ${DEPS_LIB_DIR}
-cp ${TARGET}/build/libcharset.a ${DEPS_LIB_DIR}
-cp ${TARGET}/build/include/* ${DEPS_INCLUDE_DIR}
-cp ${TARGET}/build/libcharset/include/* ${DEPS_INCLUDE_DIR}
+cp ./${TARGET}/build/libiconv.a ${DEPS_LIB_DIR}
+cp ./${TARGET}/build/libcharset.a ${DEPS_LIB_DIR}
+cp ./${TARGET}/build/include/* ${DEPS_INCLUDE_DIR}
+cp ./${TARGET}/build/libcharset/include/* ${DEPS_INCLUDE_DIR}
