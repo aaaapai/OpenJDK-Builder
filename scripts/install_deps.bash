@@ -8,7 +8,7 @@ cd ${CURRENT_DIR}
 echo "Installing host build tools..."
 sudo apt-get update
 sudo apt-get install --only-upgrade apt
-sudo apt-get install --fix-missing libfontconfig-dev libxrandr-dev libxtst-dev libcups2-dev libasound2-dev gettext autopoint libtool gperf
+sudo apt-get install --fix-missing libffi-dev libfontconfig-dev libxrandr-dev libxtst-dev libcups2-dev libasound2-dev gettext autopoint libtool gperf
 
 
 echo "Building Freetype..."
