@@ -1,5 +1,4 @@
 #!/bin/bash
-chmod +x ./scripts/utils.bash
 source ./scripts/utils.bash
 
 
@@ -24,7 +23,6 @@ cd ${CURRENT_DIR}/openjdk
 bash ./configure \
       --with-version-pre="-ea" \
       --with-vendor-name="OpenJDK" \
-      --with-extra-build-info="built with aaaapai/OpenJDK-Builder" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
       --with-conf-name="${TARGET}" \
 	  --with-ccache-dir=/home/runner/.ccache \
