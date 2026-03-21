@@ -30,6 +30,14 @@ declare -A JDK_ARCH_MAP=(
     ["riscv64"]="riscv"
 )
 
+declare -A NDK_ARCH_MAP=(
+    ["arm64"]="arm64-v8a"
+    ["arm32"]="armeabi-v7a"
+    ["x86_64"]="x86_64"
+    ["x86"]="x86"
+    ["riscv64"]="riscv"
+)
+
 if [[ -n "${TARGET_ARCH}" ]]; then
     case "${TARGET_OS}" in
         "android")
