@@ -12,14 +12,14 @@ sudo apt-get install libxrandr-dev libxtst-dev libcups2-dev libasound2-dev gette
 
 
 echo "Building Freetype..."
-git clone --depth 1 -b "$([ -n "${FREETYPE_VERSION}" ] && echo "VER-$(echo ${FREETYPE_VERSION} | tr '.' '-')" || echo "master")" https://github.com/freetype/freetype
-cd ./freetype
+git clone --depth 1 -b "$([ -n "${FREETYPE_VERSION}" ] && echo "VER-$(echo ${FREETYPE_VERSION} | tr '.' '-')" || echo "master")" https://github.com/lwjgl-ci/freetype freetype
+cd ${CURRENT_DIR}/freetype
 
 bash ./autogen.sh
 chmod +x ./configure
 ./configure \
-    --host=$TARGET \
-    --prefix=${PWD}/build \
+    --host=${TARGET} \
+    --prefix=${CURRENT_DIR}/freetype/build \
     --without-zlib \
     --with-brotli=no \
     --with-bzip2=no \
@@ -37,15 +37,18 @@ fi
 
 make -j6
 make install
-cp ./tmp/lib/libfreetype.so ${DEPS_LIB_DIR}
+cp ./build/lib/libfreetype.so ${DEPS_LIB_DIR}
+
 
 echo "Cloning cups..."
+
 cd ${CURRENT_DIR}
-git clone --depth 1 -b "$([ -n "${CUPS_VERSION}" ] && echo "v${CUPS_VERSION}" || echo "master")" https://github.com/OpenPrinting/cups
+git clone --depth 1 -b "$([ -n "${CUPS_VERSION}" ] && echo "v${CUPS_VERSION}" || echo "master")" https://github.com/OpenPrinting/cups cups
+
 
 echo "Building libiconv..."
 git clone --depth 1 https://github.com/aaaapai/libiconv libiconv
-cd ./libiconv
+cd ${CURRENT_DIR}/libiconv
 
 bash ./autogen.sh
 mkdir -p ./build_tools
