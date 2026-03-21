@@ -38,7 +38,7 @@ case "${TARGET_OS}" in
             # USE_GCC is unfinished.
             export LD=${NDK_TOOLCHAIN}/bin/ld
         else
-            export LD=${NDK_TOOLCHAIN}/bin/lld
+            export LD=${NDK_TOOLCHAIN}/bin/ld.lld
         fi
         
         export OBJCOPY=${NDK_TOOLCHAIN}/bin/llvm-objcopy
