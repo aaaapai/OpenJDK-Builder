@@ -187,24 +187,31 @@ index 90d5d79562643..0057aad852337 100644
    if test "x$OPENJDK_$1_OS" = xmacosx; then
      HOTSPOT_$1_OS=bsd
 diff --git a/make/autoconf/toolchain.m4 b/make/autoconf/toolchain.m4
-index c882deb10a7bf..814a039c300fc 100644
+index c882deb10a7bf..0b2f2e12bb5ce 100644
 --- a/make/autoconf/toolchain.m4
 +++ b/make/autoconf/toolchain.m4
-@@ -35,10 +35,11 @@
- m4_include([toolchain_microsoft.m4])
- 
- # All valid toolchains, regardless of platform (used by help.m4)
--VALID_TOOLCHAINS_all="gcc clang microsoft"
-+VALID_TOOLCHAINS_all="clang gcc microsoft"
+@@ -39,6 +39,7 @@ VALID_TOOLCHAINS_all="gcc clang microsoft"
  
  # These toolchains are valid on different platforms
--VALID_TOOLCHAINS_linux="gcc clang"
-+VALID_TOOLCHAINS_linux="clang gcc"
-+VALID_TOOLCHAINS_linux="clang gcc"
+ VALID_TOOLCHAINS_linux="gcc clang"
++VALID_TOOLCHAINS_android="clang gcc"
  VALID_TOOLCHAINS_macosx="clang"
  VALID_TOOLCHAINS_aix="clang"
  VALID_TOOLCHAINS_windows="microsoft"
-@@ -879,12 +880,14 @@ AC_DEFUN_ONCE([TOOLCHAIN_SETUP_BUILD_COMPILERS],
+@@ -226,12 +227,6 @@ AC_DEFUN_ONCE([TOOLCHAIN_DETERMINE_TOOLCHAIN_TYPE],
+ 
+     exit 0
+   elif test "x$with_toolchain_type" != x; then
+-    # User override; check that it is valid
+-    if test "x${VALID_TOOLCHAINS/$with_toolchain_type/}" = "x${VALID_TOOLCHAINS}"; then
+-      AC_MSG_NOTICE([Toolchain type $with_toolchain_type is not valid on this platform.])
+-      AC_MSG_NOTICE([Valid toolchains: $VALID_TOOLCHAINS.])
+-      AC_MSG_ERROR([Cannot continue.])
+-    fi
+     TOOLCHAIN_TYPE=$with_toolchain_type
+   else
+     # No flag given, use default
+@@ -879,12 +874,14 @@ AC_DEFUN_ONCE([TOOLCHAIN_SETUP_BUILD_COMPILERS],
  
      PATH="$OLDPATH"
  
