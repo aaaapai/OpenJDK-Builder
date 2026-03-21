@@ -22,7 +22,7 @@ source ./autogen.sh
 chmod +x ./configure
 ./configure \
     --host=${TARGET} \
-    --prefix=${CURRENT_DIR}/freetype/${TARGET}/build \
+    --prefix=${CURRENT_DIR}/freetype/build \
     --without-zlib \
     --with-brotli=no \
     --with-bzip2=no \
@@ -42,6 +42,7 @@ if [[ "${error_code}" -ne 0 ]]; then
 fi
 
 make -j6
+make install
 find ${CURRENT_DIR}/freetype -name "libfreetype.so*" -exec cp -v {} ${DEPS_LIB_DIR}/ \;
 
 
