@@ -33,7 +33,7 @@ bash ./configure \
       --with-zlib=system \
       --with-jmod-compress=zip-1 \
       --with-external-symbols-in-bundles=none \
-      --with-native-debug-symbols-level=none \
+      --with-native-debug-symbols-level=1 \
       --disable-precompiled-headers \
       --enable-option-checking=fatal \
       --enable-linktime-gc \
