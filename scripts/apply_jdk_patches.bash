@@ -1,17 +1,6 @@
 #!/bin/bash
 set -e  # 遇到错误立即退出
 
-# 检查必要参数
-if [ -z "${TARGET_JAVA_VERSION}" ]; then
-    echo "错误: TARGET_JAVA_VERSION 环境变量未设置"
-    exit 1
-fi
-
-# 检查 openjdk 目录是否存在
-if [ ! -d "${CURRENT_DIR}/openjdk" ]; then
-    echo "错误: openjdk 目录不存在，请先运行 clone_jdk.bash"
-    exit 1
-fi
 
 PATCHES_BASE_DIR="${CURRENT_DIR}/patches"
 PATCHES_DIR="${PATCHES_BASE_DIR}/${TARGET_JAVA_VERSION}"
@@ -55,20 +44,7 @@ find "${PATCHES_DIR}" -maxdepth 1 \( -name "*.diff" -o -name "*.patch" \) -print
         echo "✓ 补丁应用成功: ${patch_name}"
         APPLIED_PATCHES+=("${patch_name}")
     else
-        echo "✗ git apply 失败，尝试使用 patch 命令..."
-        
-        # 尝试使用 patch 命令
-        if patch -p1 --forward --reject-file=- < "${patch_file}" 2>&1; then
-            echo "✓ 补丁应用成功 (patch): ${patch_name}"
-            APPLIED_PATCHES+=("${patch_name}")
-        else
-            echo "✗ 错误: 补丁应用失败: ${patch_name}"
-            FAILED_PATCHES+=("${patch_name}")
-            
-            # 在 CI 环境中，可以选择继续或退出
-            # 如果希望遇到错误就停止，取消下面这行的注释
-            # exit 1
-        fi
+        echo "✗ git apply 失败..." 
     fi
 done
 
