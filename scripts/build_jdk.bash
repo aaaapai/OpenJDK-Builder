@@ -42,6 +42,7 @@ bash ./configure \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
 	  --with-toolchain-path="${NDK_TOOLCHAIN}/bin" \
+	  --with-sysroot="${NDK_TOOLCHAIN}/sysroot" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-cups-include="${CUPS_DIR}" \
       --with-extra-cflags="${CFLAGS}" \
