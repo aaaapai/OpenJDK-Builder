@@ -327,6 +327,19 @@ index bdb8828eb3279..dcc0c65d7cac7 100644
          $1_LD_OBJ_ARG := `cat $$($1_OBJ_FILE_LIST)`
        endif
      endif
+diff --git a/make/hotspot/gensrc/GensrcAdlc.gmk b/make/hotspot/gensrc/GensrcAdlc.gmk
+index 14117421d1b7b..84cdd288d2890 100644
+--- a/make/hotspot/gensrc/GensrcAdlc.gmk
++++ b/make/hotspot/gensrc/GensrcAdlc.gmk
+@@ -97,7 +97,7 @@ ifeq ($(call check-jvm-feature, compiler2), true)
+   ADLCFLAGS += -q -T
+ 
+   # ADLC flags depending on target OS
+-  ifeq ($(call isTargetOs, linux), true)
++  ifeq ($(call isTargetOs, linux android), true)
+     ADLCFLAGS += -DLINUX=1 -D_GNU_SOURCE=1
+   else ifeq ($(call isTargetOs, aix), true)
+     ADLCFLAGS += -DAIX=1
 diff --git a/make/hotspot/lib/CompileJvm.gmk b/make/hotspot/lib/CompileJvm.gmk
 index f41693e05fbb7..4bc7a8752b725 100644
 --- a/make/hotspot/lib/CompileJvm.gmk
