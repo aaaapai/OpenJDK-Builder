@@ -18,7 +18,7 @@ cd ${CURRENT_DIR}/freetype
 bash ./autogen.sh
 bash ./configure \
     --host=${TARGET} \
-    --prefix=${PWD}/freetype/build_${TARGET} \
+    --prefix=${CURRENT_DIR}/freetype/build \
     --without-zlib \
     --with-brotli=system \
     --with-bzip2=no \
