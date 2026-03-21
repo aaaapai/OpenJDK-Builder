@@ -98,7 +98,7 @@ iconv_cmake_build () {
     ${LDFLAGS:+-DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS"}
 
   cmake --build  . --config Release --parallel 6
-  cmake --install ${CURRENT_DIR}/libiconv/${TARGET}/install
+  cmake --install . --config Release
 }
 
 cd ${CURRENT_DIR}/libiconv
