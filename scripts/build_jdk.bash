@@ -3,6 +3,7 @@ source ./scripts/utils.bash
 
 
 cp -R /usr/include/X11 ${DEPS_INCLUDE_DIR}
+cp -R /usr/include/fontconfig ${DEPS_INCLUDE_DIR}
 cp ${CURRENT_DIR}/devkit_info/devkit.info.${TARGET_ARCH} ${NDK_TOOLCHAIN}
 
 if [[ "${TARGET_ARCH}" == "arm32" ]]; then
