@@ -1,5 +1,6 @@
 #!/bin/bash
-bash ./scripts/utils.bash
+chmod +x ./scripts/utils.bash
+./scripts/utils.bash
 cd ${CURRENT_DIR}
 
 
