@@ -36,10 +36,6 @@ OpenJDK-Builder 是一个使用 Bash 脚本开发的 OpenJDK 构建器
 - [AngelAuraMC/angelauramc-openjdk-build](https://github.com/AngelAuraMC/angelauramc-openjdk-build)
 - [aaaapai/android-openjdk-build](https://github.com/aaaapai/android-openjdk-build) (old builder)
 
-## 许可协议
-
-本项目遵循相关依赖项目的开源协议。详细内容请查阅各依赖项目的 LICENSE。
-
 ## F&Q
 
 详见doc
