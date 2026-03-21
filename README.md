@@ -34,7 +34,7 @@ OpenJDK-Builder 是一个使用 Bash 脚本开发的 OpenJDK 构建器
 - [openjdk/mobile](https://github.com/openjdk/mobile)
 - [termux/termux-packages](https://github.com/termux/termux-packages)
 - [AngelAuraMC/angelauramc-openjdk-build](https://github.com/AngelAuraMC/angelauramc-openjdk-build)
-- [aaaapai/android-openjdk-build](https://github.com/aaaapai/android-openjdk-build) (old builder)
+- [aaaapai/android-openjdk-build](https://github.com/aaaapai/android-openjdk-build) (old repositories)
 
 ## F&Q
 
