@@ -27,6 +27,9 @@ chmod +x ./configure
     --with-harfbuzz=no \
     --enable-static=no \
     --enable-shared=yes \
+    LD=${LD} \
+    CC=${CC} \
+    CXX=${CXX} \
     || error_code=$?
 
 if [[ "${error_code}" -ne 0 ]]; then
@@ -69,8 +72,7 @@ gcc -o gentranslit ../lib/gentranslit.c
 cd ${CURRENT_DIR}/libiconv
 
 iconv_cmake_build () {
-  mkdir -p ./${TARGET}/build
-  cd ./${TARGET}/build
+  mkdir -p  ${CURRENT_DIR}/${TARGET}/build
 
   cmake ${CURRENT_DIR}/libiconv \
     -DANDROID_PLATFORM=${ANDROID_API} \
@@ -88,12 +90,12 @@ iconv_cmake_build () {
     ${CPPFLAGS:+-DCMAKE_CXX_FLAGS="$CPPFLAGS"} \
     ${LDFLAGS:+-DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS"}
 
-  cmake --build . --config Release --parallel 6
+  cmake --build  ./${TARGET}/build --config Release --parallel 6
 }
 
 cd ${CURRENT_DIR}/libiconv
 iconv_cmake_build
-cp ./${TARGET}/build/libiconv.a ${DEPS_LIB_DIR}
+cp  ./${TARGET}/build/libiconv.a ${DEPS_LIB_DIR}
 cp ./${TARGET}/build/libcharset.a ${DEPS_LIB_DIR}
 cp ./${TARGET}/build/include/* ${DEPS_INCLUDE_DIR}
 cp ./${TARGET}/build/libcharset/include/* ${DEPS_INCLUDE_DIR}
