@@ -43,7 +43,6 @@ bash ./configure \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
-	  --with-sysroot="${NDK_TOOLCHAIN}/sysroot" \
 	  --with-toolchain-path="${NDK_TOOLCHAIN}/bin" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-cups-include="${CUPS_DIR}" \
