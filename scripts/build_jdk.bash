@@ -67,14 +67,21 @@ bash ./configure \
 	  BUILD_AR="${AR}" \
 	  BUILD_OBJCOPY="${OBJCOPY}" \
 	  BUILD_STRIP="${STRIP}" \
-	  --with-jobs=6
+	  --with-jobs=6 || \
+error_code=$?
+
+if [[ "$error_code" -ne 0 ]]; then
+  echo "\n\nCONFIGURE ERROR $error_code , config.log:"
+  cat config.log
+  exit $error_code
+fi
 
 mkdir -p ./${TARGET}/openjdk-build
 cd ./${TARGET}/openjdk-build
-make images JOBS=6 || \
+make JOBS=6 images || \
 error_code=$?
 
 if [[ "${error_code}" -ne 0 ]]; then
   echo "Build failure, exited with code ${error_code}."
-  exit 1
+  make JOBS=6 images
 fi
