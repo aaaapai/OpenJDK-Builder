@@ -1,6 +1,6 @@
 # OpenJDK-Builder
 
-OpenJDK-Builder 是一个使用 Bash 脚本开发的 OpenJDK 构建器
+OpenJDK-Builder用于构建OpenJDK
 
 ## 特性
 
