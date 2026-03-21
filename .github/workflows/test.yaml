@@ -1,0 +1,56 @@
+name: Build JDK for Android
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # 允许手动触发
+
+env:
+  ANDROID_API: 26
+  TARGET_ARCH: arm64
+  TARGET_OS: android
+  TARGET_JAVA_VERSION: 27
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      # 第1步: 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      # 第2步: 设置 ccache 以加速编译
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@main
+        with:
+          max-size: "3G"
+
+      # 第3步: 设置 Java (版本 26, Zulu 供应商)
+      - name: Set up Java
+        uses: actions/setup-java@main
+        with:
+          distribution: 'zulu'
+          java-version: '26'
+
+      # 第4步: 提权并运行依赖安装脚本
+      - name: Install dependencies
+        run: |
+          sudo chmod +x ./scripts/install_deps.bash
+          sudo ./scripts/install_deps.bash
+
+      # 第5步: 提权并运行 JDK 构建脚本
+      - name: Build JDK
+        run: |
+          sudo chmod +x ./scripts/build_jdk.bash
+          sudo ./scripts/build_jdk.bash
+
+      # 第6步: 上传构建产物 (openjdk-build 文件夹)
+      - name: Upload JDK build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openjdk-build
+          path: ./openjdk/**/openjdk-build
+          if-no-files-found: error
