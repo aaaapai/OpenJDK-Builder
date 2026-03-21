@@ -215,4 +215,5 @@ PrintConfigurationInfo() {
   echo "  Assembler: ${AS}"
 }
 
-bash ./set_devkit.bash
+chmod +x ./set_devkit.bash
+source ./set_devkit.bash
