@@ -38,8 +38,8 @@ jobs:
       # 第4步: 提权并运行依赖安装脚本
       - name: Install dependencies
         run: |
-          sudo chmod +x ./scripts/install_deps.bash
-          sudo ./scripts/install_deps.bash
+          chmod +x ./scripts/install_deps.bash
+          ./scripts/install_deps.bash
 
       # 第5步: 提权并运行 JDK 构建脚本
       - name: Build JDK
