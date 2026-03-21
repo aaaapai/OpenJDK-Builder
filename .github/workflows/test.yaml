@@ -51,7 +51,7 @@ jobs:
       - name: Build JDK
         run: |
           sudo chmod +x ./scripts/build_jdk.bash
-          sudo ./scripts/build_jdk.bash
+          bash ./scripts/build_jdk.bash
 
       # 第6步: 上传构建产物 (openjdk-build 文件夹)
       - name: Upload JDK build artifacts
