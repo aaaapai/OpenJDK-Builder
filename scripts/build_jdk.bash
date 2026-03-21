@@ -72,6 +72,7 @@ bash ./configure \
 	  BUILD_STRIP="${STRIP}" \
 	  --with-jobs=6
 
+mkdir -R ./${TARGET}/openjdk-build
 cd ./${TARGET}/openjdk-build
 make -j6 images JOBS=6 || \
 error_code=$?
