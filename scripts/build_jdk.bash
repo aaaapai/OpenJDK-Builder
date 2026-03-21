@@ -1,4 +1,5 @@
 #!/bin/bash
+chmod +x ./scripts/utils.bash
 source ./scripts/utils.bash
 
 
@@ -15,8 +16,8 @@ fi
 Set_C_CPPFLAGS -DLE_STANDALONE
 
 cd_to_script_dir
-bash ./clone_jdk.bash
-bash ./apply_jdk_patches.bash
+source ./clone_jdk.bash
+source ./apply_jdk_patches.bash
 cd ${CURRENT_DIR}/openjdk
 
 
