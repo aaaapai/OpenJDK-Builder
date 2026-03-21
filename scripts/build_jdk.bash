@@ -25,6 +25,7 @@ bash ./configure \
       --with-vendor-name="OpenJDK" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
       --with-conf-name="${TARGET}" \
+	  --openjdk-target="${TARGET}" \
 	  --with-ccache-dir=/home/runner/.ccache \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants="server,zero" \
@@ -39,7 +40,7 @@ bash ./configure \
       --enable-ccache \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
-      --with-devkit="${TOOLCHAIN}" \
+      --with-devkit="${NDK_TOOLCHAIN}" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-cups-include="${CUPS_DIR}" \
       --with-extra-cflags="${CFLAGS}" \
