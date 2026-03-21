@@ -15,7 +15,7 @@ echo "Building Freetype..."
 git clone --depth 1 -b "$([ -n "${FREETYPE_VERSION}" ] && echo "VER-$(echo ${FREETYPE_VERSION} | tr '.' '-')" || echo "master")" https://github.com/lwjgl-ci/freetype freetype
 cd ${CURRENT_DIR}/freetype
 
-bash ./autogen.sh
+source ./autogen.sh
 chmod +x ./configure
 ./configure \
     --host=${TARGET} \
@@ -72,6 +72,7 @@ gcc -o gentranslit ../lib/gentranslit.c
 cd ${CURRENT_DIR}/libiconv
 
 iconv_cmake_build () {
+  cd ${CURRENT_DIR}/libiconv
   mkdir -p  ./${TARGET}/build
 
   cmake ${CURRENT_DIR}/libiconv \
