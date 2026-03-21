@@ -3,6 +3,7 @@ source ./scripts/utils.bash
 
 
 cp -R /usr/include/X11 ${DEPS_INCLUDE_DIR}
+cp ${CURRENT_DIR}/devkit_info/devkit.info.${TARGET_ARCH} ${NDK_TOOLCHAIN}
 
 if [[ "${TARGET_ARCH}" == "arm32" ]]; then
   Set_C_CPPFLAGS -D__thumb__
@@ -41,6 +42,8 @@ bash ./configure \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
+	  --with-sysroot="${NDK_TOOLCHAIN}/sysroot"
+	  --with-toolchain-path="${NDK_TOOLCHAIN}/bin"
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-cups-include="${CUPS_DIR}" \
       --with-extra-cflags="${CFLAGS}" \
