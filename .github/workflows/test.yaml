@@ -28,6 +28,12 @@ jobs:
         with:
           max-size: "3G"
 
+      - name: Setup ccache in PATH
+        run: |
+           echo "/usr/lib/ccache" >> $GITHUB_PATH
+           echo "CCACHE_DIR=/tmp/ccache" >> $GITHUB_ENV
+           echo "CCACHE_MAXSIZE=2G" >> $GITHUB_ENV
+  
       # 第3步: 设置 Java (版本 26, Zulu 供应商)
       - name: Set up Java
         uses: actions/setup-java@main
