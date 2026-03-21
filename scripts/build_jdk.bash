@@ -66,9 +66,9 @@ bash ./configure \
       BUILD_CC="/usr/bin/clang" \
 	  BUILD_CXX="/usr/bin/clang++" \
       BUILD_NM="${NM}" \
-	  BUILD_AR="/usr/bin/llvm-ar" \
-	  BUILD_OBJCOPY="/usr/bin/llvm-objcopy" \
-	  BUILD_STRIP="/usr/bin/llvm-strip" \
+	  BUILD_AR="${AR}" \
+	  BUILD_OBJCOPY="${OBJCOPY}" \
+	  BUILD_STRIP="${STRIP}" \
 	  --with-jobs=6
 
 cd ./${TARGET}/openjdk-build
