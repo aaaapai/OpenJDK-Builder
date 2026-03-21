@@ -4,10 +4,10 @@ bash ./scripts/utils.bash
 
 cp -R /usr/include/X11 ${DEPS_INCLUDE_DIR}
 
-if [[ "$TARGET_ARCH" == "arm32" ]]; then
+if [[ "${TARGET_ARCH}" == "arm32" ]]; then
   Set_C_CPPFLAGS -D__thumb__
 else
-  if [[ "$TARGET_ARCH" == "x86" ]]; then
+  if [[ "${TARGET_ARCH}" == "x86" ]]; then
      Set_C_CPPFLAGS -mstackrealign
   fi
 fi
@@ -69,7 +69,7 @@ bash ./configure \
 	  BUILD_STRIP="/usr/bin/llvm-strip" \
 	  --with-jobs=6
 
-cd ./openjdk-build
+cd ./${TARGET}/openjdk-build
 make -j6 images JOBS=6 || \
 error_code=$?
 
