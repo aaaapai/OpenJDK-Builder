@@ -72,7 +72,7 @@ gcc -o gentranslit ../lib/gentranslit.c
 cd ${CURRENT_DIR}/libiconv
 
 iconv_cmake_build () {
-  mkdir -p  ${CURRENT_DIR}/${TARGET}/build
+  mkdir -p  ./${TARGET}/build
 
   cmake ${CURRENT_DIR}/libiconv \
     -DANDROID_PLATFORM=${ANDROID_API} \
