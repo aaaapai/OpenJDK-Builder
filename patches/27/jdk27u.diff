@@ -46,7 +46,7 @@ index bb020842d595d..f720b0cd4df76 100644
 +
 +JVM_BUILDJDK := true
 diff --git a/make/autoconf/flags-cflags.m4 b/make/autoconf/flags-cflags.m4
-index ab9cd8be19bcb..42dcdac915ed7 100644
+index ab9cd8be19bcb..726ac6c13222d 100644
 --- a/make/autoconf/flags-cflags.m4
 +++ b/make/autoconf/flags-cflags.m4
 @@ -83,7 +83,7 @@ AC_DEFUN([FLAGS_SETUP_DEBUG_SYMBOLS],
@@ -58,19 +58,21 @@ index ab9cd8be19bcb..42dcdac915ed7 100644
      if test "x$ALLOW_ABSOLUTE_PATHS_IN_OUTPUT" = "xfalse"; then
        # Check if compiler supports -fdebug-prefix-map. If so, use that to make
        # the debug symbol paths resolve to paths relative to the workspace root.
-@@ -462,6 +462,12 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS],
+@@ -462,7 +462,13 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS],
  AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
  [
    #### OS DEFINES, these should be independent on toolchain
-+  elif test "x$OPENJDK_TARGET_OS" = xandroid; then
+-  if test "x$OPENJDK_TARGET_OS" = xlinux; then
++  if test "x$OPENJDK_TARGET_OS" = xandroid; then
 +    CFLAGS_OS_DEF_JVM="-DLINUX -D_ALLBSD_SOURCE -D_FILE_OFFSET_BITS=64 -DANDROID"
 +    CFLAGS_OS_DEF_JDK="-DLINUX -D__USE_BSD -D_FILE_OFFSET_BITS=64"
 +  elif test "x$OPENJDK_TARGET_OS" = xios; then
 +    CFLAGS_OS_DEF_JVM="-D_ALLBSD_SOURCE -D__IOS__ -D_XOPEN_SOURCE"
 +    CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE -D__IOS__"
-   if test "x$OPENJDK_TARGET_OS" = xlinux; then
++  elif test "x$OPENJDK_TARGET_OS" = xlinux; then
      CFLAGS_OS_DEF_JVM="-DLINUX -D_FILE_OFFSET_BITS=64"
      CFLAGS_OS_DEF_JDK="-D_GNU_SOURCE -D_REENTRANT -D_FILE_OFFSET_BITS=64"
+   elif test "x$OPENJDK_TARGET_OS" = xmacosx; then
 @@ -633,7 +639,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
    # Set some additional per-OS defines.
  
