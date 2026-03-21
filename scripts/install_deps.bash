@@ -15,6 +15,8 @@ echo "Building Freetype..."
 git clone --depth 1 -b "$([ -n "${FREETYPE_VERSION}" ] && echo "VER-$(echo ${FREETYPE_VERSION} | tr '.' '-')" || echo "master")" https://github.com/lwjgl-ci/freetype freetype
 cd ${CURRENT_DIR}/freetype
 
+mkdir -p ${CURRENT_DIR}/freetype/${TARGET}/build
+
 source ./autogen.sh
 chmod +x ./configure
 ./configure \
@@ -39,7 +41,8 @@ if [[ "${error_code}" -ne 0 ]]; then
 fi
 
 make -j6
-make install
+make install DESTDIR=${CURRENT_DIR}/freetype
+find ${CURRENT_DIR}/freetype -name "libfreetype.so*" -exec cp -v {} ${DEPS_LIB_DIR}/ \;
 
 
 echo "Cloning cups..."
@@ -72,9 +75,11 @@ gcc -o gentranslit ../lib/gentranslit.c
 cd ${CURRENT_DIR}/libiconv
 
 iconv_cmake_build () {
+  mkdir -p  ${CURRENT_DIR}/libiconv/${TARGET}/build
   cd ${CURRENT_DIR}/libiconv
-  mkdir -p  ./${TARGET}/build
 
+  export CMAKE_C_COMPILER_LAUNCHER=ccache
+  export CMAKE_CXX_COMPILER_LAUNCHER=ccache
   cmake ${CURRENT_DIR}/libiconv \
     -DANDROID_PLATFORM=${ANDROID_API} \
     -DANDROID_TOOLCHAIN_NAME=${TARGET} \
@@ -87,16 +92,19 @@ iconv_cmake_build () {
     -DThreads_FOUND=ON \
     -DCMAKE_THREAD_LIBS_INIT="-pthread" \
     -DCMAKE_USE_PTHREADS_INIT=ON \
+    -DCMAKE_INSTALL_PREFIX=${CURRENT_DIR}/libiconv/${TARGET}/install \
+    -DCMAKE_VERBOSE_MAKEFILE=ON
     ${CFLAGS:+-DCMAKE_C_FLAGS="$CFLAGS"} \
     ${CPPFLAGS:+-DCMAKE_CXX_FLAGS="$CPPFLAGS"} \
     ${LDFLAGS:+-DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS"}
 
-  cmake --build  ./${TARGET}/build --config Release --parallel 6
+  cmake --build  . --config Release --parallel 6
+  cmake --install
 }
 
 cd ${CURRENT_DIR}/libiconv
 iconv_cmake_build
-cp  ./${TARGET}/build/libiconv.a ${DEPS_LIB_DIR}
-cp ./${TARGET}/build/libcharset.a ${DEPS_LIB_DIR}
-cp ./${TARGET}/build/include/* ${DEPS_INCLUDE_DIR}
-cp ./${TARGET}/build/libcharset/include/* ${DEPS_INCLUDE_DIR}
+cp ${CURRENT_DIR}/libiconv/${TARGET}/install/libiconv.a ${DEPS_LIB_DIR}
+cp ${CURRENT_DIR}/libiconv/${TARGET}/install/libcharset.a ${DEPS_LIB_DIR}
+cp ${CURRENT_DIR}/libiconv/${TARGET}/install/include ${DEPS_INCLUDE_DIR}
+cp ${CURRENT_DIR}/libiconv/${TARGET}/install/include ${DEPS_INCLUDE_DIR}
