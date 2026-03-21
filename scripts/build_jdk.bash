@@ -50,8 +50,8 @@ bash ./configure \
       --with-extra-cflags="${CFLAGS}" \
       --with-extra-cxxflags="${CFLAGS}" \
       --with-extra-ldflags="${LDFLAGS}" \
-      --with-freetype-include="${FREETYPE_DIR}/include/freetype2" \
-      --with-freetype-lib="${FREETYPE_DIR}/lib" \
+      --with-freetype-include="${DEPS_INCLUDE_DIR}" \
+      --with-freetype-lib="${DEPS_LIB_DIR}" \
       --x-libraries="${DEPS_LIB_DIR}" \
       --with-toolchain-type=clang \
       --x-includes="${DEPS_INCLUDE_DIR}/X11" \
