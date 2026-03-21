@@ -65,7 +65,7 @@ bash ./configure \
       CXXFILT="llvm-cxxfilt" \
       BUILD_CC="/usr/bin/clang" \
 	  BUILD_CXX="/usr/bin/clang++" \
-      BUILD_NM="/usr/bin/llvm-nm" \
+      BUILD_NM="${NM}" \
 	  BUILD_AR="/usr/bin/llvm-ar" \
 	  BUILD_OBJCOPY="/usr/bin/llvm-objcopy" \
 	  BUILD_STRIP="/usr/bin/llvm-strip" \
