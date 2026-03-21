@@ -19,7 +19,7 @@ bash ./autogen.sh
 chmod +x ./configure
 ./configure \
     --host=${TARGET} \
-    --prefix=${CURRENT_DIR}/freetype/build \
+    --prefix=${CURRENT_DIR}/freetype/${TARGET}/build \
     --without-zlib \
     --with-brotli=no \
     --with-bzip2=no \
@@ -37,7 +37,6 @@ fi
 
 make -j6
 make install
-cp ./build/lib/libfreetype.so ${DEPS_LIB_DIR}
 
 
 echo "Cloning cups..."
