@@ -28,6 +28,7 @@ bash ./configure \
       --with-extra-build-info="built with aaaapai/OpenJDK-Builder" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
       --with-conf-name="${TARGET}" \
+	  --with-ccache-dir=/home/runner/.ccache \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants=server,zero \
       --with-zlib=system \
