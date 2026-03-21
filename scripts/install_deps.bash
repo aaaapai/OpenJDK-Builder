@@ -4,7 +4,6 @@ source ./scripts/utils.bash
 cd ${CURRENT_DIR}
 
 
-PrintConfigurationInfo
 
 echo "Installing host build tools..."
 sudo apt-get update
@@ -16,20 +15,15 @@ echo "Building Freetype..."
 git clone --depth 1 -b "$([ -n "${FREETYPE_VERSION}" ] && echo "VER-$(echo ${FREETYPE_VERSION} | tr '.' '-')" || echo "master")" https://github.com/lwjgl-ci/freetype freetype
 cd ${CURRENT_DIR}/freetype
 
-mkdir -p ${CURRENT_DIR}/freetype/${TARGET}/build
-
-source ./autogen.sh
-chmod +x ./configure
-./configure \
+bash ./autogen.sh
+bash ./configure \
     --host=${TARGET} \
     --prefix=${CURRENT_DIR}/freetype/build \
     --without-zlib \
-    --with-brotli=no \
+    --with-brotli=system \
     --with-bzip2=no \
     --with-png=no \
     --with-harfbuzz=no \
-    --enable-static=no \
-    --enable-shared=yes \
     LD=${LD} \
     CC=${CC} \
     CXX=${CXX} \
@@ -37,11 +31,12 @@ chmod +x ./configure
 
 if [[ "${error_code}" -ne 0 ]]; then
   echo "\n\nCONFIGURE ERROR ${error_code} , config.log:"
-  cat ./builds/unix/config.log
+  cat ${CURRENT_DIR}/freetype/builds/unix/config.log
   exit ${error_code}
 fi
 
-make -j6
+PrintConfigurationInfo
+CFLAGS="-O3 -fno-rtti -mllvm -polly" CXXFLAGS="-O3 -fno-rtti -mllvm -polly" make -j6
 make install
 find ${CURRENT_DIR}/freetype -name "libfreetype.so*" -exec cp -v {} ${DEPS_LIB_DIR}/ \;
 
@@ -81,6 +76,9 @@ iconv_cmake_build () {
 
   export CMAKE_C_COMPILER_LAUNCHER=ccache
   export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+  PrintConfigurationInfo
+  
   cmake ${CURRENT_DIR}/libiconv \
     -DANDROID_PLATFORM=${ANDROID_API} \
     -DANDROID_TOOLCHAIN_NAME=${TARGET} \
