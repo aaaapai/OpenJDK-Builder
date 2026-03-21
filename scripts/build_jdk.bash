@@ -27,7 +27,7 @@ bash ./configure \
       --with-conf-name="${TARGET}" \
 	  --with-ccache-dir=/home/runner/.ccache \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
-      --with-jvm-variants=server,zero \
+      --with-jvm-variants="server,zero" \
       --with-zlib=system \
       --with-jmod-compress=zip-1 \
       --with-external-symbols-in-bundles=none \
@@ -47,7 +47,7 @@ bash ./configure \
       --with-extra-ldflags="${LDFLAGS}" \
       --with-freetype-include="${FREETYPE_DIR}/include/freetype2" \
       --with-freetype-lib="${FREETYPE_DIR}/lib" \
-      --x-libraries="${DEPS_LIB_DIR}" \ # TODO
+      --x-libraries="${DEPS_LIB_DIR}" \
       --with-toolchain-type=clang \
       --x-includes="${DEPS_INCLUDE_DIR}/X11" \
       OBJDUMP="${OBJDUMP}" \
