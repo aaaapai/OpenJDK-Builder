@@ -46,7 +46,8 @@ case "${TARGET_OS}" in
         export STRIP=${NDK_TOOLCHAIN}/bin/llvm-strip
         export PATH=${NDK_TOOLCHAIN}/bin:$PATH
         export NM=${NDK_TOOLCHAIN}/bin/llvm-nm
-        
+        export DLLTOOL=${NDK_TOOLCHAIN}/bin/llvm-dlltool
+
         Set_CFLAGS -I${NDK_INCLUDE} -I${NDK_INCLUDE}/${TARGET} -Wno-unknown-warning-option
         Set_CPPFLAGS -I${NDK_INCLUDE} -I${NDK_INCLUDE}/${TARGET} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
         Set_LDFLAGS -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API}
