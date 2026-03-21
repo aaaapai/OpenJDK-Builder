@@ -30,9 +30,7 @@ bash ./configure \
 	  --openjdk-target="${TARGET}" \
 	  --with-ccache-dir=/home/runner/.ccache \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
-      --with-jvm-variants="server,zero" \
-      --with-zlib=system \
-      --with-jmod-compress=zip-1 \
+      --with-jvm-variants="server" \
       --with-external-symbols-in-bundles=none \
       --with-native-debug-symbols-level=1 \
       --disable-precompiled-headers \
