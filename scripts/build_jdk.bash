@@ -76,8 +76,7 @@ if [[ "$error_code" -ne 0 ]]; then
   exit $error_code
 fi
 
-mkdir -p ./${TARGET}/openjdk-build
-cd ./${TARGET}/openjdk-build
+cd ./build/${TARGET}
 make JOBS=6 images || \
 error_code=$?
 
