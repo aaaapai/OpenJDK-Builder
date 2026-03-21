@@ -50,7 +50,7 @@ bash ./configure \
       --with-extra-cflags="${CFLAGS}" \
       --with-extra-cxxflags="${CFLAGS}" \
       --with-extra-ldflags="${LDFLAGS}" \
-      --with-freetype-include="${CURRENT_DIR}/include/freetype" \
+      --with-freetype-include="${FREETYPE_DIR}/include/freetype2" \
       --with-freetype-lib="${DEPS_LIB_DIR}" \
       --x-libraries="${DEPS_LIB_DIR}" \
       --with-toolchain-type=clang \
