@@ -27,7 +27,8 @@ bash ./configure \
       --with-vendor-name="OpenJDK" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
       --with-conf-name="${TARGET}" \
-	  --openjdk-target="${TARGET}" \
+	  --host="${TARGET}" \
+	  --target="${TARGET}" \
 	  --with-ccache-dir=/home/runner/.ccache \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants="server" \
