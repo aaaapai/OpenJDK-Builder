@@ -10,9 +10,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef SIMPLE_POSIX_SPAWN_H
+#define SIMPLE_POSIX_SPAWN_H
+
+
 #ifdef __cplusplus
+#ifndef __EXTERN_C_ALREADY_OPEN
+#define __EXTERN_C_ALREADY_OPEN
 extern "C" {
 #endif
+#endif
+
 
 #define SIMPLE_POSIX_SPAWN_SETPGROUP   0x0001
 #define SIMPLE_POSIX_SPAWN_SETSIGMASK  0x0002
@@ -334,8 +342,12 @@ static inline int simple_posix_spawnp(pid_t *pid_ptr,
     return 0;
 }
 
+
 #ifdef __cplusplus
+#ifdef __EXTERN_C_ALREADY_OPEN
+#undef __EXTERN_C_ALREADY_OPEN
 }
+#endif
 #endif
 
 #endif /* SIMPLE_POSIX_SPAWN_H */
