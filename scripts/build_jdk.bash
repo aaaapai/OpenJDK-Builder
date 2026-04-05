@@ -39,7 +39,6 @@ bash ./configure \
       --enable-linktime-gc \
       --disable-warnings-as-errors \
       --enable-ccache \
-	  --enable-cross-compile \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
