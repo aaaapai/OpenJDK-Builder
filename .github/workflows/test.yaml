@@ -2,7 +2,7 @@ name: Build JDK for Android
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ master ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:  # 允许手动触发
