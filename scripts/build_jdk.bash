@@ -61,8 +61,8 @@ bash ./configure \
       CXX="${CXX}" \
       LD="${LD}" \
       CXXFILT="llvm-cxxfilt" \
-      BUILD_CC=$(get_compiler_with_ccache "/usr/bin/clang") \
-	  BUILD_CXX=$(get_compiler_with_ccache "/usr/bin/clang++") \
+      BUILD_CC="$(get_compiler_with_ccache "/usr/bin/clang")" \
+	  BUILD_CXX="$(get_compiler_with_ccache "/usr/bin/clang++")" \
       BUILD_NM="${NM}" \
 	  BUILD_AR="${AR}" \
 	  BUILD_OBJCOPY="${OBJCOPY}" \
