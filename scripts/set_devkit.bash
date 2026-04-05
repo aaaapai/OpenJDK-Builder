@@ -30,8 +30,8 @@ case "${TARGET_OS}" in
             export CC=$(get_compiler_with_ccache "./wrapper/gcc/android-wrapped-clang")
             export CXX=$(get_compiler_with_ccache "./wrapper/gcc/android-wrapped-clang++")
         else
-            export CC=$(get_compiler_with_ccache "${thecc}")
-            export CXX=$(get_compiler_with_ccache "${thecxx}")
+            export CC="$(get_compiler_with_ccache "${thecc}")"
+            export CXX="$(get_compiler_with_ccache "${thecxx}")"
         fi
         
         if [[ -n "${FAKE_GCC}" && "${FAKE_GCC}" == "1" ]] || [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]]; then
