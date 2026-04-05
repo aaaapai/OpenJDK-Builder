@@ -203,6 +203,14 @@ Set_LDFLAGS() {
     fi
 }
 
+get_compiler_with_ccache() {
+    local compiler="$1"
+    if command -v ccache >/dev/null 2>&1; then
+        echo "ccache ${compiler}"
+    else
+        echo "${compiler}"
+    fi
+}
 
 PrintConfigurationInfo() {
   echo "Current configuration:"
