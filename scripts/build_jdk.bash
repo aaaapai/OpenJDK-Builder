@@ -29,7 +29,6 @@ bash ./configure \
       --with-conf-name="${TARGET}" \
 	  --host="${TARGET}" \
 	  --target="${TARGET}" \
-	  --with-ccache-dir=/home/runner/.ccache \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants="server" \
       --with-external-symbols-in-bundles=none \
@@ -39,6 +38,7 @@ bash ./configure \
       --enable-linktime-gc \
       --disable-warnings-as-errors \
       --enable-ccache \
+	  --with-ccache-dir="/home/runner/work/OpenJDK-Builder/OpenJDK-Builder/.ccache" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
