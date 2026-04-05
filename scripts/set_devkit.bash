@@ -1,11 +1,20 @@
 #!/bin/bash
 
+get_compiler_with_ccache() {
+    local compiler="$1"
+    if command -v ccache >/dev/null 2>&1; then
+        echo "ccache ${compiler}"
+    else
+        echo "${compiler}"
+    fi
+}
 
 export JVM_PLATFORM=${TARGET_OS}
 if [[ -z "${JDK_DEBUG_LEVEL}" ]]
 then
   export JDK_DEBUG_LEVEL=release
 fi
+
 if [[ "${USE_LTO}" == "1" ]]; then
   Set_CFLAGS -flto
   Set_CPPFLAGS -flto
@@ -27,11 +36,11 @@ case "${TARGET_OS}" in
         export AS=${NDK_TOOLCHAIN}/bin/llvm-as
         
         if [[ -n "${FAKE_GCC}" ]] && [[ "${FAKE_GCC}" == "1" ]]; then
-            export CC=./wrapper/gcc/android-wrapped-clang
-            export CXX=./wrapper/gcc/android-wrapped-clang++
+            export CC=$(get_compiler_with_ccache "./wrapper/gcc/android-wrapped-clang")
+            export CXX=$(get_compiler_with_ccache "./wrapper/gcc/android-wrapped-clang++")
         else
-            export CC=${thecc}
-            export CXX=${thecxx}
+            export CC=$(get_compiler_with_ccache "${thecc}")
+            export CXX=$(get_compiler_with_ccache "${thecxx}")
         fi
         
         if [[ -n "${FAKE_GCC}" && "${FAKE_GCC}" == "1" ]] || [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]]; then
