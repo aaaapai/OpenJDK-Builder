@@ -1,17 +1,16 @@
 #!/bin/bash
 
+
 export JVM_PLATFORM=${TARGET_OS}
 if [[ -z "${JDK_DEBUG_LEVEL}" ]]
 then
   export JDK_DEBUG_LEVEL=release
 fi
-
 if [[ "${USE_LTO}" == "1" ]]; then
   Set_CFLAGS -flto
   Set_CPPFLAGS -flto
   Set_LDFLAGS -flto
 fi
-
 
 case "${TARGET_OS}" in
     "ios")
@@ -28,21 +27,11 @@ case "${TARGET_OS}" in
         export AS=${NDK_TOOLCHAIN}/bin/llvm-as
         
         if [[ -n "${FAKE_GCC}" ]] && [[ "${FAKE_GCC}" == "1" ]]; then
-            if [[ "${USE_CCACHE}" == "1" ]]; then
-                export CC="/tmp/ccache-wrapped-clang"
-                export CXX="/tmp/ccache-wrapped-clang++"
-            else
-                export CC="./wrapper/gcc/android-wrapped-clang"
-                export CXX="./wrapper/gcc/android-wrapped-clang++"
-            fi
+            export CC=./wrapper/gcc/android-wrapped-clang
+            export CXX=./wrapper/gcc/android-wrapped-clang++
         else
-            if [[ "${USE_CCACHE}" == "1" ]]; then
-                export CC="/tmp/ccache-wrapped-cc"
-                export CXX="/tmp/ccache-wrapped-cxx"
-            else
-                export CC="${thecc}"
-                export CXX="${thecxx}"
-            fi
+            export CC=${thecc}
+            export CXX=${thecxx}
         fi
         
         if [[ -n "${FAKE_GCC}" && "${FAKE_GCC}" == "1" ]] || [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]]; then
