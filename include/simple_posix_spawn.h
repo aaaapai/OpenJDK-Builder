@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define SIMPLE_POSIX_SPAWN_SETPGROUP   0x0001
 #define SIMPLE_POSIX_SPAWN_SETSIGMASK  0x0002
@@ -331,5 +334,8 @@ static inline int simple_posix_spawnp(pid_t *pid_ptr,
     return 0;
 }
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SIMPLE_POSIX_SPAWN_H */
