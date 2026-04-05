@@ -1459,6 +1459,19 @@ index 41a4dbea3842a..6471f1194c998 100644
      : /* no output */ : /* no input */ : "r0"
    );
  #endif
+diff --git a/src/hotspot/share/adlc/adlArena.hpp b/src/hotspot/share/adlc/adlArena.hpp
+index 2e8d8ae8ae2f9..75084c0460c8c 100644
+--- a/src/hotspot/share/adlc/adlArena.hpp
++++ b/src/hotspot/share/adlc/adlArena.hpp
+@@ -25,6 +25,8 @@
+ #ifndef SHARE_ADLC_ADLARENA_HPP
+ #define SHARE_ADLC_ADLARENA_HPP
+ 
++#include <cstdint>
++
+ void* AdlAllocateHeap(size_t size);
+ void* AdlReAllocateHeap(void* old_ptr, size_t size);
+ 
 diff --git a/src/hotspot/share/adlc/forms.hpp b/src/hotspot/share/adlc/forms.hpp
 index b55cfc00428f3..17c3114b60c2d 100644
 --- a/src/hotspot/share/adlc/forms.hpp
