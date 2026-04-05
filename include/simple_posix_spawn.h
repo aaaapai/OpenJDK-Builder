@@ -10,9 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef SIMPLE_POSIX_SPAWN_H
-#define SIMPLE_POSIX_SPAWN_H
-
 
 #ifdef __cplusplus
 #ifndef __EXTERN_C_ALREADY_OPEN
@@ -20,7 +17,6 @@
 extern "C" {
 #endif
 #endif
-
 
 #define SIMPLE_POSIX_SPAWN_SETPGROUP   0x0001
 #define SIMPLE_POSIX_SPAWN_SETSIGMASK  0x0002
