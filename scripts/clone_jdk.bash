@@ -22,7 +22,7 @@ fi
 # 处理特殊版本
 if [[ "${TARGET_JAVA_VERSION}" = "latest" ]] || [[ "${TARGET_JAVA_VERSION}" = "27" ]] || [[ "${TARGET_JAVA_VERSION}" = "main" ]] || [[ "${TARGET_JAVA_VERSION}" = "dev" ]]; then
     echo "使用最新开发版本 (main分支)"
-    git clone --depth 1 -b master https://github.com/openjdk/jdk openjdk
+    git clone --depth 1 -b master https://github.com/openjdk/mobile openjdk
 fi
 
 # 检查是否是dev分支
