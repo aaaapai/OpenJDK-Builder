@@ -22,7 +22,7 @@ fi
 # 处理特殊版本
 if [[ "${TARGET_JAVA_VERSION}" = "latest" ]] || [[ "${TARGET_JAVA_VERSION}" = "27" ]] || [[ "${TARGET_JAVA_VERSION}" = "main" ]] || [[ "${TARGET_JAVA_VERSION}" = "dev" ]]; then
     echo "使用最新开发版本 (main分支)"
-    git clone --depth 1 -b master https://github.com/aaaapai/jdk openjdk
+    git clone --depth 1 -b master https://github.com/openjdk/mobile openjdk
 fi
 
 # 检查是否是dev分支
@@ -60,7 +60,7 @@ if [[ "${TARGET_JAVA_VERSION}" == *.* ]]; then
 else
     # 大版本，默认使用master分支
     echo "使用大版本master分支"
-    git clone --depth 1 -b master https://github.com/openjdk/jdk openjdk
+    git clone --depth 1 -b master https://github.com/openjdk/mobile openjdk
 fi
 
 echo "成功: OpenJDK ${TARGET_JAVA_VERSION} 已克隆到 openjdk 目录"
