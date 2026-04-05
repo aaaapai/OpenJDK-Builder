@@ -1459,6 +1459,18 @@ index 41a4dbea3842a..6471f1194c998 100644
      : /* no output */ : /* no input */ : "r0"
    );
  #endif
+diff --git a/src/hotspot/share/adlc/forms.hpp b/src/hotspot/share/adlc/forms.hpp
+index b55cfc00428f3..17c3114b60c2d 100644
+--- a/src/hotspot/share/adlc/forms.hpp
++++ b/src/hotspot/share/adlc/forms.hpp
+@@ -27,6 +27,7 @@
+ 
+ #include "dict2.hpp"
+ #include "opto/adlcVMDeps.hpp"
++#include <cstdint>
+ 
+ // FORMS.HPP - ADL Parser Generic and Utility Forms Classes
+ 
 diff --git a/src/hotspot/share/nmt/memMapPrinter.cpp b/src/hotspot/share/nmt/memMapPrinter.cpp
 index 639e06292fc7d..17ede6b1ee0ec 100644
 --- a/src/hotspot/share/nmt/memMapPrinter.cpp
