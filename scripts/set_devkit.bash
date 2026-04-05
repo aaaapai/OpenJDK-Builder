@@ -12,6 +12,7 @@ if [[ "${USE_LTO}" == "1" ]]; then
   Set_LDFLAGS -flto
 fi
 
+
 case "${TARGET_OS}" in
     "ios")
         export CC=./wrapper/ios/ios-arm64-clang
@@ -27,11 +28,21 @@ case "${TARGET_OS}" in
         export AS=${NDK_TOOLCHAIN}/bin/llvm-as
         
         if [[ -n "${FAKE_GCC}" ]] && [[ "${FAKE_GCC}" == "1" ]]; then
-            export CC=$(get_compiler_with_ccache "./wrapper/gcc/android-wrapped-clang")
-            export CXX=$(get_compiler_with_ccache "./wrapper/gcc/android-wrapped-clang++")
+            if [[ "${USE_CCACHE}" == "1" ]]; then
+                export CC="/tmp/ccache-wrapped-clang"
+                export CXX="/tmp/ccache-wrapped-clang++"
+            else
+                export CC="./wrapper/gcc/android-wrapped-clang"
+                export CXX="./wrapper/gcc/android-wrapped-clang++"
+            fi
         else
-            export CC="$(get_compiler_with_ccache "${thecc}")"
-            export CXX="$(get_compiler_with_ccache "${thecxx}")"
+            if [[ "${USE_CCACHE}" == "1" ]]; then
+                export CC="/tmp/ccache-wrapped-cc"
+                export CXX="/tmp/ccache-wrapped-cxx"
+            else
+                export CC="${thecc}"
+                export CXX="${thecxx}"
+            fi
         fi
         
         if [[ -n "${FAKE_GCC}" && "${FAKE_GCC}" == "1" ]] || [[ -n "${USE_GCC}" && "${USE_GCC}" == "1" ]]; then
