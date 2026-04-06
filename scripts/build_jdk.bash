@@ -61,10 +61,10 @@ bash ./configure \
       OBJCOPY="${OBJCOPY}" \
       CC="${CC}" \
       CXX="${CXX}" \
-	  BUILD_CC="/usr/lib/ccache/clang" \
-	  BUILD_CXX="/usr/lib/ccache/clang++" \
+	  BUILD_CC="${CC}" \
+	  BUILD_CXX="${CXX}" \
       LD="${LD}" \
-	  BUILD_LD="/usr/bin/ld.lld" \
+	  BUILD_LD="${LD}" \
       CXXFILT="llvm-cxxfilt" \
       BUILD_NM="${NM}" \
 	  BUILD_AR="${AR}" \
