@@ -131,7 +131,7 @@ static inline int simple_posix_spawn_file_actions_destroy(simple_posix_spawn_fil
 static inline int simple_posix_spawn_file_actions_addopen(simple_posix_spawn_file_actions_t *actions,
                                                           int fd, const char *path, int flags, mode_t mode) {
     if (!actions || fd < 0 || !path) return EINVAL;
-    struct simple_spawn_file_action *act = malloc(sizeof(*act));
+    struct simple_spawn_file_action *act = (struct simple_spawn_file_action*)malloc(sizeof(*act));
     if (!act) return ENOMEM;
     memset(act, 0, sizeof(*act));
     act->type = SIMPLE_SPAWN_OPEN;
@@ -156,7 +156,7 @@ static inline int simple_posix_spawn_file_actions_addopen(simple_posix_spawn_fil
 
 static inline int simple_posix_spawn_file_actions_addclose(simple_posix_spawn_file_actions_t *actions, int fd) {
     if (!actions || fd < 0) return EINVAL;
-    struct simple_spawn_file_action *act = malloc(sizeof(*act));
+    struct simple_spawn_file_action *act = (struct simple_spawn_file_action*)malloc(sizeof(*act));
     if (!act) return ENOMEM;
     memset(act, 0, sizeof(*act));
     act->type = SIMPLE_SPAWN_CLOSE;
@@ -174,7 +174,7 @@ static inline int simple_posix_spawn_file_actions_addclose(simple_posix_spawn_fi
 static inline int simple_posix_spawn_file_actions_adddup2(simple_posix_spawn_file_actions_t *actions,
                                                           int fd, int new_fd) {
     if (!actions || fd < 0 || new_fd < 0) return EINVAL;
-    struct simple_spawn_file_action *act = malloc(sizeof(*act));
+    struct simple_spawn_file_action *act = (struct simple_spawn_file_action*)malloc(sizeof(*act));
     if (!act) return ENOMEM;
     memset(act, 0, sizeof(*act));
     act->type = SIMPLE_SPAWN_DUP2;
