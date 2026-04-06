@@ -7,7 +7,7 @@ cp -R /usr/include/fontconfig ${DEPS_INCLUDE_DIR}
 cp ${CURRENT_DIR}/devkit_info/devkit.info.${TARGET_ARCH} ${NDK_TOOLCHAIN}
 
 if [[ "${TARGET_ARCH}" == "arm32" ]]; then
-  Set_C_CPPFLAGS -D__thumb__
+  Set_C_CPPFLAGS -marm
 else
   if [[ "${TARGET_ARCH}" == "x86" ]]; then
      Set_C_CPPFLAGS -mstackrealign
