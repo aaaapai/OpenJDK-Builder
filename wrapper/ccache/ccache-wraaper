@@ -1,6 +1,0 @@
-#!/bin/bash
-
-REAL_COMPILER="$1"
-shift
-
-exec ccache "$REAL_COMPILER" "$@"
