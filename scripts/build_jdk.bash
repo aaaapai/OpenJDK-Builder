@@ -62,6 +62,7 @@ bash ./configure \
 	  BUILD_CC="/usr/bin/clang" \
 	  BUILD_CXX="/usr/bin/clang++" \
       LD="${LD}" \
+	  BUILD_LD="/usr/bin/ld.lld" \
       CXXFILT="llvm-cxxfilt" \
       BUILD_NM="${NM}" \
 	  BUILD_AR="${AR}" \
