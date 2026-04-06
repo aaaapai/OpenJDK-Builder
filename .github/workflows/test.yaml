@@ -24,13 +24,13 @@ jobs:
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@main
         with:
-          max-size: "3G"
+          max-size: "5G"
 
       - name: Setup ccache in PATH
         run: |
            echo "/usr/lib/ccache" >> $GITHUB_PATH
            echo "CCACHE_DIR=/home/runner/work/OpenJDK-Builder/OpenJDK-Builder/.ccache" >> $GITHUB_ENV
-           echo "CCACHE_MAXSIZE=3G" >> $GITHUB_ENV
+           echo "CCACHE_MAXSIZE=5G" >> $GITHUB_ENV
   
       # 第3步: 设置 Java (版本 26, Zulu 供应商)
       - name: Set up Java
