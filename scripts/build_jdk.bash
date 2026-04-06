@@ -59,8 +59,8 @@ bash ./configure \
       OBJCOPY="${OBJCOPY}" \
       CC="${CC}" \
       CXX="${CXX}" \
-	  BUILD_CC="/usr/bin/clang" \
-	  BUILD_CXX="/usr/bin/clang++" \
+	  BUILD_CC="/usr/lib/ccache/clang" \
+	  BUILD_CXX="/usr/lib/ccache/clang++" \
       LD="${LD}" \
 	  BUILD_LD="/usr/bin/ld.lld" \
       CXXFILT="llvm-cxxfilt" \
