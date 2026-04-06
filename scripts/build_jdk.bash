@@ -29,6 +29,8 @@ bash ./configure \
       --with-conf-name="${TARGET}" \
 	  --host="${TARGET}" \
 	  --target="${TARGET}" \
+	  --with-sysroot="${NDK_TOOLCHAIN}/sysroot" \
+	  --with-toolchain-path="${NDK_TOOLCHAIN}/bin" \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants="server" \
       --with-external-symbols-in-bundles=none \
