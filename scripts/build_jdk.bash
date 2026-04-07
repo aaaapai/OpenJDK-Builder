@@ -16,6 +16,9 @@ fi
 
 Set_C_CPPFLAGS -DLE_STANDALONE
 
+chmod +x ${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang
+chmod +x ${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++
+
 cd_to_script_dir
 bash ./clone_jdk.bash
 # bash ./apply_jdk_patches.bash
