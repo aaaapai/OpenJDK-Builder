@@ -61,8 +61,8 @@ bash ./configure \
       OBJCOPY="${OBJCOPY}" \
       CC="${CC}" \
       CXX="${CXX}" \
-	  BUILD_CC="${CURRENT_DIR}/wrapper/buildcc-wrapped-clang" \
-	  BUILD_CXX="${CURRENT_DIR}/wrapper/buildcxx-wrapped-clang++" \
+	  BUILD_CC="${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang" \
+	  BUILD_CXX="${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++" \
       LD="${LD}" \
 	  BUILD_LD="${LD}" \
       CXXFILT="llvm-cxxfilt" \
