@@ -48,7 +48,7 @@ bash ./configure \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
-      --with-cups-include="${CUPS_DIR}" \
+      --with-cups-include="${CUPS_DIR}/cups" \
       --with-extra-cflags="${CFLAGS}" \
       --with-extra-cxxflags="${CFLAGS}" \
       --with-extra-ldflags="${LDFLAGS}" \
