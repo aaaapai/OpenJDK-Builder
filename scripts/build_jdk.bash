@@ -63,13 +63,7 @@ bash ./configure \
       CXX="${CXX}" \
 	  BUILD_CC="${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang" \
 	  BUILD_CXX="${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++" \
-      LD="${LD}" \
-	  BUILD_LD="${LD}" \
       CXXFILT="llvm-cxxfilt" \
-      BUILD_NM="${NM}" \
-	  BUILD_AR="${AR}" \
-	  BUILD_OBJCOPY="${OBJCOPY}" \
-	  BUILD_STRIP="${STRIP}" \
 	  --with-jobs=6 || \
 error_code=$?
 
