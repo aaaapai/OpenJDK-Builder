@@ -32,8 +32,6 @@ bash ./configure \
       --with-conf-name="${TARGET}" \
 	  --host="${TARGET}" \
 	  --target="${TARGET}" \
-	  --with-sysroot="${NDK_TOOLCHAIN}/sysroot" \
-	  --with-toolchain-path="${NDK_TOOLCHAIN}/bin" \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants="server" \
       --with-external-symbols-in-bundles=none \
@@ -48,7 +46,7 @@ bash ./configure \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
-      --with-cups-include="${CUPS_DIR}/cups" \
+      --with-cups-include="${CUPS_DIR}" \
       --with-extra-cflags="${CFLAGS}" \
       --with-extra-cxxflags="${CFLAGS}" \
       --with-extra-ldflags="${LDFLAGS}" \
