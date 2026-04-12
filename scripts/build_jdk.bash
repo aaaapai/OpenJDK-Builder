@@ -30,8 +30,7 @@ bash ./configure \
       --with-vendor-name="OpenJDK" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
       --with-conf-name="${TARGET}" \
-	  --host="${TARGET}" \
-	  --target="${TARGET}" \
+	  --openjdk-target="${TARGET}" \
       --with-boot-jdk-jvmargs="-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseNUMA" \
       --with-jvm-variants="server" \
       --with-external-symbols-in-bundles=none \
