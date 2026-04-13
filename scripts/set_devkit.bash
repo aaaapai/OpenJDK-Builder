@@ -52,9 +52,9 @@ case "${TARGET_OS}" in
         export NM=${NDK_TOOLCHAIN}/bin/llvm-nm
         export DLLTOOL=${NDK_TOOLCHAIN}/bin/llvm-dlltool
 
-        Set_CFLAGS -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
-        Set_CPPFLAGS -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
-        Set_LDFLAGS -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API}
+        Set_CFLAGS -I${FREETYPE_DIR}/include/freetype2 -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
+        Set_CPPFLAGS -I${FREETYPE_DIR}/include/freetype2 -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
+        Set_LDFLAGS -L${FREETYPE_DIR}/lib -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API}
         ;;
     
     *)
