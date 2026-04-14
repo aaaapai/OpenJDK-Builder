@@ -48,7 +48,8 @@ case "${TARGET_OS}" in
         export OBJCOPY=${NDK_TOOLCHAIN}/bin/llvm-objcopy
         export RANLIB=${NDK_TOOLCHAIN}/bin/llvm-ranlib
         export STRIP=${NDK_TOOLCHAIN}/bin/llvm-strip
-        export PATH=${NDK_TOOLCHAIN}/bin:$PATH
+        export PATH=${NDK_TOOLCHAIN}/bin:${PATH}
+        export LD_LIBRARY_PATH=./openjdk/build/${TARGET}/buildjdk/jdk/lib:$LD_LIBRARY_PATH
         export NM=${NDK_TOOLCHAIN}/bin/llvm-nm
         export DLLTOOL=${NDK_TOOLCHAIN}/bin/llvm-dlltool
 
