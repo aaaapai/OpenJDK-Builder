@@ -30,7 +30,8 @@ bash ./configure \
       --with-vendor-name="OpenJDK" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
       --with-conf-name="${TARGET}" \
-	  --openjdk-target="${TARGET}" \
+	  --host="${TARGET}" \
+	  --target="${TARGET}" \
       --with-boot-jdk-jvmargs="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation" \
       --with-jvm-variants="server" \
       --with-external-symbols-in-bundles=none \
