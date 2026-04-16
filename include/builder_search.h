@@ -4,6 +4,9 @@
 #include <string.h>
 #include <errno.h>
 #include <dlfcn.h>
+#include <pthread.h>
+
+#include <search.h>
 
 #if defined(__ANDROID__) && __ANDROID_API__ < 28
 
@@ -13,18 +16,13 @@
 extern "C" {
 #endif
 
-typedef enum { FIND, ENTER } ACTION;
-
-typedef struct entry {
-    char *key;
-    void *data;
-} ENTRY;
-
-typedef enum { preorder, postorder, endorder, leaf } VISIT;
-
-struct hsearch_data {
-    void *__private;
-};
+static inline int use_system_hsearch(void) {
+    static int cached_api_level = -1;
+    if (cached_api_level == -1) {
+        cached_api_level = android_get_device_api_level();
+    }
+    return cached_api_level >= 28;
+}
 
 struct internal_bucket {
     char *key;
@@ -93,14 +91,6 @@ static inline ENTRY *internal_insert(struct internal_hashtable *ht, const char *
     return (ENTRY*)b;
 }
 
-static inline int use_system_hsearch(void) {
-    static int cached_api_level = -1;
-    if (cached_api_level == -1) {
-        cached_api_level = android_get_device_api_level();
-    }
-    return cached_api_level >= 28;
-}
-
 static inline int hcreate_r(size_t nel, struct hsearch_data *htab) {
     if (!htab) {
         errno = EINVAL;
@@ -119,7 +109,6 @@ static inline int hcreate_r(size_t nel, struct hsearch_data *htab) {
         if (sys_hcreate_r) {
             return sys_hcreate_r(nel, htab);
         }
-
     }
 
     if (htab->__private != NULL) {
@@ -218,5 +207,5 @@ static inline int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hs
 #endif
 
 #else
-#include <search.h>
+
 #endif
