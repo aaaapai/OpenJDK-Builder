@@ -1,28 +1,16 @@
 #pragma once
 
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <dlfcn.h>
-#include <pthread.h>
-
 #include <search.h>
 
 #if defined(__ANDROID__) && __ANDROID_API__ < 28
 
-#include <android/api-level.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-static inline int use_system_hsearch(void) {
-    static int cached_api_level = -1;
-    if (cached_api_level == -1) {
-        cached_api_level = android_get_device_api_level();
-    }
-    return cached_api_level >= 28;
-}
 
 struct internal_bucket {
     char *key;
@@ -91,27 +79,13 @@ static inline ENTRY *internal_insert(struct internal_hashtable *ht, const char *
     return (ENTRY*)b;
 }
 
-static inline int hcreate_r(size_t nel, struct hsearch_data *htab) {
+static inline int simple_hcreate_r(size_t nel, struct hsearch_data *htab) {
     if (!htab) {
         errno = EINVAL;
         return 0;
     }
-    if (use_system_hsearch()) {
-        static int (*sys_hcreate_r)(size_t, struct hsearch_data*) = NULL;
-        static pthread_once_t once = PTHREAD_ONCE_INIT;
-        static void load_sym(void) {
-            void *handle = dlopen(NULL, RTLD_LAZY);
-            if (handle) {
-                sys_hcreate_r = (int(*)(size_t, struct hsearch_data*))dlsym(handle, "hcreate_r");
-            }
-        }
-        pthread_once(&once, load_sym);
-        if (sys_hcreate_r) {
-            return sys_hcreate_r(nel, htab);
-        }
-    }
-
-    if (htab->__private != NULL) {
+    void **priv = (void**)htab;
+    if (*priv != NULL) {
         errno = EINVAL;
         return 0;
     }
@@ -120,34 +94,20 @@ static inline int hcreate_r(size_t nel, struct hsearch_data *htab) {
         errno = ENOMEM;
         return 0;
     }
-    htab->__private = ht;
+    *priv = ht;
     return 1;
 }
 
-static inline void hdestroy_r(struct hsearch_data *htab) {
+static inline void simple_hdestroy_r(struct hsearch_data *htab) {
     if (!htab) return;
-    if (use_system_hsearch()) {
-        static void (*sys_hdestroy_r)(struct hsearch_data*) = NULL;
-        static pthread_once_t once = PTHREAD_ONCE_INIT;
-        static void load_sym(void) {
-            void *handle = dlopen(NULL, RTLD_LAZY);
-            if (handle) {
-                sys_hdestroy_r = (void(*)(struct hsearch_data*))dlsym(handle, "hdestroy_r");
-            }
-        }
-        pthread_once(&once, load_sym);
-        if (sys_hdestroy_r) {
-            sys_hdestroy_r(htab);
-            return;
-        }
-    }
-    if (htab->__private) {
-        internal_destroy((struct internal_hashtable*)htab->__private);
-        htab->__private = NULL;
+    void **priv = (void**)htab;
+    if (*priv) {
+        internal_destroy((struct internal_hashtable*)*priv);
+        *priv = NULL;
     }
 }
 
-static inline int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *htab) {
+static inline int simple_hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hsearch_data *htab) {
     if (!htab || !retval) {
         errno = EINVAL;
         return 0;
@@ -161,22 +121,8 @@ static inline int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hs
         return 0;
     }
 
-    if (use_system_hsearch()) {
-        static int (*sys_hsearch_r)(ENTRY, ACTION, ENTRY**, struct hsearch_data*) = NULL;
-        static pthread_once_t once = PTHREAD_ONCE_INIT;
-        static void load_sym(void) {
-            void *handle = dlopen(NULL, RTLD_LAZY);
-            if (handle) {
-                sys_hsearch_r = (int(*)(ENTRY, ACTION, ENTRY**, struct hsearch_data*))dlsym(handle, "hsearch_r");
-            }
-        }
-        pthread_once(&once, load_sym);
-        if (sys_hsearch_r) {
-            return sys_hsearch_r(item, action, retval, htab);
-        }
-    }
-
-    struct internal_hashtable *ht = (struct internal_hashtable*)htab->__private;
+    void **priv = (void**)htab;
+    struct internal_hashtable *ht = (struct internal_hashtable*)*priv;
     if (!ht) {
         errno = EINVAL;
         return 0;
@@ -206,6 +152,4 @@ static inline int hsearch_r(ENTRY item, ACTION action, ENTRY **retval, struct hs
 }
 #endif
 
-#else
-
-#endif
+#endif /* __ANDROID_API__ < 28 */
