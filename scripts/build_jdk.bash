@@ -90,10 +90,10 @@ if [[ "${error_code}" -ne 0 ]]; then
 fi
 
 
-cp -v ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/ || true # it's needed for caciocavallo.
-cp -v ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/ || true # it's needed for caciocavallo.
-cp -v ${DEPS_LIB_DIR}/libnuma.so jdk/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
-cp -rv ${CURRENT_DIR}/fonts_config/* jdk/lib/ || true # it's needed for caciocavallo.
+cp -v ${FREETYPE_DIR}/lib/libfreetype.so images/jdk/lib/ || true # Perhaps it's needed for caciocavallo.
+cp -v ${DEPS_LIB_DIR}/libawt_xawt.so images/jdk/lib/ || true # It's needed for caciocavallo.
+cp -v ${DEPS_LIB_DIR}/libnuma.so images/jdk/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
+cp -rv ${CURRENT_DIR}/fonts_config/* images/jdk/lib/ || true # It's needed for caciocavallo.
 
 
 cd ${CURRENT_DIR}
