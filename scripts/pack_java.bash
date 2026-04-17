@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo"Packing java..."
+echo "Packing java..."
 
 
 cd ${CURRENT_DIR}/openjdk/build/${TARGET}/images/jre
