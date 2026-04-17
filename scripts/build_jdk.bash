@@ -85,8 +85,8 @@ fi
 
 make jmods # To remove debuginfo for jre.
 
-cp -v ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/ || true
-cp -v ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/ || true
+cp -v ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/ || true # it's needed for caciocavallo.
+cp -v ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/ || true # it's needed for caciocavallo.
 cp -v ${DEPS_LIB_DIR}/libnuma.so jdk/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
 cp -rv ${CURRENT_DIR}/fonts_config/* jdk/lib/ || true # it's needed for caciocavallo.
 
