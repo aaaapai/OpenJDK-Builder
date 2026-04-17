@@ -25,13 +25,13 @@ jobs:
         uses: hendrikmuhs/ccache-action@main
         with:
           max-size: "5G"
+          key: "android-${{ env.TARGET_ARCH }}-jdk${{ env.TARGET_JAVA_VERSION }}"
+          restore-keys: |
+            android-${{ env.TARGET_ARCH }}-jdk
+            android-${{ env.TARGET_ARCH }}-
+            android-
+          create-symlink: true
 
-      - name: Setup ccache in PATH
-        run: |
-           echo "/usr/lib/ccache" >> $GITHUB_PATH
-           echo "CCACHE_DIR=/home/runner/work/OpenJDK-Builder/OpenJDK-Builder/.ccache" >> $GITHUB_ENV
-           echo "CCACHE_MAXSIZE=5G" >> $GITHUB_ENV
-  
       # 第3步: 设置 Java (版本 26, Zulu 供应商)
       - name: Set up Java
         uses: actions/setup-java@main
