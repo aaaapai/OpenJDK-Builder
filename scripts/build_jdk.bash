@@ -83,6 +83,7 @@ if [[ "${error_code}" -ne 0 ]]; then
   make JOBS=6 images
 fi
 
-cp ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/
-cp ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/
-cp ${DEPS_LIB_DIR}/libnuma.so jdk/lib/
+cp -v ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/ || true
+cp -v ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/ || true
+cp -v ${DEPS_LIB_DIR}/libnuma.so jdk/lib/ || true
+cp -rv fonts_config/* jdk/lib/ || true
