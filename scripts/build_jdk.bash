@@ -71,7 +71,7 @@ bash ./configure \
 	  --disable-full-docs \
 	  --enable-javac-server \
 	  --with-memory-size=3072 \
-	  --with-jobs=2 || \
+	  --with-jobs=6 || \
 error_code=$?
 
 if [[ "$error_code" -ne 0 ]]; then
