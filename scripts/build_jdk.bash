@@ -59,9 +59,10 @@ bash ./configure \
       STRIP="${STRIP}" \
       NM="${NM}" \
       AR="${AR}" \
-      OBJCOPY="${OBJCOPY}" \
-      CC="${CC}" \
-      CXX="${CXX}" \
+	  BUILD_OBJDUMP="${OBJDUMP}" \
+	  BUILD_OBJCOPY="${OBJCOPY}" \
+      BUILD_NM="${NM}" \
+      BUILD_AR="${AR}" \
 	  BUILD_CC="${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang" \
 	  BUILD_CXX="${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++" \
       CXXFILT="llvm-cxxfilt" \
