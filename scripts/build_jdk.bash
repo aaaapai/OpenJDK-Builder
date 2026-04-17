@@ -59,6 +59,7 @@ bash ./configure \
       STRIP="${STRIP}" \
       NM="${NM}" \
       AR="${AR}" \
+	  RANLIB=${RANLIB} \
 	  BUILD_OBJDUMP="${OBJDUMP}" \
 	  BUILD_OBJCOPY="${OBJCOPY}" \
       BUILD_NM="${NM}" \
