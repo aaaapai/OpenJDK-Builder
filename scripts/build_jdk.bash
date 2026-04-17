@@ -65,7 +65,10 @@ bash ./configure \
 	  BUILD_CC="${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang" \
 	  BUILD_CXX="${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++" \
       CXXFILT="llvm-cxxfilt" \
-	  --with-jobs=6 || \
+	  --disable-full-docs \
+	  --enable-javac-server \
+	  --with-memory-size=3072 \
+	  --with-jobs=2 || \
 error_code=$?
 
 if [[ "$error_code" -ne 0 ]]; then
