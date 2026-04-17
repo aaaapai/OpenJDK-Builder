@@ -89,7 +89,6 @@ if [[ "${error_code}" -ne 0 ]]; then
   make JOBS=6 images
 fi
 
-make jmods # To remove debuginfo for jre.
 
 cp -v ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/ || true # it's needed for caciocavallo.
 cp -v ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/ || true # it's needed for caciocavallo.
