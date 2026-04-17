@@ -41,6 +41,7 @@ bash ./configure \
       --enable-linktime-gc \
       --disable-warnings-as-errors \
       --enable-ccache \
+	  --with-ccache-dir="/home/runner/work/OpenJDK-Builder/OpenJDK-Builder/.ccache" \
 	  --enable-headless-only=yes \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
