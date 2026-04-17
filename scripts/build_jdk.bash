@@ -82,3 +82,7 @@ if [[ "${error_code}" -ne 0 ]]; then
   echo "Build failure, exited with code ${error_code}."
   make JOBS=6 images
 fi
+
+cp ${FREETYPE_DIR}/lib/libfreetype.so jdk/lib/
+cp ${DEPS_LIB_DIR}/libawt_xawt.so jdk/lib/
+cp ${DEPS_LIB_DIR}/libnuma.so jdk/lib/
