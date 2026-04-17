@@ -57,21 +57,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-build
-          path: openjdk/build/aarch64-linux-android/jre27*.tar.xz
+          path: openjdk/build/aarch64-linux-android/images/jre27*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-build
-          path: openjdk/build/aarch64-linux-android/jdk27*.tar.xz
+          path: openjdk/build/aarch64-linux-android/images/jdk27*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-build
-          path: openjdk/build/aarch64-linux-android/jdk27debuginfo*.tar.xz
+          path: openjdk/build/aarch64-linux-android/images/jdk27debuginfo*.tar.xz
           if-no-files-found: error
 
       - name: Upload unfinished output
