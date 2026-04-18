@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# 检查必要参数
 if [ -z "${TARGET_JAVA_VERSION}" ]; then
     echo "错误: TARGET_JAVA_VERSION 环境变量未设置"
     exit 1
