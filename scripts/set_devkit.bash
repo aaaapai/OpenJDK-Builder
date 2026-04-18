@@ -30,7 +30,7 @@ fi # Real LTS support is started at Android 12L, I disabled emulated lts here fo
 
 Set_C_CPPFLAGS -O3 -fomit-frame-pointer -fno-semantic-interposition -mllvm -hot-cold-split=true -fdata-sections -ffunction-sections -ftree-vectorize -fvectorize -fslp-vectorize -pipe -integrated-as
 # Set_CPPFLAGS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -stdlib=libc++
-Set_LDFLAGS -fuse-ld=lld -Wl,--gc-sections -Wl,-O3 -Wl,--as-needed
+Set_LDFLAGS -fuse-ld=lld -Wl,--gc-sections -Wl,-O3
 #LTO
 Set_C_CPPFLAGS -flto
 Set_LDFLAGS -flto -Wl,--lto-O3
