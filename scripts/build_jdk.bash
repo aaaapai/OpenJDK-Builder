@@ -18,17 +18,20 @@ if [[ "${TARGET_ARCH}" == "arm64" ]]; then
   Set_C_CPPFLAGS -march=armv8-a+simd+sve
 fi
 
+if [[ "${ANDROID_API}" -ge 32 ]]; then
+  Set_C_CPPFLAGS -fno-emulated-tls
+  Set_LDFLAGS -Wl,-plugin-opt=-emulated-tls=0
+fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
+
 Set_C_CPPFLAGS -O3 -fomit-frame-pointer -fno-semantic-interposition -mllvm -hot-cold-split=true -fdata-sections -ffunction-sections -fmerge-all-constants -ftree-vectorize -fvectorize -fslp-vectorize -pipe -integrated-as
 Set_LDFLAGS -fuse-ld=lld -Wl,--gc-sections -Wl,-O3 -Wl,--sort-common -Wl,--as-needed
-
+#LTO
 Set_C_CPPFLAGS -flto
 Set_LDFLAGS -flto -Wl,--lto-O3
-
-
 #polly
 Set_C_CPPFLAGS -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-run-inliner -mllvm -polly-run-dce -mllvm -polly-detect-keep-going -mllvm -polly-ast-use-context -mllvm -polly-parallel
-
 Set_C_CPPFLAGS -DLE_STANDALONE
+
 
 chmod +x ${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang
 chmod +x ${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++
