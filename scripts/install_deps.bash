@@ -104,9 +104,7 @@ iconv_cmake_build () {
 cd ${CURRENT_DIR}/libiconv
 iconv_cmake_build
 
-# 方法1：使用 find 命令查找库文件
 find ${CURRENT_DIR}/libiconv/${TARGET}/install -name "libiconv.a" -exec cp {} ${DEPS_LIB_DIR} \;
 find ${CURRENT_DIR}/libiconv/${TARGET}/install -name "libcharset.a" -exec cp {} ${DEPS_LIB_DIR} \;
 
-# 复制头文件（使用 -r 递归复制）
 cp -r ${CURRENT_DIR}/libiconv/${TARGET}/install/include ${DEPS_INCLUDE_DIR}
