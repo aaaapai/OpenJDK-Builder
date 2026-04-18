@@ -37,3 +37,26 @@ done
 
 find images/jdk/bin images/jre/bin -type f -exec ${NDK_TOOLCHAIN}/bin/llvm-strip {} \;
 find images/jdk/lib images/jre/lib -type f -name "*.so" -exec ${NDK_TOOLCHAIN}/bin/llvm-strip {} \;
+
+
+unset CC CXX LD CFLAGS CPPFLAGS
+git clone --depth 1 https://github.com/termux/termux-elf-cleaner || true
+cd termux-elf-cleaner
+mkdir build
+cd build
+cmake ..
+make -j6
+cd ../..
+
+findexec() { find $1 -type f -name "*" -not -name "*.o" -exec bash -c '
+    case "$(head -n 1 "$1")" in
+      ?ELF*) exit 0;;
+      MZ*) exit 0;;
+      #!*/ocamlrun*)exit0;;
+    esac
+exit 1
+' bash {} \; -print
+}
+
+findexec images/jre | xargs ./termux-elf-cleaner/build/termux-elf-cleaner --api-level ${ANDROID_API}
+findexec images/jdk | xargs ./termux-elf-cleaner/build/termux-elf-cleaner --api-level ${ANDROID_API}
