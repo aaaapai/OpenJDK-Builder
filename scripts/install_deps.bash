@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 chmod +x ./scripts/utils.bash
 source ./scripts/utils.bash
 cd ${CURRENT_DIR}
