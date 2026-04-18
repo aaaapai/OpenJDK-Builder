@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -z "${JDK_DEBUG_LEVEL}" ]]
+then
+  export JDK_DEBUG_LEVEL=release
+fi
 
 export JVM_PLATFORM=${TARGET_OS}
 
