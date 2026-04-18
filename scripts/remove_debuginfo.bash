@@ -5,6 +5,8 @@ echo "Removing debuginfo..."
 cd ${CURRENT_DIR}/openjdk/build/${TARGET}
 
 
+cp -v images/jdk/lib/jspawnhelper images/jdk/lib/libjspawnhelper.so || true
+
 if [[ "${TARGET_ARCH}" == "arm64" ]] || [[ "${TARGET_ARCH}" == "x86_64" ]] || [[ "${TARGET_ARCH}" == "riscv64" ]]; then
    echo "Building for ${TARGET_ARCH}, introducing JVMCI module"
    export EXTRA_JLINK_JMODS=jdk.internal.vm.ci
@@ -29,8 +31,8 @@ for dir in jdk jre; do
     cp -v ${DEPS_LIB_DIR}/libawt_xawt.so images/${dir}/lib/ || true # It's needed for caciocavallo.
     cp -v ${DEPS_LIB_DIR}/libnuma.so images/${dir}/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
     cp -rv ${CURRENT_DIR}/fonts_config/* images/${dir}/lib/ || true # It's needed for caciocavallo.
-    cp -v images/jdk/lib/jspawnhelper images/${dir}/lib/libjspawnhelper.so || true
 done
+cp -v images/jdk/lib/jspawnhelper images/jre/lib/libjspawnhelper.so || true
 
 
 find images/jdk/bin images/jre/bin -type f -exec ${NDK_TOOLCHAIN}/bin/llvm-strip {} \;
