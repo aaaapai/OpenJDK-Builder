@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 
 cd_to_script_dir() {
