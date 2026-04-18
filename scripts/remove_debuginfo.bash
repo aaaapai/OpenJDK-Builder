@@ -24,10 +24,12 @@ ${JLINK_STRIP_ARG} \
 --release-info=jdk/release
 
 
-cp -v ${FREETYPE_DIR}/lib/libfreetype.so images/jdk/lib/ || true # Perhaps it's needed for caciocavallo.
-cp -v ${DEPS_LIB_DIR}/libawt_xawt.so images/jdk/lib/ || true # It's needed for caciocavallo.
-cp -v ${DEPS_LIB_DIR}/libnuma.so images/jdk/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
-cp -rv ${CURRENT_DIR}/fonts_config/* images/jdk/lib/ || true # It's needed for caciocavallo.
+for dir in jdk jre; do
+    cp -v ${FREETYPE_DIR}/lib/libfreetype.so images/${dir}/lib/ || true # Perhaps it's needed for caciocavallo.
+    cp -v ${DEPS_LIB_DIR}/libawt_xawt.so images/${dir}/lib/ || true # It's needed for caciocavallo.
+    cp -v ${DEPS_LIB_DIR}/libnuma.so images/${dir}/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
+    cp -rv ${CURRENT_DIR}/fonts_config/* images/${dir}/lib/ || true # It's needed for caciocavallo.
+done
 
 
 find images/jdk/bin images/jre/bin -type f -exec ${NDK_TOOLCHAIN}/bin/llvm-strip {} \;
