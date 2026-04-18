@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ -z "${JDK_DEBUG_LEVEL}" ]]
 then
