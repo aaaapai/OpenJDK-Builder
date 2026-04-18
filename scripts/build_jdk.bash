@@ -14,6 +14,20 @@ else
   fi
 fi
 
+if [[ "${TARGET_ARCH}" == "arm64" ]]; then
+  Set_C_CPPFLAGS -march=armv8-a+simd+sve
+fi
+
+Set_C_CPPFLAGS -O3 -fomit-frame-pointer -fno-semantic-interposition -mllvm -hot-cold-split=true -fdata-sections -ffunction-sections -fmerge-all-constants -ftree-vectorize -fvectorize -fslp-vectorize -pipe -integrated-as
+Set_LDFLAGS -fuse-ld=lld -Wl,--gc-sections -Wl,-O3 -Wl,--sort-common -Wl,--as-needed
+
+Set_C_CPPFLAGS -flto
+Set_LDFLAGS -flto -Wl,--lto-O3
+
+
+#polly
+Set_C_CPPFLAGS -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-run-inliner -mllvm -polly-run-dce -mllvm -polly-detect-keep-going -mllvm -polly-ast-use-context -mllvm -polly-parallel
+
 Set_C_CPPFLAGS -DLE_STANDALONE
 
 chmod +x ${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang
@@ -32,9 +46,10 @@ bash ./configure \
       --with-conf-name="${TARGET}" \
 	  --host="${TARGET}" \
 	  --target="${TARGET}" \
+      --build="x86_64-unknown-linux-gnu" \
       --with-boot-jdk-jvmargs="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation" \
       --with-jvm-variants="server" \
-	  --with-jvm-features="-dtrace,-zero,-vm-structs,-epsilongc" \
+	  --with-jvm-features="" \
       --with-external-symbols-in-bundles=none \
       --with-native-debug-symbols-level=1 \
       --disable-precompiled-headers \
