@@ -16,6 +16,9 @@ bash ./clone_jdk.bash
 bash ./apply_jdk_patches.bash
 cd ${CURRENT_DIR}/openjdk
 
+echo ""
+PrintConfigurationInfo
+echo ""
 
 bash ./configure \
       --with-version-pre="-ea" \
