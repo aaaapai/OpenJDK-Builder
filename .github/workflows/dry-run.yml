@@ -1,0 +1,39 @@
+name: Clean all workflow runs and artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      # 必须有写入 actions 的权限才能删除 workflow runs
+      actions: write
+      contents: read
+
+    steps:
+      - name: Delete all workflow runs except the current one
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          CURRENT_RUN_ID: ${{ github.run_id }}
+        run: |
+          echo "Current run ID: $CURRENT_RUN_ID (will be kept)"
+          
+          # 获取所有历史 workflow run 的 ID（排除当前正在运行的）
+          ALL_RUN_IDS=$(gh api repos/$REPO/actions/runs \
+            --paginate \
+            --jq ".workflow_runs[] | select(.id != $CURRENT_RUN_ID) | .id")
+          
+          if [ -z "$ALL_RUN_IDS" ]; then
+            echo "No other workflow runs to delete."
+            exit 0
+          fi
+          
+          # 逐个删除
+          for RUN_ID in $ALL_RUN_IDS; do
+            echo "Deleting workflow run ID: $RUN_ID"
+            gh api repos/$REPO/actions/runs/$RUN_ID -X DELETE
+          done
+          
+          echo "Cleanup completed."
