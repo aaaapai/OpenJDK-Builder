@@ -2392,7 +2392,7 @@ index 06cc2be112fdd..bd1f74ce55c92 100644
  Java_jdk_internal_io_JdkConsoleImpl_echo(JNIEnv *env,
                            jclass cls,
 diff --git a/src/java.base/unix/native/libjava/ProcessImpl_md.c b/src/java.base/unix/native/libjava/ProcessImpl_md.c
-index 69af948d2da69..0c48d76827026 100644
+index 69af948d2da69..c8fef7e44ac17 100644
 --- a/src/java.base/unix/native/libjava/ProcessImpl_md.c
 +++ b/src/java.base/unix/native/libjava/ProcessImpl_md.c
 @@ -37,6 +37,7 @@
@@ -2435,12 +2435,12 @@ index 69af948d2da69..0c48d76827026 100644
      }
  #endif
 +
-+    int deviceApiLevel = android_get_device_api_level();
 +#if defined(__ANDROID__) && __ANDROID_API__ < 28
++    int deviceApiLevel = android_get_device_api_level();
 +    if (deviceApiLevel >= 28) {
 +      return posix_spawn_file_actions_adddup2(file_actions, filedes, newfiledes);
 +    } else {
-+      return simple_posix_spawn_file_actions_adddup2(file_actions, filedes, newfiledes);
++      return simple_posix_spawn_file_actions_adddup2((simple_posix_spawn_file_actions_t *)&file_actions, filedes, newfiledes);
 +    }
 +#else
      return posix_spawn_file_actions_adddup2(file_actions, filedes, newfiledes);
@@ -2448,15 +2448,17 @@ index 69af948d2da69..0c48d76827026 100644
  }
  
  static pid_t
-@@ -477,6 +501,7 @@ spawnChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath)
+@@ -477,6 +501,9 @@ spawnChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath)
      SpawnInfo sp;
      posix_spawn_file_actions_t file_actions;
      int child_stdin, child_stdout, child_stderr, child_childenv, child_fail = -1;
++#if defined(__ANDROID__) && __ANDROID_API__ < 28
 +    int deviceApiLevel = android_get_device_api_level();
++#endif
  
      /* NULL-terminated argv array.
       * argv[0] contains path to jspawnhelper, to follow conventions.
-@@ -540,7 +565,15 @@ spawnChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath)
+@@ -540,7 +567,15 @@ spawnChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath)
      assert(child_childenv > STDERR_FILENO);
  
      /* Slot in dup2 file actions. */
@@ -2464,7 +2466,7 @@ index 69af948d2da69..0c48d76827026 100644
 +    if (deviceApiLevel >= 28) {
 +        posix_spawn_file_actions_init(&file_actions);
 +    } else {
-+        simple_posix_spawn_file_actions_init(&file_actions);
++        simple_posix_spawn_file_actions_init((simple_posix_spawn_file_actions_t *)&file_actions);
 +    }
 +#else
      posix_spawn_file_actions_init(&file_actions);
@@ -2472,7 +2474,7 @@ index 69af948d2da69..0c48d76827026 100644
  
  #ifdef __APPLE__
      /* On MacOS, posix_spawn does not behave in a POSIX-conform way in that the
-@@ -579,7 +612,15 @@ spawnChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath)
+@@ -579,7 +614,15 @@ spawnChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath)
      c->fds[0] = c->fds[1] = c->fds[2] = -1;
      c->redirectErrorStream = false;
  
