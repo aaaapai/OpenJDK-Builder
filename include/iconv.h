@@ -24,6 +24,7 @@
 extern "C" {
 #endif
 
+#define BUILDING_LIBICONV 0
 #define _LIBICONV_VERSION 0x0112    /* version number: (major<<8) + minor */
 /* Control of exported symbols from libiconv.
    Copyright (C) 2005-2023 Free Software Foundation, Inc.
