@@ -20,7 +20,7 @@ else
 fi
 
 if [[ "${TARGET_ARCH}" == "arm64" ]]; then
-  Set_C_CPPFLAGS -march=armv8-a+simd+sve -mbranch-protection=standard -D__ARM_NEON__=1
+  Set_C_CPPFLAGS -march=armv8-a+simd
 fi
 
 if [[ "${ANDROID_API}" -ge 32 ]]; then
@@ -28,16 +28,16 @@ if [[ "${ANDROID_API}" -ge 32 ]]; then
   Set_LDFLAGS -Wl,-plugin-opt=-emulated-tls=0
 fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
 
-Set_C_CPPFLAGS -O3 -fomit-frame-pointer -fno-semantic-interposition -mllvm -hot-cold-split=true -fdata-sections -ffunction-sections -ftree-vectorize -fvectorize -fslp-vectorize -pipe -integrated-as -fno-unique-section-names -fno-strict-aliasing -fno-math-errno -fno-ident -mno-outline -fvisibility=hidden -fvisibility-inlines-hidden -DHAVE_SYS_UIO_H
-Set_CPPFLAGS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -stdlib=libc++
-Set_LDFLAGS -fuse-ld=lld -Wl,--gc-sections -Wl,-O3 -Wl,--sort-common -Wl,--as-needed
+Set_C_CPPFLAGS -O3 -fomit-frame-pointer -fno-semantic-interposition -mllvm -hot-cold-split=true -fdata-sections -ffunction-sections -ftree-vectorize -fvectorize -fslp-vectorize -pipe -integrated-as
+# Set_CPPFLAGS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -stdlib=libc++
+Set_LDFLAGS -fuse-ld=lld -Wl,--gc-sections -Wl,-O3 -Wl,--as-needed
 #LTO
 Set_C_CPPFLAGS -flto
 Set_LDFLAGS -flto -Wl,--lto-O3
 #polly
 Set_C_CPPFLAGS -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-run-inliner -mllvm -polly-run-dce -mllvm -polly-detect-keep-going -mllvm -polly-ast-use-context -mllvm -polly-parallel
 
-Set_C_CPPFLAGS -fexperimental-relative-c++-abi-vtables
+# Set_C_CPPFLAGS -fexperimental-relative-c++-abi-vtables
 
 case "${TARGET_OS}" in
     "ios")
