@@ -19,7 +19,7 @@ fi
 
 if [[ "${TARGET_JAVA_VERSION}" = "latest" ]] || [[ "${TARGET_JAVA_VERSION}" = "27" ]] || [[ "${TARGET_JAVA_VERSION}" = "main" ]] || [[ "${TARGET_JAVA_VERSION}" = "dev" ]]; then
     echo "Use the latest version of JDK."
-    git clone --depth 1 -b master https://github.com/aaaapai/jdk openjdk
+    git clone --depth 1 -b master https://github.com/openjdk/jdk openjdk
     exit 0
 fi
 
@@ -42,7 +42,7 @@ fi
 
 if [[ -n "${TARGET_JAVA_TAG:-}" ]]; then
     TAG_NAME="${TARGET_JAVA_VERSION}-${TARGET_JAVA_TAG}"
-    echo "使用指定tag: ${TAG_NAME}"
+    echo "tag: ${TAG_NAME}"
     git clone --depth 1 -b ${TAG_NAME} https://github.com/openjdk/jdk${TARGET_JAVA_VERSION}u openjdk
     exit 0
 fi
