@@ -2,12 +2,11 @@
 set -e
 
 
-echo "Cloning JDK..."
+echo "Patching JDK..."
 
 PATCHES_BASE_DIR="${CURRENT_DIR}/patches"
 PATCHES_DIR="${PATCHES_BASE_DIR}/${TARGET_JAVA_VERSION}"
 
-echo "JAVA_VERSION=${TARGET_JAVA_VERSION}"
 
 if [ ! -d "${PATCHES_DIR}" ]; then
     echo "Warning: Patches don't exist ( ${PATCHES_DIR} )"
