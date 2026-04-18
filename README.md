@@ -11,7 +11,7 @@ OpenJDK-Builder用于构建OpenJDK
 | 系统   | 支持情况   |
 |--------|------------|
 | Android| ✅ 支持     |
-| iOS    | ✅ 支持     |
+| iOS    | 🚧 计划中     |
 | 其它   | 🚧 计划中   |
 
 ## 目标JDK
@@ -38,7 +38,7 @@ OpenJDK-Builder用于构建OpenJDK
 
 ## F&Q
 
-详见doc
+TODO
 
 ## 联系与交流
 
