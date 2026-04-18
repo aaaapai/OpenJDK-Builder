@@ -19,9 +19,9 @@ else
   fi
 fi
 
-if [[ "${TARGET_ARCH}" == "arm64" ]]; then
+# if [[ "${TARGET_ARCH}" == "arm64" ]]; then
   # Set_C_CPPFLAGS -march=armv8-a+simd
-fi
+# fi
 
 if [[ "${ANDROID_API}" -ge 32 ]]; then
   Set_C_CPPFLAGS -fno-emulated-tls
