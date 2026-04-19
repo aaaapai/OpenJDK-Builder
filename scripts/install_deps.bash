@@ -74,8 +74,8 @@ iconv_cmake_build () {
   mkdir -p  ${CURRENT_DIR}/libiconv/${TARGET}/build
   cd ${CURRENT_DIR}/libiconv
 
-  export CMAKE_C_COMPILER_LAUNCHER=ccache
-  export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+  #export CMAKE_C_COMPILER_LAUNCHER=ccache
+ # export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
   PrintConfigurationInfo
   
