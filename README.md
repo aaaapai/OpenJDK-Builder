@@ -1,3 +1,5 @@
+注意: 此存储库未完成，目前可能有很多bug
+
 # OpenJDK-Builder
 
 OpenJDK-Builder用于构建OpenJDK
