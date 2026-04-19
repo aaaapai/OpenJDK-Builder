@@ -42,6 +42,9 @@ find images/jdk/lib images/jre/lib -type f -name "*.so" -exec ${NDK_TOOLCHAIN}/b
 
 
 unset CC CXX LD CFLAGS CPPFLAGS
+export CC=${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang
+export CXX=${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang++
+export LD=/usr/bin/ld.lld
 git clone --depth 1 https://github.com/termux/termux-elf-cleaner || true
 cd termux-elf-cleaner
 mkdir build
