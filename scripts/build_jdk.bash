@@ -32,7 +32,7 @@ bash ./configure \
       --with-conf-name="${TARGET}" \
 	  --host="${TARGET}" \
 	  --target="${TARGET}" \
-      --with-boot-jdk-jvmargs="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation -Djdk.lang.Process.launchMechanism=FORK" \
+      --with-boot-jdk-jvmargs="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation" \
       --with-jvm-variants="server" \
 	  --with-jvm-features="" \
       --with-external-symbols-in-bundles=none \
