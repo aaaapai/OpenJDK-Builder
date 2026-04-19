@@ -21,16 +21,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Set up ccache
-        uses: hendrikmuhs/ccache-action@main
-        with:
-          max-size: "5G"
-          key: "android-${{ env.TARGET_ARCH }}-jdk${{ env.TARGET_JAVA_VERSION }}"
-          restore-keys: |
-            android-${{ env.TARGET_ARCH }}-jdk
-            android-${{ env.TARGET_ARCH }}-
-            android-
-          create-symlink: true
 
       - name: Set up Java
         uses: actions/setup-java@main
