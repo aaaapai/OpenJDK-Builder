@@ -71,11 +71,3 @@ jobs:
           name: openjdk-symbols-build
           path: openjdk/build/aarch64-linux-android/images/symbols27*.tar.xz
           if-no-files-found: error
-
-      - name: Upload unfinished output
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: openjdk-unfinished-build
-          path: openjdk/build/aarch64-linux-android
-          compression-level: 9
