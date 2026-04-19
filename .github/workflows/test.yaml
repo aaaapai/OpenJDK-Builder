@@ -9,7 +9,7 @@ on:
 
 env:
   ANDROID_API: 26
-  TARGET_ARCH: arm64
+  TARGET_ARCH: arm32
   TARGET_OS: android
   TARGET_JAVA_VERSION: 27
 
