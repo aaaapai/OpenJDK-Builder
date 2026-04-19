@@ -1,0 +1,8 @@
+DEVKIT_NAME="Android x86"
+
+DEVKIT_TOOLCHAIN_PATH="${NDK_TOOLCHAIN}/bin"
+DEVKIT_SYSROOT="${NDK_TOOLCHAIN}/sysroot"
+
+export CC="${thecc}"
+export CXX="${thecxx}"
+export STRIP="${NDK_TOOLCHAIN}/bin/llvm-strip"
