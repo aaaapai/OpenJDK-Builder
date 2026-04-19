@@ -24,7 +24,6 @@ echo ""
 bash ./configure \
       --with-version-pre="-ea" \
       --with-vendor-name="OpenJDK" \
-	  --with-version-build="${TARGET}-${GITHUB_SHA}" \
       --with-version-opt="${GITHUB_ACTOR}-${GITHUB_SHA}" \
 	  --with-vendor-bug-url="https://github.com/aaaapai/OpenJDK-Builder/issues/" \
 	  --with-vendor-vm-bug-url="https://github.com/aaaapai/OpenJDK-Builder/issues/" \
