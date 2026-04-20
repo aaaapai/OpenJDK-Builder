@@ -12,7 +12,7 @@ export CUPS_DIR=${CURRENT_DIR}/cups
 
 
 if [[ "${TARGET_ARCH}" == "arm32" ]]; then
-  Set_C_CPPFLAGS -marm
+  Set_C_CPPFLAGS -marm -Wno-unknown-attributes -Wno-inline-asm
 else
   if [[ "${TARGET_ARCH}" == "x86" ]]; then
      Set_C_CPPFLAGS -mstackrealign
@@ -33,7 +33,9 @@ Set_C_CPPFLAGS -O3
 # Set_C_CPPFLAGS -flto
 # Set_LDFLAGS -flto -Wl,--lto-O3
 #polly
+if [[ "${TARGET_ARCH}" != "arm32" ]]; then
 Set_C_CPPFLAGS -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-run-inliner -mllvm -polly-run-dce -mllvm -polly-detect-keep-going -mllvm -polly-ast-use-context -mllvm -polly-parallel
+fi
 
 # Set_C_CPPFLAGS -fexperimental-relative-c++-abi-vtables
 
