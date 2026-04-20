@@ -3980,17 +3980,14 @@ diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
 index e236d03e6d26d..84b69ef0ba2d6 100644
 --- a/src/hotspot/cpu/riscv/riscv.ad
 +++ b/src/hotspot/cpu/riscv/riscv.ad
-@@ -26,6 +26,10 @@
+@@ -1014,6 +1010,7 @@ definitions %{
  
- // RISCV Architecture Description File
+ source_hpp %{
  
-+%{
 +#include "c2_MacroAssembler_riscv.hpp"
-+%}
-+
- //----------REGISTER DEFINITION BLOCK------------------------------------------
- // This information is used by the matcher and the register allocator to
- // describe individual registers and classes of registers within the target
+ #include "asm/macroAssembler.hpp"
+ #include "gc/shared/barrierSetAssembler.hpp"
+ #include "gc/shared/cardTable.hpp"
 @@ -7544,7 +7548,7 @@ instruct maxF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
    ins_encode %{
      __ minmax_fp(as_FloatRegister($dst$$reg),
