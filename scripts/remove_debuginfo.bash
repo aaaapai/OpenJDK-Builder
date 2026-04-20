@@ -42,18 +42,6 @@ find images/jdk/bin images/jre/bin -type f -exec ${NDK_TOOLCHAIN}/bin/llvm-strip
 find images/jdk/lib images/jre/lib -type f -name "*.so" -exec ${NDK_TOOLCHAIN}/bin/llvm-strip {} \;
 
 
-unset CC CXX LD CFLAGS CPPFLAGS
-export CC=${CURRENT_DIR}/wrapper/clang/buildcc-wrapped-clang
-export CXX=${CURRENT_DIR}/wrapper/clang/buildcxx-wrapped-clang++
-export LD=/usr/bin/ld.lld
-git clone --depth 1 https://github.com/termux/termux-elf-cleaner || true
-cd termux-elf-cleaner
-mkdir build
-cd build
-cmake ..
-make -j6
-cd ../..
-
 findexec() { find $1 -type f -name "*" -not -name "*.o" -exec bash -c '
     case "$(head -n 1 "$1")" in
       ?ELF*) exit 0;;
@@ -64,5 +52,6 @@ exit 1
 ' bash {} \; -print
 }
 
-findexec images/jre | xargs ./termux-elf-cleaner/build/termux-elf-cleaner --api-level ${ANDROID_API}
-findexec images/jdk | xargs ./termux-elf-cleaner/build/termux-elf-cleaner --api-level ${ANDROID_API}
+chmod +x ${CURRENT_DIR}/termux-elf-cleaner
+findexec images/jre | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
+findexec images/jdk | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
