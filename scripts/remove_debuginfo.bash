@@ -52,5 +52,5 @@ exit 1
 ' bash {} \; -print
 }
 
-findexec images/jre | xargs ${CURRENT_DIR}/termux-elf-cleaner/build/termux-elf-cleaner --api-level ${ANDROID_API}
-findexec images/jdk | xargs ${CURRENT_DIR}/termux-elf-cleaner/build/termux-elf-cleaner --api-level ${ANDROID_API}
+findexec images/jre | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
+findexec images/jdk | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
