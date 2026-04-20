@@ -50,7 +50,7 @@ git clone --depth 1 https://github.com/termux/termux-elf-cleaner || true
 cd termux-elf-cleaner
 mkdir build
 cd build
-cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_LINKER="/usr/bin/ld.lld" -DCMAKE_SYSROOT= -DCMAKE_FIND_ROOT_PATH= -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=NEVER -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS=""
+cmake .. -DCMAKE_SYSTEM_NAME=Linux
 make -j6
 cd ../..
 
