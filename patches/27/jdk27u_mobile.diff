@@ -3997,3 +3997,69 @@ index 51221df64eadd..188057a865393 100644
                  case LINUX -> newInstance("jdk.net.LinuxSocketOptions");
                  case MACOS -> newInstance("jdk.net.MacOSXSocketOptions");
                  case WINDOWS -> newInstance("jdk.net.WindowsSocketOptions");
+diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
+index e236d03e6d26d..df8581a0670c3 100644
+--- a/src/hotspot/cpu/riscv/riscv.ad
++++ b/src/hotspot/cpu/riscv/riscv.ad
+@@ -1010,6 +1010,7 @@ definitions %{
+ 
+ source_hpp %{
+ 
++#include "c2_MacroAssembler_riscv.hpp"
+ #include "asm/macroAssembler.hpp"
+ #include "gc/shared/barrierSetAssembler.hpp"
+ #include "gc/shared/cardTable.hpp"
+@@ -7544,7 +7545,7 @@ instruct maxF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::single_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::single_precision, false /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7575,7 +7576,7 @@ instruct minF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::single_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::single_precision, true /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7606,7 +7607,7 @@ instruct maxD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::double_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::double_precision, false /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7637,7 +7638,7 @@ instruct minD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::double_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::double_precision, true /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -8691,7 +8692,7 @@ instruct min_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
+ 
+   ins_encode %{
+     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
+-                 __ FLOAT_TYPE::half_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::half_precision, true /* is_min */);
+   %}
+   ins_pipe(pipe_class_default);
+ %}
+@@ -8721,7 +8722,7 @@ instruct max_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
+ 
+   ins_encode %{
+     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
+-                 __ FLOAT_TYPE::half_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::half_precision, false /* is_min */);
+   %}
+   ins_pipe(pipe_class_default);
+ %}
