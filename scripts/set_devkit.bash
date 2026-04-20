@@ -12,7 +12,7 @@ export CUPS_DIR=${CURRENT_DIR}/cups
 
 
 if [[ "${TARGET_ARCH}" == "arm32" ]]; then
-  Set_C_CPPFLAGS -marm -Wno-unknown-attributes
+  Set_C_CPPFLAGS -marm -Wno-unknown-attributes -Wno-inline-asm
 else
   if [[ "${TARGET_ARCH}" == "x86" ]]; then
      Set_C_CPPFLAGS -mstackrealign
