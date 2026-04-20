@@ -3976,4 +3976,36 @@ index 51221df64eadd..188057a865393 100644
                  case LINUX -> newInstance("jdk.net.LinuxSocketOptions");
                  case MACOS -> newInstance("jdk.net.MacOSXSocketOptions");
                  case WINDOWS -> newInstance("jdk.net.WindowsSocketOptions");
+diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
+index e236d03e6d26d..84b69ef0ba2d6 100644
+--- a/src/hotspot/cpu/riscv/riscv.ad
++++ b/src/hotspot/cpu/riscv/riscv.ad
+@@ -26,6 +26,10 @@
  
+ // RISCV Architecture Description File
+ 
++%{
++#include "c2_MacroAssembler_riscv.hpp"
++%}
++
+ //----------REGISTER DEFINITION BLOCK------------------------------------------
+ // This information is used by the matcher and the register allocator to
+ // describe individual registers and classes of registers within the target
+@@ -7544,7 +7548,7 @@ instruct maxF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::single_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::single_precision, false /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7575,7 +7579,7 @@ instruct minF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::single_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::single_precision, true /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
