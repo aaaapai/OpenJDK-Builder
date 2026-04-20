@@ -30,7 +30,7 @@ bash ./configure \
 	  --with-vendor-version-string="OpenJDK-built-with-aaaapai-OpenJDK-Builder" \
 	  --with-vendor-url="https://github.com/openjdk/" \
       --with-conf-name="${TARGET}" \
-	  --build=x86_64-pc-linux-gnu \
+	  --build="x86_64-pc-linux-gnu" \
 	  --host="${TARGET}" \
 	  --target="${TARGET}" \
       --with-boot-jdk-jvmargs="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation" \
