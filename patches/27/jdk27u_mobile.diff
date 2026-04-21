@@ -4063,3 +4063,15 @@ index e236d03e6d26d..df8581a0670c3 100644
    %}
    ins_pipe(pipe_class_default);
  %}
+diff --git a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
+index 8c343f6ab2b90..f68aaadf11409 100644
+--- a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
++++ b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
+@@ -793,6 +793,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
+   }
+ }
+ 
++__attribute__((optnone))
+ static void save_args(MacroAssembler *masm, int arg_count, int first_arg, VMRegPair *args) {
+   RegSet x;
+   for ( int i = first_arg ; i < arg_count ; i++ ) {
