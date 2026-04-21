@@ -103,7 +103,5 @@ iconv_cmake_build () {
 cd ${CURRENT_DIR}/libiconv
 iconv_cmake_build
 
-find ${CURRENT_DIR}/libiconv/${TARGET}/install -name "libiconv.a" -exec cp {} ${DEPS_LIB_DIR} \;
-find ${CURRENT_DIR}/libiconv/${TARGET}/install -name "libcharset.a" -exec cp {} ${DEPS_LIB_DIR} \;
-
-cp -r ${CURRENT_DIR}/libiconv/${TARGET}/install/include ${DEPS_INCLUDE_DIR}
+cp -v ${CURRENT_DIR}/libiconv/${TARGET}/install/lib/libiconv.a ${DEPS_LIB_DIR}
+cp -rv ${CURRENT_DIR}/libiconv/${TARGET}/install/include ${DEPS_INCLUDE_DIR}
