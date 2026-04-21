@@ -238,7 +238,7 @@ index e470cdbe66fe6..a7442a3a340d7 100644
 +    if test "x$OPENJDK_TARGET_OS" = xlinux; then
 +      STATIC_STDCXX_FLAGS="-static-libstdc++ -static-libgcc"
 +    else
-+      STATIC_STDCXX_FLAGS="-stdlib=libc++ -static-libstdc++"
++      STATIC_STDCXX_FLAGS="-static-libstdc++"
 +    fi
      AC_LANG_PUSH(C++)
      OLD_LIBS="$LIBS"
