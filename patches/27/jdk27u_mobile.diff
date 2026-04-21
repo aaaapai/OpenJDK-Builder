@@ -223,7 +223,7 @@ index 234d7b742684e..2e649a09cdcc8 100644
          AC_MSG_RESULT([yes])
        else
 diff --git a/make/autoconf/lib-std.m4 b/make/autoconf/lib-std.m4
-index e470cdbe66fe6..db541ce86178b 100644
+index e470cdbe66fe6..a7442a3a340d7 100644
 --- a/make/autoconf/lib-std.m4
 +++ b/make/autoconf/lib-std.m4
 @@ -44,10 +44,14 @@ AC_DEFUN_ONCE([LIB_SETUP_STD_LIBS],
@@ -238,7 +238,7 @@ index e470cdbe66fe6..db541ce86178b 100644
 +    if test "x$OPENJDK_TARGET_OS" = xlinux; then
 +      STATIC_STDCXX_FLAGS="-static-libstdc++ -static-libgcc"
 +    else
-+      STATIC_STDCXX_FLAGS="-static-libstdc++"
++      STATIC_STDCXX_FLAGS="-stdlib=libc++ -static-libstdc++"
 +    fi
      AC_LANG_PUSH(C++)
      OLD_LIBS="$LIBS"
@@ -341,32 +341,17 @@ index c4e5a23d31a1e..86ab23c0875ba 100644
  BUILD_LDCXX := @BUILD_LDCXX@
  BUILD_AS := @BUILD_AS@
 diff --git a/make/autoconf/toolchain.m4 b/make/autoconf/toolchain.m4
-index c882deb10a7bf..fa1e37538c770 100644
+index c882deb10a7bf..67f07ef312ac9 100644
 --- a/make/autoconf/toolchain.m4
 +++ b/make/autoconf/toolchain.m4
-@@ -35,10 +35,11 @@
- m4_include([toolchain_microsoft.m4])
- 
- # All valid toolchains, regardless of platform (used by help.m4)
--VALID_TOOLCHAINS_all="gcc clang microsoft"
-+VALID_TOOLCHAINS_all="clang gcc microsoft"
+@@ -39,6 +39,7 @@ VALID_TOOLCHAINS_all="gcc clang microsoft"
  
  # These toolchains are valid on different platforms
--VALID_TOOLCHAINS_linux="gcc clang"
-+VALID_TOOLCHAINS_linux="clang gcc"
+ VALID_TOOLCHAINS_linux="gcc clang"
 +VALID_TOOLCHAINS_android="clang gcc"
  VALID_TOOLCHAINS_macosx="clang"
  VALID_TOOLCHAINS_aix="clang"
  VALID_TOOLCHAINS_windows="microsoft"
-@@ -226,7 +227,7 @@ AC_DEFUN_ONCE([TOOLCHAIN_DETERMINE_TOOLCHAIN_TYPE],
- 
-     exit 0
-   elif test "x$with_toolchain_type" != x; then
--    # User override; check that it is valid
-+  # User override; check that it is valid
-     if test "x${VALID_TOOLCHAINS/$with_toolchain_type/}" = "x${VALID_TOOLCHAINS}"; then
-       AC_MSG_NOTICE([Toolchain type $with_toolchain_type is not valid on this platform.])
-       AC_MSG_NOTICE([Valid toolchains: $VALID_TOOLCHAINS.])
 @@ -879,12 +880,14 @@ AC_DEFUN_ONCE([TOOLCHAIN_SETUP_BUILD_COMPILERS],
  
      PATH="$OLDPATH"
@@ -499,18 +484,9 @@ index 8d45142ef4aaf..de2c7d8e2a8bb 100644
        LDFLAGS_FILTER_OUT := $$($1_LDFLAGS_FILTER_OUT), \
        JDK_LIBS := $$($1_JDK_LIBS), \
 diff --git a/make/common/native/Link.gmk b/make/common/native/Link.gmk
-index 855e50bddfb2b..54610a2c3925e 100644
+index 855e50bddfb2b..28cdb44dc6225 100644
 --- a/make/common/native/Link.gmk
 +++ b/make/common/native/Link.gmk
-@@ -93,7 +93,7 @@ endef
- ################################################################################
- define CreateStaticLibrary
-   # Include partial linking when building the static library with clang on linux
--  ifeq ($(call isTargetOs, linux), true)
-+  ifeq ($(call isTargetOs, linux), true) # ,android
-     ifneq ($(findstring $(TOOLCHAIN_TYPE), clang), )
-       $1_ENABLE_PARTIAL_LINKING := true
-     endif
 @@ -185,7 +185,7 @@ define CreateDynamicLibraryOrExecutable
  	        $$($1_SYSROOT_LDFLAGS) -o $$($1_TARGET) $$($1_LD_OBJ_ARG) \
  	        $$($1_LIBS) $$($1_EXTRA_LIBS))
@@ -542,21 +518,8 @@ index bdb8828eb3279..dcc0c65d7cac7 100644
          $1_LD_OBJ_ARG := `cat $$($1_OBJ_FILE_LIST)`
        endif
      endif
-diff --git a/make/hotspot/gensrc/GensrcAdlc.gmk b/make/hotspot/gensrc/GensrcAdlc.gmk
-index 14117421d1b7b..84cdd288d2890 100644
---- a/make/hotspot/gensrc/GensrcAdlc.gmk
-+++ b/make/hotspot/gensrc/GensrcAdlc.gmk
-@@ -97,7 +97,7 @@ ifeq ($(call check-jvm-feature, compiler2), true)
-   ADLCFLAGS += -q -T
- 
-   # ADLC flags depending on target OS
--  ifeq ($(call isTargetOs, linux), true)
-+  ifeq ($(call isTargetOs, linux android), true)
-     ADLCFLAGS += -DLINUX=1 -D_GNU_SOURCE=1
-   else ifeq ($(call isTargetOs, aix), true)
-     ADLCFLAGS += -DAIX=1
 diff --git a/make/hotspot/lib/CompileJvm.gmk b/make/hotspot/lib/CompileJvm.gmk
-index f41693e05fbb7..4bc7a8752b725 100644
+index 4c1b0a0a96f4b..e20fae93ffdaf 100644
 --- a/make/hotspot/lib/CompileJvm.gmk
 +++ b/make/hotspot/lib/CompileJvm.gmk
 @@ -121,10 +121,10 @@ DISABLED_WARNINGS_microsoft := 4624 4244 4291 4146 4127 4722
@@ -779,7 +742,7 @@ index 572adb4376ec7..8eb79b5509ddb 100644
  
  FONTCONFIG_DEST_DIR := $(SUPPORT_OUTPUTDIR)/modules_libs/$(MODULE)
 diff --git a/make/modules/java.desktop/lib/ClientLibraries.gmk b/make/modules/java.desktop/lib/ClientLibraries.gmk
-index 3e37fe7964354..87bfad280178e 100644
+index 2326505d11c2b..6b898e40a4e31 100644
 --- a/make/modules/java.desktop/lib/ClientLibraries.gmk
 +++ b/make/modules/java.desktop/lib/ClientLibraries.gmk
 @@ -264,7 +264,7 @@ ifeq ($(ENABLE_HEADLESS_ONLY), false)
@@ -791,7 +754,7 @@ index 3e37fe7964354..87bfad280178e 100644
        LIBS_linux := $(X_LIBS) -lX11 -lXext, \
        LIBS_macosx := \
            -framework ApplicationServices \
-@@ -407,8 +407,8 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBFONTMANAGER, \
+@@ -409,8 +409,8 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBFONTMANAGER, \
      LDFLAGS_FILTER_OUT := -Wl$(COMMA)-z$(COMMA)defs, \
      LDFLAGS_aix := -Wl$(COMMA)-berok, \
      JDK_LIBS := libawt java.base:libjava $(LIBFONTMANAGER_JDK_LIBS), \
@@ -954,6 +917,84 @@ index 53e9824756a2e..fc8fc1cbfe9cc 100644
    return magic;
  }
  
+diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
+index e236d03e6d26d..df8581a0670c3 100644
+--- a/src/hotspot/cpu/riscv/riscv.ad
++++ b/src/hotspot/cpu/riscv/riscv.ad
+@@ -1010,6 +1010,7 @@ definitions %{
+ 
+ source_hpp %{
+ 
++#include "c2_MacroAssembler_riscv.hpp"
+ #include "asm/macroAssembler.hpp"
+ #include "gc/shared/barrierSetAssembler.hpp"
+ #include "gc/shared/cardTable.hpp"
+@@ -7544,7 +7545,7 @@ instruct maxF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::single_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::single_precision, false /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7575,7 +7576,7 @@ instruct minF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::single_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::single_precision, true /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7606,7 +7607,7 @@ instruct maxD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::double_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::double_precision, false /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -7637,7 +7638,7 @@ instruct minD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
+   ins_encode %{
+     __ minmax_fp(as_FloatRegister($dst$$reg),
+                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
+-                 __ FLOAT_TYPE::double_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::double_precision, true /* is_min */);
+   %}
+ 
+   ins_pipe(pipe_class_default);
+@@ -8691,7 +8692,7 @@ instruct min_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
+ 
+   ins_encode %{
+     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
+-                 __ FLOAT_TYPE::half_precision, true /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::half_precision, true /* is_min */);
+   %}
+   ins_pipe(pipe_class_default);
+ %}
+@@ -8721,7 +8722,7 @@ instruct max_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
+ 
+   ins_encode %{
+     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
+-                 __ FLOAT_TYPE::half_precision, false /* is_min */);
++                 C2_MacroAssembler::FLOAT_TYPE::half_precision, false /* is_min */);
+   %}
+   ins_pipe(pipe_class_default);
+ %}
+diff --git a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
+index 8c343f6ab2b90..f68aaadf11409 100644
+--- a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
++++ b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
+@@ -793,6 +793,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
+   }
+ }
+ 
++__attribute__((optnone))
+ static void save_args(MacroAssembler *masm, int arg_count, int first_arg, VMRegPair *args) {
+   RegSet x;
+   for ( int i = first_arg ; i < arg_count ; i++ ) {
 diff --git a/src/hotspot/os/bsd/gc/z/zPhysicalMemoryBacking_bsd.cpp b/src/hotspot/os/bsd/gc/z/zPhysicalMemoryBacking_bsd.cpp
 index 861fda7a71d7a..a3e652dc0b8d4 100644
 --- a/src/hotspot/os/bsd/gc/z/zPhysicalMemoryBacking_bsd.cpp
@@ -995,7 +1036,7 @@ index 30e258c9d2ca6..fe34ce8a64455 100644
  #include "nmt/memMapPrinter.hpp"
  #include "runtime/os.hpp"
 diff --git a/src/hotspot/os/bsd/os_bsd.cpp b/src/hotspot/os/bsd/os_bsd.cpp
-index a4d9a2197a546..a5db92ae1df3a 100644
+index 4c77b619718d3..8b914498d3757 100644
 --- a/src/hotspot/os/bsd/os_bsd.cpp
 +++ b/src/hotspot/os/bsd/os_bsd.cpp
 @@ -820,6 +820,26 @@ void os::Bsd::clock_init() {
@@ -1062,7 +1103,7 @@ index e87a680b2d2f6..d5e222dde3d3a 100644
    static pthread_t main_thread(void)                                { return _main_thread; }
  
 diff --git a/src/hotspot/os/bsd/os_perf_bsd.cpp b/src/hotspot/os/bsd/os_perf_bsd.cpp
-index 78d9519c3a71a..dcf0acb47cdc1 100644
+index 47fe3a0d7e99f..a13fa298712a8 100644
 --- a/src/hotspot/os/bsd/os_perf_bsd.cpp
 +++ b/src/hotspot/os/bsd/os_perf_bsd.cpp
 @@ -21,6 +21,7 @@
@@ -1079,7 +1120,7 @@ index 78d9519c3a71a..dcf0acb47cdc1 100644
  }
 +#endif // IOS
 diff --git a/src/hotspot/os/linux/os_linux.cpp b/src/hotspot/os/linux/os_linux.cpp
-index a87c0ab33fa12..e67bc5cd9a704 100644
+index 6927f5108acc2..95622e65d8736 100644
 --- a/src/hotspot/os/linux/os_linux.cpp
 +++ b/src/hotspot/os/linux/os_linux.cpp
 @@ -536,10 +536,12 @@ bool os::Linux::get_tick_information(CPUPerfTicks* pticks, int which_logical_cpu
@@ -1236,7 +1277,7 @@ index a87c0ab33fa12..e67bc5cd9a704 100644
  
  // Get the default path to the core file
 diff --git a/src/hotspot/os/linux/os_perf_linux.cpp b/src/hotspot/os/linux/os_perf_linux.cpp
-index 9f91f3b4c0d25..a0d4aa49711b5 100644
+index c0e863ed2a2fe..2716547c9e565 100644
 --- a/src/hotspot/os/linux/os_perf_linux.cpp
 +++ b/src/hotspot/os/linux/os_perf_linux.cpp
 @@ -1003,6 +1003,7 @@ int64_t NetworkPerformanceInterface::NetworkPerformance::read_counter(const char
@@ -1508,112 +1549,6 @@ index 49d879731ff20..e6c8fbc2a53f8 100644
      _jit_exec_enabled = exec_enabled;
    }
  }
-diff --git a/src/hotspot/os_cpu/bsd_aarch64/tcg-apple-jit.h b/src/hotspot/os_cpu/bsd_aarch64/tcg-apple-jit.h
-new file mode 100644
-index 0000000000000..7f25dab809a34
---- /dev/null
-+++ b/src/hotspot/os_cpu/bsd_aarch64/tcg-apple-jit.h
-@@ -0,0 +1,100 @@
-+/*
-+ * Apple Silicon functions for JIT handling
-+ *
-+ * Copyright (c) 2020 osy
-+ *
-+ * This library is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU Lesser General Public
-+ * License as published by the Free Software Foundation; either
-+ * version 2.1 of the License, or (at your option) any later version.
-+ *
-+ * This library is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * Lesser General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU Lesser General Public
-+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef TCG_APPLE_JIT_H
-+#define TCG_APPLE_JIT_H
-+
-+/*
-+ * APRR handling
-+ * Credits to: https://siguza.github.io/APRR/
-+ * Reversed from /usr/lib/system/libsystem_pthread.dylib
-+ */
-+
-+#if defined(__aarch64__) && defined(CONFIG_DARWIN)
-+
-+#define _COMM_PAGE_START_ADDRESS        (0x0000000FFFFFC000ULL) /* In TTBR0 */
-+#define _COMM_PAGE_APRR_SUPPORT         (_COMM_PAGE_START_ADDRESS + 0x10C)
-+#define _COMM_PAGE_APPR_WRITE_ENABLE    (_COMM_PAGE_START_ADDRESS + 0x110)
-+#define _COMM_PAGE_APRR_WRITE_DISABLE   (_COMM_PAGE_START_ADDRESS + 0x118)
-+
-+static __attribute__((__always_inline__)) bool jit_write_protect_supported(void)
-+{
-+    /* Access shared kernel page at fixed memory location. */
-+    uint8_t aprr_support = *(volatile uint8_t *)_COMM_PAGE_APRR_SUPPORT;
-+    return aprr_support > 0;
-+}
-+
-+/* write protect enable = write disable */
-+static __attribute__((__always_inline__)) void jit_write_protect(int enabled)
-+{
-+    /* Access shared kernel page at fixed memory location. */
-+    uint8_t aprr_support = *(volatile uint8_t *)_COMM_PAGE_APRR_SUPPORT;
-+    if (aprr_support == 0 || aprr_support > 3) {
-+        return;
-+    } else if (aprr_support == 1) {
-+        __asm__ __volatile__ (
-+            "mov x0, %0\n"
-+            "ldr x0, [x0]\n"
-+            "msr S3_4_c15_c2_7, x0\n"
-+            "isb sy\n"
-+            :: "r" (enabled ? _COMM_PAGE_APRR_WRITE_DISABLE
-+                            : _COMM_PAGE_APPR_WRITE_ENABLE)
-+            : "memory", "x0"
-+        );
-+    } else {
-+        __asm__ __volatile__ (
-+            "mov x0, %0\n"
-+            "ldr x0, [x0]\n"
-+            "msr S3_6_c15_c1_5, x0\n"
-+            "isb sy\n"
-+            :: "r" (enabled ? _COMM_PAGE_APRR_WRITE_DISABLE
-+                            : _COMM_PAGE_APPR_WRITE_ENABLE)
-+            : "memory", "x0"
-+        );
-+    }
-+}
-+
-+#else /* defined(__aarch64__) && defined(CONFIG_DARWIN) */
-+
-+static __attribute__((__always_inline__)) bool jit_write_protect_supported(void)
-+{
-+    return false;
-+}
-+
-+static __attribute__((__always_inline__)) void jit_write_protect(int enabled)
-+{
-+}
-+
-+#endif
-+
-+static inline void qemu_thread_jit_execute(void)
-+{
-+    if (jit_write_protect_supported()) {
-+        jit_write_protect(true);
-+    }
-+}
-+
-+static inline void qemu_thread_jit_write(void)
-+{
-+    if (jit_write_protect_supported()) {
-+        jit_write_protect(false);
-+    }
-+}
-+
-+#endif /* define TCG_APPLE_JIT_H */
 diff --git a/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp b/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp
 index facad184426b0..84948335bd9da 100644
 --- a/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp
@@ -2413,7 +2348,7 @@ index 06cc2be112fdd..bd1f74ce55c92 100644
  Java_jdk_internal_io_JdkConsoleImpl_echo(JNIEnv *env,
                            jclass cls,
 diff --git a/src/java.base/unix/native/libjava/ProcessImpl_md.c b/src/java.base/unix/native/libjava/ProcessImpl_md.c
-index 69af948d2da69..257b27dfc3322 100644
+index 69af948d2da69..486aca750e815 100644
 --- a/src/java.base/unix/native/libjava/ProcessImpl_md.c
 +++ b/src/java.base/unix/native/libjava/ProcessImpl_md.c
 @@ -37,6 +37,7 @@
@@ -2499,15 +2434,14 @@ index 69af948d2da69..257b27dfc3322 100644
      c->fds[0] = c->fds[1] = c->fds[2] = -1;
      c->redirectErrorStream = false;
  
--    rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
 +#if defined(__ANDROID__) && __ANDROID_API__ < 28
 +    if (deviceApiLevel >= 28) {
-+      rval = posix_spawn(&resultPid, helperpath, 0, 0, (char * const *) hlpargs, environ);
++      rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
 +    } else {
-+      rval = simple_posix_spawn(&resultPid, helperpath, 0, 0, (char * const *) hlpargs, environ);
++      rval = simple_posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
 +    }
 +#else
-+    rval = posix_spawn(&resultPid, helperpath, 0, 0, (char * const *) hlpargs, environ);
+     rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
 +#endif
  
      if (rval != 0) {
@@ -2792,10 +2726,10 @@ index e75bf6bc90c24..6170c5344776c 100644
          /* i will be incremented at the top of the loop */
      }
 diff --git a/src/java.base/unix/native/libjli/java_md.c b/src/java.base/unix/native/libjli/java_md.c
-index a75795af5804f..ce7c3d452c9f5 100644
+index a75795af5804f..b4bac3e2440fd 100644
 --- a/src/java.base/unix/native/libjli/java_md.c
 +++ b/src/java.base/unix/native/libjli/java_md.c
-@@ -576,17 +576,131 @@ const char*
+@@ -576,17 +576,87 @@ const char*
  SetExecname(char **argv)
  {
      char* exec_path = NULL;
@@ -2830,8 +2764,9 @@ index a75795af5804f..ce7c3d452c9f5 100644
 +                JLI_Snprintf(original_java_path, PATH_MAX, "%s", argv[0]);
 +            }
 +            found = 1;
-+        }
-+    }
+         }
+     }
+-#else /* !__linux__ */
 +    
 +    if (!found && __java_home != NULL) {
 +        JLI_Snprintf(original_java_path, PATH_MAX, "%s/bin/java", __java_home);
@@ -2855,72 +2790,28 @@ index a75795af5804f..ce7c3d452c9f5 100644
 +    struct stat st;
 +    if (stat(original_java_path, &st) == 0) {
 +        char libjava_path[PATH_MAX+1];
-+        char java_symlink_path[PATH_MAX+1];
-+        
 +        JLI_Snprintf(libjava_path, PATH_MAX, "%s/libjava_bin.so", tmpdir);
-+        JLI_Snprintf(java_symlink_path, PATH_MAX, "%s/java", tmpdir);
-+        
-+        JLI_TraceLauncher("Target libjava_bin.so: %s\n", libjava_path);
-+        JLI_TraceLauncher("Target java symlink: %s\n", java_symlink_path);
-+        
++    
 +        FILE *src = fopen(original_java_path, "rb");
-+        if (src != NULL) {
++        if (src) {
 +            FILE *dst = fopen(libjava_path, "wb");
-+            if (dst != NULL) {
++            if (dst) {
 +                char buffer[8192];
 +                size_t bytes;
 +                while ((bytes = fread(buffer, 1, sizeof(buffer), src)) > 0) {
 +                    fwrite(buffer, 1, bytes, dst);
 +                }
 +                fclose(dst);
-+                
-+                chmod(libjava_path, 0755);
-+                
-+                JLI_TraceLauncher("Successfully copied java to: %s\n", libjava_path);
-+                
-+                if (symlink(libjava_path, java_symlink_path) == 0) {
-+                    JLI_TraceLauncher("Created symlink: %s -> %s\n", 
-+                                      java_symlink_path, libjava_path);
-+                    
-+                    chmod(java_symlink_path, 0755);
-+                    
-+                    if (access(java_symlink_path, X_OK) == 0) {
-+                        JLI_TraceLauncher("Symlink is executable\n");
-+                        
-+                        void *handle = dlopen(libjava_path, RTLD_LOCAL | RTLD_LAZY);
-+                        if (handle != NULL) {
-+                            JLI_TraceLauncher("Successfully dlopen libjava_bin.so\n");
-+                            dlclose(handle);
-+                            
-+                            exec_path = JLI_StringDup(java_symlink_path);
-+                        } else {
-+                            JLI_TraceLauncher("dlopen libjava_bin.so failed: %s\n", dlerror());
-+                            exec_path = JLI_StringDup(java_symlink_path);
-+                        }
-+                    } else {
-+                        JLI_TraceLauncher("Symlink not executable, using original\n");
-+                        exec_path = JLI_StringDup(original_java_path);
-+                    }
-+                } else {
-+                    JLI_TraceLauncher("Failed to create symlink: %s\n", strerror(errno));
-+                    if (access(libjava_path, X_OK) == 0) {
-+                        exec_path = JLI_StringDup(libjava_path);
-+                    } else {
-+                        exec_path = JLI_StringDup(original_java_path);
-+                    }
-+                }
++                chmod(libjava_path, 0777);
++            
++                exec_path = JLI_StringDup(libjava_path);
 +            } else {
-+                JLI_TraceLauncher("Failed to open destination file: %s\n", libjava_path);
 +                exec_path = JLI_StringDup(original_java_path);
 +            }
 +            fclose(src);
 +        } else {
-+            JLI_TraceLauncher("Failed to open source file: %s\n", original_java_path);
 +            exec_path = JLI_StringDup(original_java_path);
-         }
-+    } else {
-+        JLI_TraceLauncher("Original java file not found: %s\n", original_java_path);
-+        exec_path = JLI_StringDup(original_java_path);
++        }
 +    }
 +    
 +#elif defined(__linux__)
@@ -2930,8 +2821,7 @@ index a75795af5804f..ce7c3d452c9f5 100644
 +    if (len >= 0) {
 +        buf[len] = '\0';
 +        exec_path = JLI_StringDup(buf);
-     }
--#else /* !__linux__ */
++    }
 +#else
      {
          /* Not implemented */
@@ -3345,7 +3235,7 @@ index 2dc0b611c2e72..bd4da1191776a 100644
  #endif
  
 diff --git a/src/jdk.hotspot.agent/linux/native/libsaproc/ps_core.c b/src/jdk.hotspot.agent/linux/native/libsaproc/ps_core.c
-index c500360f39db6..c322c7503ce62 100644
+index c500360f39db6..cf544ae22915a 100644
 --- a/src/jdk.hotspot.agent/linux/native/libsaproc/ps_core.c
 +++ b/src/jdk.hotspot.agent/linux/native/libsaproc/ps_core.c
 @@ -45,6 +45,33 @@
@@ -3392,7 +3282,7 @@ index c500360f39db6..c322c7503ce62 100644
     print_debug("got integer regset for lwp %d\n", prstat->pr_pid);
     if((newthr = add_thread_info(ph, prstat->pr_pid)) == NULL) {
        print_error("failed to add thread info\n");
-@@ -824,6 +851,336 @@ static bool read_shared_lib_info(struct ps_prochandle* ph) {
+@@ -824,6 +851,266 @@ static bool read_shared_lib_info(struct ps_prochandle* ph) {
    return true;
  }
  
@@ -3544,139 +3434,69 @@ index c500360f39db6..c322c7503ce62 100644
 +#elif defined(__riscv) && (__riscv_xlen == 64)
 +        // RISC-V 64-bit support
 +        if (strncmp(line, "      ra ", 9) == 0) {
-+            // RISC-V tombstone format: "      ra 0x...  sp 0x...  gp 0x...  tp 0x..."
 +            unsigned long long ra, sp, gp, tp;
 +            sscanf(line, "      ra %llx  sp %llx  gp %llx  tp %llx",
 +                   &ra, &sp, &gp, &tp);
-+            current_regs.regs[1] = ra;   // x1/ra
-+            current_regs.regs[2] = sp;   // x2/sp
-+            current_regs.regs[3] = gp;   // x3/gp
-+            current_regs.regs[4] = tp;   // x4/tp
++            current_regs.ra = ra;
++            current_regs.sp = sp;
++            current_regs.gp = gp;
++            current_regs.tp = tp;
 +            regs_filled = 1;
 +        } else if (strncmp(line, "      t0 ", 9) == 0) {
 +            unsigned long long t0, t1, t2, fp;
 +            sscanf(line, "      t0 %llx  t1 %llx  t2 %llx  fp %llx",
 +                   &t0, &t1, &t2, &fp);
-+            current_regs.regs[5] = t0;   // x5/t0
-+            current_regs.regs[6] = t1;   // x6/t1
-+            current_regs.regs[7] = t2;   // x7/t2
-+            current_regs.regs[8] = fp;   // x8/fp
++            current_regs.t0 = t0;
++            current_regs.t1 = t1;
++            current_regs.t2 = t2;
++            current_regs.s0 = fp;   // fp = s0
 +        } else if (strncmp(line, "      s1 ", 9) == 0) {
 +            unsigned long long s1, a0, a1, a2;
 +            sscanf(line, "      s1 %llx  a0 %llx  a1 %llx  a2 %llx",
 +                   &s1, &a0, &a1, &a2);
-+            current_regs.regs[9] = s1;   // x9/s1
-+            current_regs.regs[10] = a0;  // x10/a0
-+            current_regs.regs[11] = a1;  // x11/a1
-+            current_regs.regs[12] = a2;  // x12/a2
++            current_regs.s1 = s1;
++            current_regs.a0 = a0;
++            current_regs.a1 = a1;
++            current_regs.a2 = a2;
 +        } else if (strncmp(line, "      a3 ", 9) == 0) {
 +            unsigned long long a3, a4, a5, a6;
 +            sscanf(line, "      a3 %llx  a4 %llx  a5 %llx  a6 %llx",
 +                   &a3, &a4, &a5, &a6);
-+            current_regs.regs[13] = a3;  // x13/a3
-+            current_regs.regs[14] = a4;  // x14/a4
-+            current_regs.regs[15] = a5;  // x15/a5
-+            current_regs.regs[16] = a6;  // x16/a6
++            current_regs.a3 = a3;
++            current_regs.a4 = a4;
++            current_regs.a5 = a5;
++            current_regs.a6 = a6;
 +        } else if (strncmp(line, "      a7 ", 9) == 0) {
 +            unsigned long long a7, s2, s3, s4;
 +            sscanf(line, "      a7 %llx  s2 %llx  s3 %llx  s4 %llx",
 +                   &a7, &s2, &s3, &s4);
-+            current_regs.regs[17] = a7;  // x17/a7
-+            current_regs.regs[18] = s2;  // x18/s2
-+            current_regs.regs[19] = s3;  // x19/s3
-+            current_regs.regs[20] = s4;  // x20/s4
++            current_regs.a7 = a7;
++            current_regs.s2 = s2;
++            current_regs.s3 = s3;
++            current_regs.s4 = s4;
 +        } else if (strncmp(line, "      s5 ", 9) == 0) {
 +            unsigned long long s5, s6, s7, s8;
 +            sscanf(line, "      s5 %llx  s6 %llx  s7 %llx  s8 %llx",
 +                   &s5, &s6, &s7, &s8);
-+            current_regs.regs[21] = s5;  // x21/s5
-+            current_regs.regs[22] = s6;  // x22/s6
-+            current_regs.regs[23] = s7;  // x23/s7
-+            current_regs.regs[24] = s8;  // x24/s8
++            current_regs.s5 = s5;
++            current_regs.s6 = s6;
++            current_regs.s7 = s7;
++            current_regs.s8 = s8;
 +        } else if (strncmp(line, "      s9 ", 9) == 0) {
 +            unsigned long long s9, s10, s11, t3;
 +            sscanf(line, "      s9 %llx  s10 %llx  s11 %llx  t3 %llx",
 +                   &s9, &s10, &s11, &t3);
-+            current_regs.regs[25] = s9;   // x25/s9
-+            current_regs.regs[26] = s10;  // x26/s10
-+            current_regs.regs[27] = s11;  // x27/s11
-+            current_regs.regs[28] = t3;   // x28/t3
++            current_regs.s9 = s9;
++            current_regs.s10 = s10;
++            current_regs.s11 = s11;
++            current_regs.t3 = t3;
 +        } else if (strncmp(line, "      t4 ", 9) == 0) {
 +            unsigned long long t4, t5, t6, pc;
 +            sscanf(line, "      t4 %llx  t5 %llx  t6 %llx  pc %llx",
 +                   &t4, &t5, &t6, &pc);
-+            current_regs.regs[29] = t4;  // x29/t4
-+            current_regs.regs[30] = t5;  // x30/t5
-+            current_regs.regs[31] = t6;  // x31/t6
-+            current_regs.pc = pc;
-+        }
-+
-+#elif defined(__riscv) && (__riscv_xlen == 32)
-+        // RISC-V 32-bit support
-+        if (strncmp(line, "      ra ", 9) == 0) {
-+            unsigned int ra, sp, gp, tp;
-+            sscanf(line, "      ra %x  sp %x  gp %x  tp %x",
-+                   &ra, &sp, &gp, &tp);
-+            current_regs.regs[1] = ra;
-+            current_regs.regs[2] = sp;
-+            current_regs.regs[3] = gp;
-+            current_regs.regs[4] = tp;
-+            regs_filled = 1;
-+        } else if (strncmp(line, "      t0 ", 9) == 0) {
-+            unsigned int t0, t1, t2, fp;
-+            sscanf(line, "      t0 %x  t1 %x  t2 %x  fp %x",
-+                   &t0, &t1, &t2, &fp);
-+            current_regs.regs[5] = t0;
-+            current_regs.regs[6] = t1;
-+            current_regs.regs[7] = t2;
-+            current_regs.regs[8] = fp;
-+        } else if (strncmp(line, "      s1 ", 9) == 0) {
-+            unsigned int s1, a0, a1, a2;
-+            sscanf(line, "      s1 %x  a0 %x  a1 %x  a2 %x",
-+                   &s1, &a0, &a1, &a2);
-+            current_regs.regs[9] = s1;
-+            current_regs.regs[10] = a0;
-+            current_regs.regs[11] = a1;
-+            current_regs.regs[12] = a2;
-+        } else if (strncmp(line, "      a3 ", 9) == 0) {
-+            unsigned int a3, a4, a5, a6;
-+            sscanf(line, "      a3 %x  a4 %x  a5 %x  a6 %x",
-+                   &a3, &a4, &a5, &a6);
-+            current_regs.regs[13] = a3;
-+            current_regs.regs[14] = a4;
-+            current_regs.regs[15] = a5;
-+            current_regs.regs[16] = a6;
-+        } else if (strncmp(line, "      a7 ", 9) == 0) {
-+            unsigned int a7, s2, s3, s4;
-+            sscanf(line, "      a7 %x  s2 %x  s3 %x  s4 %x",
-+                   &a7, &s2, &s3, &s4);
-+            current_regs.regs[17] = a7;
-+            current_regs.regs[18] = s2;
-+            current_regs.regs[19] = s3;
-+            current_regs.regs[20] = s4;
-+        } else if (strncmp(line, "      s5 ", 9) == 0) {
-+            unsigned int s5, s6, s7, s8;
-+            sscanf(line, "      s5 %x  s6 %x  s7 %x  s8 %x",
-+                   &s5, &s6, &s7, &s8);
-+            current_regs.regs[21] = s5;
-+            current_regs.regs[22] = s6;
-+            current_regs.regs[23] = s7;
-+            current_regs.regs[24] = s8;
-+        } else if (strncmp(line, "      s9 ", 9) == 0) {
-+            unsigned int s9, s10, s11, t3;
-+            sscanf(line, "      s9 %x  s10 %x  s11 %x  t3 %x",
-+                   &s9, &s10, &s11, &t3);
-+            current_regs.regs[25] = s9;
-+            current_regs.regs[26] = s10;
-+            current_regs.regs[27] = s11;
-+            current_regs.regs[28] = t3;
-+        } else if (strncmp(line, "      t4 ", 9) == 0) {
-+            unsigned int t4, t5, t6, pc;
-+            sscanf(line, "      t4 %x  t5 %x  t6 %x  pc %x",
-+                   &t4, &t5, &t6, &pc);
-+            current_regs.regs[29] = t4;
-+            current_regs.regs[30] = t5;
-+            current_regs.regs[31] = t6;
++            current_regs.t4 = t4;
++            current_regs.t5 = t5;
++            current_regs.t6 = t6;
 +            current_regs.pc = pc;
 +        }
 +#endif // Architecture selection
@@ -3729,7 +3549,7 @@ index c500360f39db6..c322c7503ce62 100644
  // the one and only one exposed stuff from this file
  JNIEXPORT struct ps_prochandle* JNICALL
  Pgrab_core(const char* exec_file, const char* core_file) {
-@@ -853,6 +1210,14 @@ Pgrab_core(const char* exec_file, const char* core_file) {
+@@ -853,6 +1140,14 @@ Pgrab_core(const char* exec_file, const char* core_file) {
      print_error("can't open core file: %s\n", strerror(errno));
      goto err;
    }
@@ -3997,81 +3817,3 @@ index 51221df64eadd..188057a865393 100644
                  case LINUX -> newInstance("jdk.net.LinuxSocketOptions");
                  case MACOS -> newInstance("jdk.net.MacOSXSocketOptions");
                  case WINDOWS -> newInstance("jdk.net.WindowsSocketOptions");
-diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
-index e236d03e6d26d..df8581a0670c3 100644
---- a/src/hotspot/cpu/riscv/riscv.ad
-+++ b/src/hotspot/cpu/riscv/riscv.ad
-@@ -1010,6 +1010,7 @@ definitions %{
- 
- source_hpp %{
- 
-+#include "c2_MacroAssembler_riscv.hpp"
- #include "asm/macroAssembler.hpp"
- #include "gc/shared/barrierSetAssembler.hpp"
- #include "gc/shared/cardTable.hpp"
-@@ -7544,7 +7545,7 @@ instruct maxF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::single_precision, false /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::single_precision, false /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -7575,7 +7576,7 @@ instruct minF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::single_precision, true /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::single_precision, true /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -7606,7 +7607,7 @@ instruct maxD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::double_precision, false /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::double_precision, false /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -7637,7 +7638,7 @@ instruct minD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::double_precision, true /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::double_precision, true /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -8691,7 +8692,7 @@ instruct min_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
- 
-   ins_encode %{
-     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
--                 __ FLOAT_TYPE::half_precision, true /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::half_precision, true /* is_min */);
-   %}
-   ins_pipe(pipe_class_default);
- %}
-@@ -8721,7 +8722,7 @@ instruct max_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
- 
-   ins_encode %{
-     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
--                 __ FLOAT_TYPE::half_precision, false /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::half_precision, false /* is_min */);
-   %}
-   ins_pipe(pipe_class_default);
- %}
-diff --git a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-index 8c343f6ab2b90..f68aaadf11409 100644
---- a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-+++ b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-@@ -793,6 +793,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
-   }
- }
- 
-+__attribute__((optnone))
- static void save_args(MacroAssembler *masm, int arg_count, int first_arg, VMRegPair *args) {
-   RegSet x;
-   for ( int i = first_arg ; i < arg_count ; i++ ) {
