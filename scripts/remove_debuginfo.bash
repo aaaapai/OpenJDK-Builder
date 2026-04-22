@@ -15,7 +15,7 @@ cp -v buildjdk/jdk/lib/jspawnhelper buildjdk/jdk/lib/libjspawnhelper.so || true
 
 # Produce the jre equivalent from the jdk (https://blog.adoptium.net/2021/10/jlink-to-produce-own-runtime/)
 export JLINK_STRIP_ARG="--strip-native-debug-symbols=exclude-debuginfo-files:objcopy=${OBJCOPY}"
-export JAVA_TOOL_OPTIONS="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation -Djdk.lang.Process.launchMechanism=FORK"
+export JAVA_TOOL_OPTIONS="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation"
 
 ./buildjdk/jdk/bin/jlink \
 --module-path=images/jdk/jmods \
