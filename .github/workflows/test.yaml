@@ -9,7 +9,7 @@ on:
 
 env:
   ANDROID_API: 26
-  TARGET_ARCH: x86_64
+  TARGET_ARCH: arm64
   TARGET_OS: android
   TARGET_JAVA_VERSION: 27
 
@@ -55,19 +55,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-jre-build
-          path: openjdk/build/x86_64-linux-android/images/jre27*.tar.xz
+          path: openjdk/build/aarch64-linux-android/images/jre27*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-jdk-build
-          path: openjdk/build/x86_64-linux-android/images/jdk27*.tar.xz
+          path: openjdk/build/aarch64-linux-android/images/jdk27*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-symbols-build
-          path: openjdk/build/x86_64-linux-android/images/symbols27*.tar.xz
+          path: openjdk/build/aarch64-linux-android/images/symbols27*.tar.xz
           if-no-files-found: error

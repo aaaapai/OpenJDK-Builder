@@ -18,6 +18,9 @@ else
      Set_C_CPPFLAGS -mstackrealign
   fi
 fi
+if [[ "${TARGET_ARCH}" == "riscv64" ]]; then
+  Set_C_CPPFLAGS -I${DEPS_INCLUDE_DIR}/riscv
+fi
 
 # if [[ "${TARGET_ARCH}" == "arm64" ]]; then
   # Set_C_CPPFLAGS -march=armv8-a+simd
