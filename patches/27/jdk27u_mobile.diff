@@ -223,7 +223,7 @@ index 234d7b742684e..2e649a09cdcc8 100644
          AC_MSG_RESULT([yes])
        else
 diff --git a/make/autoconf/lib-std.m4 b/make/autoconf/lib-std.m4
-index e470cdbe66fe6..a7442a3a340d7 100644
+index e470cdbe66fe6..d123225c9924a 100644
 --- a/make/autoconf/lib-std.m4
 +++ b/make/autoconf/lib-std.m4
 @@ -44,10 +44,14 @@ AC_DEFUN_ONCE([LIB_SETUP_STD_LIBS],
@@ -1120,7 +1120,7 @@ index 47fe3a0d7e99f..a13fa298712a8 100644
  }
 +#endif // IOS
 diff --git a/src/hotspot/os/linux/os_linux.cpp b/src/hotspot/os/linux/os_linux.cpp
-index 6927f5108acc2..95622e65d8736 100644
+index 6927f5108acc2..8fe37aecb5f58 100644
 --- a/src/hotspot/os/linux/os_linux.cpp
 +++ b/src/hotspot/os/linux/os_linux.cpp
 @@ -536,10 +536,12 @@ bool os::Linux::get_tick_information(CPUPerfTicks* pticks, int which_logical_cpu
@@ -1156,7 +1156,7 @@ index 6927f5108acc2..95622e65d8736 100644
    os::Linux::set_libpthread_version("musl - unknown");
 +#elif defined(__BIONIC__)
 +  os::Linux::set_libc_version("bionic - unknown");
-+  os::Linux::set_libpthread_version("NPTL");
++  os::Linux::set_libpthread_version("bionic - unknown");
  #else
    size_t n = confstr(_CS_GNU_LIBC_VERSION, nullptr, 0);
    assert(n > 0, "cannot retrieve glibc version");

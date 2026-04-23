@@ -35,7 +35,7 @@ declare -A NDK_ARCH_MAP=(
     ["arm32"]="armeabi-v7a"
     ["x86_64"]="x86_64"
     ["x86"]="x86"
-    ["riscv64"]="riscv"
+    ["riscv64"]="riscv64"
 )
 
 if [[ -n "${TARGET_ARCH}" ]]; then

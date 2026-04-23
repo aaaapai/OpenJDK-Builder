@@ -15,7 +15,7 @@ cp -v buildjdk/jdk/lib/jspawnhelper buildjdk/jdk/lib/libjspawnhelper.so || true
 
 # Produce the jre equivalent from the jdk (https://blog.adoptium.net/2021/10/jlink-to-produce-own-runtime/)
 export JLINK_STRIP_ARG="--strip-native-debug-symbols=exclude-debuginfo-files:objcopy=${OBJCOPY}"
-export JAVA_TOOL_OPTIONS="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation -Djdk.lang.Process.launchMechanism=FORK"
+export JAVA_TOOL_OPTIONS="-Xms3G -Xmx3G -XX:+UseThreadPriorities -XX:MetaspaceSize=256M -XX:+UseG1GC -XX:+DisableExplicitGC -XX:+TieredCompilation"
 
 ./buildjdk/jdk/bin/jlink \
 --module-path=images/jdk/jmods \
@@ -34,7 +34,6 @@ for dir in jdk jre; do
     cp -v ${DEPS_LIB_DIR}/libnuma.so images/${dir}/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
     cp -rv ${CURRENT_DIR}/fonts_config/* images/${dir}/lib/ || true # It's needed for caciocavallo.
     cp -v images/jdk/lib/jspawnhelper images/${dir}/lib/libjspawnhelper.so || true
-    cp -v ${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/libc++_shared.so images/${dir}/lib/ || true # maybe shared libc++ is better.
 done
 
 

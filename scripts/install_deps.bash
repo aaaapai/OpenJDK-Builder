@@ -81,6 +81,7 @@ iconv_cmake_build () {
   
   cmake ${CURRENT_DIR}/libiconv \
     -DANDROID_PLATFORM=${ANDROID_API} \
+    -DANDROID_ABI=${NDK_ARCH_MAP[${TARGET_ARCH}]} \
     -DANDROID_TOOLCHAIN_NAME=${TARGET} \
     -DANDROID_TOOLCHAIN=clang \
     -DCMAKE_ANDROID_STL_TYPE=c++_static \
