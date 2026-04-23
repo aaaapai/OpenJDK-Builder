@@ -34,7 +34,6 @@ for dir in jdk jre; do
     cp -v ${DEPS_LIB_DIR}/libnuma.so images/${dir}/lib/ || true # Android doesn't have NUMA, it's a shim, perhaps there is no need to add it?
     cp -rv ${CURRENT_DIR}/fonts_config/* images/${dir}/lib/ || true # It's needed for caciocavallo.
     cp -v images/jdk/lib/jspawnhelper images/${dir}/lib/libjspawnhelper.so || true
-    cp -v ${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/libc++_shared.so images/${dir}/lib/ || true # maybe shared libc++ is better.
 done
 
 
