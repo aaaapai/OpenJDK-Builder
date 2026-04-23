@@ -1120,7 +1120,7 @@ index 47fe3a0d7e99f..a13fa298712a8 100644
  }
 +#endif // IOS
 diff --git a/src/hotspot/os/linux/os_linux.cpp b/src/hotspot/os/linux/os_linux.cpp
-index 6927f5108acc2..0415aa4031b15 100644
+index 6927f5108acc2..8fe37aecb5f58 100644
 --- a/src/hotspot/os/linux/os_linux.cpp
 +++ b/src/hotspot/os/linux/os_linux.cpp
 @@ -536,10 +536,12 @@ bool os::Linux::get_tick_information(CPUPerfTicks* pticks, int which_logical_cpu
@@ -1137,14 +1137,8 @@ index 6927f5108acc2..0415aa4031b15 100644
    #else
      #error "Define SYS_gettid for this architecture"
    #endif
-@@ -727,18 +729,30 @@ void os::init_system_properties_values() {
- //////////////////////////////////////////////////////////////////////////////
- // detecting pthread library
+@@ -729,16 +731,21 @@ void os::init_system_properties_values() {
  
-+#if defined(__ANDROID__)
-+#include <string>
-+#include <android/api-level.h>
-+#endif
  void os::Linux::libpthread_init() {
    // Save glibc and pthread version strings.
 +#ifndef __BIONIC__
@@ -1161,15 +1155,12 @@ index 6927f5108acc2..0415aa4031b15 100644
    os::Linux::set_libc_version("musl - unknown");
    os::Linux::set_libpthread_version("musl - unknown");
 +#elif defined(__BIONIC__)
-+  int deviceApiLevel = android_get_device_api_level();
-+  static std::string libpthread_init_libcVersion = "bionic - " + std::to_string(deviceApiLevel);
-+  static std::string libpthread_init_pthreadVersion = "bionic - " + std::to_string(deviceApiLevel);
-+  os::Linux::set_libc_version(libpthread_init_libcVersion.c_str());
-+  os::Linux::set_libpthread_version(libpthread_init_pthreadVersion.c_str());
++  os::Linux::set_libc_version("bionic - unknown");
++  os::Linux::set_libpthread_version("bionic - unknown");
  #else
    size_t n = confstr(_CS_GNU_LIBC_VERSION, nullptr, 0);
    assert(n > 0, "cannot retrieve glibc version");
-@@ -2029,10 +2043,37 @@ const char* os::Linux::dll_path(void* lib) {
+@@ -2029,10 +2036,37 @@ const char* os::Linux::dll_path(void* lib) {
    const char* l_path = nullptr;
    assert(lib != nullptr, "dll_path parameter must not be null");
  
@@ -1207,7 +1198,7 @@ index 6927f5108acc2..0415aa4031b15 100644
    return l_path;
  }
  
-@@ -3164,7 +3205,8 @@ void os::Linux::sched_getcpu_init() {
+@@ -3164,7 +3198,8 @@ void os::Linux::sched_getcpu_init() {
    }
  
    if (sched_getcpu() == -1) {
@@ -1217,7 +1208,7 @@ index 6927f5108acc2..0415aa4031b15 100644
    }
  }
  
-@@ -3175,7 +3217,11 @@ extern "C" JNIEXPORT void numa_error(char *where) { }
+@@ -3175,7 +3210,11 @@ extern "C" JNIEXPORT void numa_error(char *where) { }
  // Handle request to load libnuma symbol version 1.1 (API v1). If it fails
  // load symbol from base version instead.
  void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
@@ -1229,7 +1220,7 @@ index 6927f5108acc2..0415aa4031b15 100644
    if (f == nullptr) {
      f = dlsym(handle, name);
    }
-@@ -3185,7 +3231,11 @@ void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
+@@ -3185,7 +3224,11 @@ void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
  // Handle request to load libnuma symbol version 1.2 (API v2) only.
  // Return null if the symbol is not defined in this particular version.
  void* os::Linux::libnuma_v2_dlsym(void* handle, const char* name) {
@@ -1241,7 +1232,7 @@ index 6927f5108acc2..0415aa4031b15 100644
  }
  
  // Check numa dependent syscalls
-@@ -3208,7 +3258,11 @@ static bool numa_syscall_check() {
+@@ -3208,7 +3251,11 @@ static bool numa_syscall_check() {
  bool os::Linux::libnuma_init() {
    // Requires sched_getcpu() and numa dependent syscalls support
    if ((sched_getcpu() != -1) && numa_syscall_check()) {
@@ -1253,7 +1244,7 @@ index 6927f5108acc2..0415aa4031b15 100644
      if (handle != nullptr) {
        set_numa_node_to_cpus(CAST_TO_FN_PTR(numa_node_to_cpus_func_t,
                                             libnuma_dlsym(handle, "numa_node_to_cpus")));
-@@ -4480,7 +4534,8 @@ void os::init(void) {
+@@ -4480,7 +4527,8 @@ void os::init(void) {
    check_pax();
  
    // Check the availability of MADV_POPULATE_WRITE.
@@ -1263,7 +1254,7 @@ index 6927f5108acc2..0415aa4031b15 100644
  
    os::Posix::init();
  }
-@@ -5092,7 +5147,20 @@ bool os::is_thread_cpu_time_supported() {
+@@ -5092,7 +5140,20 @@ bool os::is_thread_cpu_time_supported() {
  // Linux doesn't yet have a (official) notion of processor sets,
  // so just return the system wide load average.
  int os::loadavg(double loadavg[], int nelem) {
