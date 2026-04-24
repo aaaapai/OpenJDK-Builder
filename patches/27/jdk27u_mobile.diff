@@ -2310,7 +2310,7 @@ index 06cc2be112fdd..bd1f74ce55c92 100644
  Java_jdk_internal_io_JdkConsoleImpl_echo(JNIEnv *env,
                            jclass cls,
 diff --git a/src/java.base/unix/native/libjava/ProcessImpl_md.c b/src/java.base/unix/native/libjava/ProcessImpl_md.c
-index 69af948d2da69..486aca750e815 100644
+index 69af948d2da69..e0b636fe43237 100644
 --- a/src/java.base/unix/native/libjava/ProcessImpl_md.c
 +++ b/src/java.base/unix/native/libjava/ProcessImpl_md.c
 @@ -37,6 +37,7 @@
@@ -2400,7 +2400,7 @@ index 69af948d2da69..486aca750e815 100644
 +    if (deviceApiLevel >= 28) {
 +      rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
 +    } else {
-+      rval = simple_posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
++      rval = simple_posix_spawn(&resultPid, helperpath, (const simple_posix_spawn_file_actions_t*) &file_actions, 0, (char * const *) hlpargs, environ);
 +    }
 +#else
      rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
@@ -2818,7 +2818,7 @@ index 639cf00515fa0..44fe613fe5fbf 100644
  #include <poll.h>
  #include <sys/socket.h>
 diff --git a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
-index 4b5cfabebfbc5..adcd009d9c4ff 100644
+index 4b5cfabebfbc5..ada9413ae3c95 100644
 --- a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 +++ b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 @@ -375,11 +375,24 @@ Java_sun_nio_fs_UnixNativeDispatcher_init(JNIEnv* env, jclass this)
@@ -2856,16 +2856,90 @@ index 4b5cfabebfbc5..adcd009d9c4ff 100644
      (*env)->SetLongField(env, attrs, attrs_st_atime_nsec, (jlong)buf->st_atim.tv_nsec);
      (*env)->SetLongField(env, attrs, attrs_st_mtime_nsec, (jlong)buf->st_mtim.tv_nsec);
      (*env)->SetLongField(env, attrs, attrs_st_ctime_nsec, (jlong)buf->st_ctim.tv_nsec);
-@@ -1243,6 +1256,9 @@ Java_sun_nio_fs_UnixNativeDispatcher_getpwuid(JNIEnv* env, jclass this, jint uid
+@@ -1202,6 +1215,14 @@ Java_sun_nio_fs_UnixNativeDispatcher_mknod0(JNIEnv* env, jclass this,
+     }
  }
  
- 
 +#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++#include <android/api-level.h>
 +#include <pwd_grp_compat.h>
++__attribute__((weak)) int getgrgid_r(gid_t gid, struct group* grp, char* buf, size_t buflen, struct group** result);
++__attribute__((weak)) int getgrnam_r(const char* name, struct group* grp, char* buf, size_t buflen, struct group** result);
++__attribute__((weak)) int getpwnam_r(const char* name, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result);
++__attribute__((weak)) int getpwuid_r(uid_t uid, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result);
 +#endif
  JNIEXPORT jbyteArray JNICALL
- Java_sun_nio_fs_UnixNativeDispatcher_getgrgid(JNIEnv* env, jclass this, jint gid)
+ Java_sun_nio_fs_UnixNativeDispatcher_getpwuid(JNIEnv* env, jclass this, jint uid)
  {
+@@ -1222,7 +1243,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getpwuid(JNIEnv* env, jclass this, jint uid
+         int res = 0;
+ 
+         errno = 0;
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getpwuid_r((uid_t)uid, &pwent, pwbuf, (size_t)buflen, &p), res);
++        } else {
++          RESTARTABLE(compat_getpwuid_r((uid_t)uid, &pwent, pwbuf, (size_t)buflen, &p), res);
++        }
++#else
+         RESTARTABLE(getpwuid_r((uid_t)uid, &pwent, pwbuf, (size_t)buflen, &p), res);
++#endif
+ 
+         if (res != 0 || p == NULL || p->pw_name == NULL || *(p->pw_name) == '\0') {
+             /* not found or error */
+@@ -1267,7 +1297,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getgrgid(JNIEnv* env, jclass this, jint gid
+         }
+ 
+         errno = 0;
+-        RESTARTABLE(getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++        } else {
++          RESTARTABLE(compat_getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++        }
++#else
++          RESTARTABLE(getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++#endif
+ 
+         retry = 0;
+         if (res != 0 || g == NULL || g->gr_name == NULL || *(g->gr_name) == '\0') {
+@@ -1318,7 +1357,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getpwnam0(JNIEnv* env, jclass this,
+         const char* name = (const char*)jlong_to_ptr(nameAddress);
+ 
+         errno = 0;
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getpwnam_r(name, &pwent, pwbuf, (size_t)buflen, &p), res);
++        } else {
++          RESTARTABLE(compat_getpwnam_r(name, &pwent, pwbuf, (size_t)buflen, &p), res);
++        }
++#else
+         RESTARTABLE(getpwnam_r(name, &pwent, pwbuf, (size_t)buflen, &p), res);
++#endif
+ 
+         if (res != 0 || p == NULL || p->pw_name == NULL || *(p->pw_name) == '\0') {
+             /* not found or error */
+@@ -1362,7 +1410,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getgrnam0(JNIEnv* env, jclass this,
+         }
+ 
+         errno = 0;
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getgrnam_r(name, &grent, grbuf, (size_t)buflen, &g), res);
++        } else {
++          RESTARTABLE(compat_getgrnam_r(name, &grent, grbuf, (size_t)buflen, &g), res);
++        }
++#else
+         RESTARTABLE(getgrnam_r(name, &grent, grbuf, (size_t)buflen, &g), res);
++#endif
+ 
+         retry = 0;
+         if (res != 0 || g == NULL || g->gr_name == NULL || *(g->gr_name) == '\0') {
 diff --git a/src/java.desktop/macosx/native/libjawt/jawt.m b/src/java.desktop/macosx/native/libjawt/jawt.m
 index 36d4e897f608d..790a0c1d8a826 100644
 --- a/src/java.desktop/macosx/native/libjawt/jawt.m
