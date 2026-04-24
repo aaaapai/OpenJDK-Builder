@@ -7,7 +7,7 @@
 
 #if defined(__ANDROID__) && __ANDROID_API__ <= 23
 
-static inline int getgrgid_r(gid_t gid, struct group* grp, char* buf, size_t buflen, struct group** result) {
+static inline int compat_getgrgid_r(gid_t gid, struct group* grp, char* buf, size_t buflen, struct group** result) {
     (void)grp;
     (void)buf;
     (void)buflen;
@@ -21,7 +21,7 @@ static inline int getgrgid_r(gid_t gid, struct group* grp, char* buf, size_t buf
     return 0;
 }
 
-static inline int getgrnam_r(const char* name, struct group* grp, char* buf, size_t buflen, struct group** result) {
+static inline int compat_getgrnam_r(const char* name, struct group* grp, char* buf, size_t buflen, struct group** result) {
     (void)grp;
     (void)buf;
     (void)buflen;
@@ -35,7 +35,7 @@ static inline int getgrnam_r(const char* name, struct group* grp, char* buf, siz
     return 0;
 }
 
-static inline int getpwnam_r(const char* name, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result) {
+static inline int compat_getpwnam_r(const char* name, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result) {
     (void)pwd;
     (void)buf;
     (void)buflen;
@@ -49,7 +49,7 @@ static inline int getpwnam_r(const char* name, struct passwd* pwd, char* buf, si
     return 0;
 }
 
-static inline int getpwuid_r(uid_t uid, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result) {
+static inline int compat_getpwuid_r(uid_t uid, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result) {
     (void)pwd;
     (void)buf;
     (void)buflen;
