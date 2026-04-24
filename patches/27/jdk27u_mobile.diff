@@ -35,18 +35,8 @@ index d7b8f8e141b85..f831a32d0a25c 100644
  endif
  
  SLEEF_SUPPORT_DIR := $(MAKESUPPORT_OUTPUTDIR)/sleef
-diff --git a/make/autoconf/buildjdk-spec.gmk.template b/make/autoconf/buildjdk-spec.gmk.template
-index bb020842d595d..f720b0cd4df76 100644
---- a/make/autoconf/buildjdk-spec.gmk.template
-+++ b/make/autoconf/buildjdk-spec.gmk.template
-@@ -108,3 +108,5 @@ override EXTRA_LDFLAGS :=
- # hsdis is not needed
- HSDIS_BACKEND := none
- ENABLE_HSDIS_BUNDLING := false
-+
-+JVM_BUILDJDK := true
 diff --git a/make/autoconf/flags-cflags.m4 b/make/autoconf/flags-cflags.m4
-index 423654cd50ad8..37a8fff55b2c3 100644
+index 423654cd50ad8..7b00115e5ce92 100644
 --- a/make/autoconf/flags-cflags.m4
 +++ b/make/autoconf/flags-cflags.m4
 @@ -83,7 +83,7 @@ AC_DEFUN([FLAGS_SETUP_DEBUG_SYMBOLS],
@@ -80,15 +70,6 @@ index 423654cd50ad8..37a8fff55b2c3 100644
        if test "x$DEBUG_LEVEL" = xrelease; then
          # Clang does not inline as much as GCC does for functions with "inline" keyword by default.
          # This causes noticeable slowdown in pause time for G1, and possibly in other areas.
-@@ -630,7 +636,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
-   # Set some additional per-OS defines.
- 
-   # Additional macosx handling
--  if test "x$OPENJDK_TARGET_OS" = xmacosx; then
-+  if test "x$OPENJDK_TARGET_OS" = xmacosx && "$JVM_BUILDJDK" = true; then
-     OS_CFLAGS="-DMAC_OS_X_VERSION_MIN_REQUIRED=$MACOSX_VERSION_MIN_NODOTS \
-         -mmacosx-version-min=$MACOSX_VERSION_MIN"
- 
 @@ -778,6 +784,13 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_CPU_DEP],
        $1_CFLAGS_CPU="-mcpu=pwr8"
      fi
@@ -104,7 +85,7 @@ index 423654cd50ad8..37a8fff55b2c3 100644
      if test "x$FLAGS_CPU" = xx86; then
        $1_CFLAGS_CPU_JVM="-arch:IA32"
 diff --git a/make/autoconf/flags-ldflags.m4 b/make/autoconf/flags-ldflags.m4
-index ff10828731ecc..98fecf8f960fd 100644
+index ff10828731ecc..326066aef3c11 100644
 --- a/make/autoconf/flags-ldflags.m4
 +++ b/make/autoconf/flags-ldflags.m4
 @@ -73,17 +73,19 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
@@ -131,14 +112,7 @@ index ff10828731ecc..98fecf8f960fd 100644
      if test "x$OPENJDK_TARGET_OS" = xaix; then
        BASIC_LDFLAGS="-Wl,-b64 -Wl,-brtl -Wl,-bnorwexec -Wl,-blibpath:/usr/lib:lib -Wl,-bnoexpall \
          -Wl,-bernotok -Wl,-bcdtors:mbr::s -Wl,-bdatapsize:64k -Wl,-btextpsize:64k -Wl,-bstackpsize:64k"
-@@ -105,13 +107,13 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
-   fi
- 
-   # Setup OS-dependent LDFLAGS
--  if test "x$OPENJDK_TARGET_OS" = xmacosx && test "x$TOOLCHAIN_TYPE" = xclang; then
-+  if test "x$OPENJDK_TARGET_OS" = xmacosx && test "x$TOOLCHAIN_TYPE" = xclang && test "$JVM_BUILDJDK" = true; then
-     if test x$DEBUG_LEVEL = xrelease; then
-       BASIC_LDFLAGS_JDK_ONLY="$BASIC_LDFLAGS_JDK_ONLY -Wl,-dead_strip"
+@@ -111,7 +113,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
      fi
      # FIXME: We should really generalize SetSharedLibraryOrigin instead.
      OS_LDFLAGS_JVM_ONLY="-Wl,-rpath,@loader_path/. -Wl,-rpath,@loader_path/.."
@@ -148,7 +122,7 @@ index ff10828731ecc..98fecf8f960fd 100644
  
    # Setup debug level-dependent LDFLAGS
 diff --git a/make/autoconf/flags-other.m4 b/make/autoconf/flags-other.m4
-index 4570f6ede78ac..3f6133c82acbb 100644
+index 4570f6ede78ac..72f966410c637 100644
 --- a/make/autoconf/flags-other.m4
 +++ b/make/autoconf/flags-other.m4
 @@ -115,7 +115,7 @@ AC_DEFUN([FLAGS_SETUP_SVE],
@@ -160,18 +134,6 @@ index 4570f6ede78ac..3f6133c82acbb 100644
      if test "x$TOOLCHAIN_TYPE" = xgcc || test "x$TOOLCHAIN_TYPE" = xclang; then
        # check the compiler and binutils support sve or not
        AC_MSG_CHECKING([if Arm SVE ACLE is supported])
-@@ -184,9 +184,11 @@ AC_DEFUN([FLAGS_SETUP_ASFLAGS],
- 
-     # Fix linker warning.
-     # Code taken from make/autoconf/flags-cflags.m4 and adapted.
-+    if test "$JVM_BUILDJDK" = true; then
-     JVM_BASIC_ASFLAGS="$JVM_BASIC_ASFLAGS \
-         -DMAC_OS_X_VERSION_MIN_REQUIRED=$MACOSX_VERSION_MIN_NODOTS \
-         -mmacosx-version-min=$MACOSX_VERSION_MIN"
-+    fi
- 
-     if test -n "$MACOSX_VERSION_MAX"; then
-         JVM_BASIC_ASFLAGS="$JVM_BASIC_ASFLAGS $OS_CFLAGS \
 diff --git a/make/autoconf/flags.m4 b/make/autoconf/flags.m4
 index c47947154c282..b71bde2358d2b 100644
 --- a/make/autoconf/flags.m4
@@ -326,10 +288,10 @@ index 90d5d79562643..0780540e7c55a 100644
    AC_SUBST(RELEASE_FILE_OS_ARCH)
    AC_SUBST(RELEASE_FILE_LIBC)
 diff --git a/make/autoconf/spec.gmk.template b/make/autoconf/spec.gmk.template
-index c4e5a23d31a1e..86ab23c0875ba 100644
+index 2a3f2793a32c1..dd40d9102c1ed 100644
 --- a/make/autoconf/spec.gmk.template
 +++ b/make/autoconf/spec.gmk.template
-@@ -600,8 +600,8 @@ LIBCXX := @LIBCXX@
+@@ -601,8 +601,8 @@ LIBCXX := @LIBCXX@
  
  # BUILD_CC/BUILD_LD is a compiler/linker that generates code that is runnable on the
  # build platform.
@@ -519,7 +481,7 @@ index bdb8828eb3279..dcc0c65d7cac7 100644
        endif
      endif
 diff --git a/make/hotspot/lib/CompileJvm.gmk b/make/hotspot/lib/CompileJvm.gmk
-index 4c1b0a0a96f4b..e20fae93ffdaf 100644
+index e8db4888d3afe..eb8297deacacd 100644
 --- a/make/hotspot/lib/CompileJvm.gmk
 +++ b/make/hotspot/lib/CompileJvm.gmk
 @@ -121,10 +121,10 @@ DISABLED_WARNINGS_microsoft := 4624 4244 4291 4146 4127 4722
@@ -549,7 +511,7 @@ index 90ea8a985e3d9..68c5e235574f2 100644
      # minimal JVM
      JVM_STRIPFLAGS := --strip-unneeded
 diff --git a/make/hotspot/lib/JvmFlags.gmk b/make/hotspot/lib/JvmFlags.gmk
-index 27a96cc486535..9e4080cfb070f 100644
+index 121f71bfa278e..a35c78ae67606 100644
 --- a/make/hotspot/lib/JvmFlags.gmk
 +++ b/make/hotspot/lib/JvmFlags.gmk
 @@ -57,6 +57,22 @@ JVM_CFLAGS_INCLUDES += \
@@ -2198,7 +2160,7 @@ index 9c2a2c84511fc..dc6b3333e4f24 100644
      // The Architecture value for the current architecture
      static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
 diff --git a/src/java.base/share/native/libjli/java.c b/src/java.base/share/native/libjli/java.c
-index 4621ab588d19c..50223819ce778 100644
+index e19ba280fa7b7..703d135f7361a 100644
 --- a/src/java.base/share/native/libjli/java.c
 +++ b/src/java.base/share/native/libjli/java.c
 @@ -52,6 +52,31 @@
@@ -2447,7 +2409,7 @@ index 69af948d2da69..486aca750e815 100644
      if (rval != 0) {
          return -1;
 diff --git a/src/java.base/unix/native/libjava/TimeZone_md.c b/src/java.base/unix/native/libjava/TimeZone_md.c
-index cd253edde6017..7efaa3497f524 100644
+index 2f163cf27f1fd..03bdb04f89545 100644
 --- a/src/java.base/unix/native/libjava/TimeZone_md.c
 +++ b/src/java.base/unix/native/libjava/TimeZone_md.c
 @@ -56,7 +56,7 @@ static const char *DEFAULT_ZONEINFO_FILE = "/usr/share/lib/zoneinfo/localtime";
@@ -2827,7 +2789,7 @@ index a75795af5804f..b4bac3e2440fd 100644
          /* Not implemented */
      }
 diff --git a/src/java.base/unix/native/libnet/NetworkInterface.c b/src/java.base/unix/native/libnet/NetworkInterface.c
-index f5025b9f48864..027b29c69f2bb 100644
+index 5ed99f256d809..5b3bff3dab509 100644
 --- a/src/java.base/unix/native/libnet/NetworkInterface.c
 +++ b/src/java.base/unix/native/libnet/NetworkInterface.c
 @@ -25,7 +25,9 @@
