@@ -3216,8 +3216,24 @@ index af50fdbb5c088..ffd3f485ce250 100644
    #define LWAWT_PATH "/libawt_lwawt.dylib"
    #define DEFAULT_PATH LWAWT_PATH
  #else
+diff --git a/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c b/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c
+index e89d813fff460..a1e0777860e55 100644
+--- a/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c
++++ b/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c
+@@ -65,7 +65,11 @@ char* SplashConvertStringAlloc(const char* in, int* size) {
+     }
+     old_locale = setlocale(LC_ALL, "");
+ 
++#ifdef __BIONIC__
++    codeset = "UTF-8";
++#else
+     codeset = nl_langinfo(CODESET);
++#endif
+     if ( codeset == NULL || codeset[0] == 0 ) {
+         goto done;
+     }
 diff --git a/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c b/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c
-index 490eea9a5ac33..8350a6797187e 100644
+index 490eea9a5ac33..d4a42b47dd4c5 100644
 --- a/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c
 +++ b/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c
 @@ -22,6 +22,8 @@
@@ -3237,6 +3253,18 @@ index 490eea9a5ac33..8350a6797187e 100644
  
  /* Routines to convert back and forth between Platform Encoding and UTF-8 */
  
+@@ -65,7 +66,11 @@ utfInitialize(void)
+     (void)setlocale(LC_ALL, "");
+ 
+     /* Get the codeset name */
++#if defined(__BIONIC__)
++    codeset = "UTF-8";
++#else
+     codeset = (char*)nl_langinfo(CODESET);
++#endif
+     if ( codeset == NULL || codeset[0] == 0 ) {
+         UTF_DEBUG(("NO codeset returned by nl_langinfo(CODESET)\n"));
+         return;
 diff --git a/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java b/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
 index ad24432f1889e..ac04d06a9ff12 100644
 --- a/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
@@ -3759,6 +3787,22 @@ index c2bccb1bac141..ae01b0d861894 100644
              case LINUX: return "Linux";
              case MACOS: return "Mac OS X";
              case AIX: return "AIX";
+diff --git a/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c b/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c
+index 6bae02fce549c..9c747f5a02779 100644
+--- a/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c
++++ b/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c
+@@ -483,7 +483,11 @@ static int iconvConvert(conv_direction drn, char *bytes, size_t len, char *outpu
+         // locale is not initialized, do it now
+         if (setlocale(LC_ALL, "") != NULL) {
+             // nl_langinfo returns ANSI_X3.4-1968 by default
++#ifdef __BIONIC__
++            codeset = "UTF-8";
++#else
+             codeset = (char*)nl_langinfo(CODESET);
++#endif
+         }
+ 
+         if (codeset == NULL) {
 diff --git a/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java b/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java
 index a3f465ca05179..791c22b632ec3 100644
 --- a/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java
