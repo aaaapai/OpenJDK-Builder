@@ -2818,7 +2818,7 @@ index 639cf00515fa0..44fe613fe5fbf 100644
  #include <poll.h>
  #include <sys/socket.h>
 diff --git a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
-index 4b5cfabebfbc5..0bf39a3845c8d 100644
+index 4b5cfabebfbc5..adcd009d9c4ff 100644
 --- a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 +++ b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 @@ -375,11 +375,24 @@ Java_sun_nio_fs_UnixNativeDispatcher_init(JNIEnv* env, jclass this)
@@ -2856,6 +2856,16 @@ index 4b5cfabebfbc5..0bf39a3845c8d 100644
      (*env)->SetLongField(env, attrs, attrs_st_atime_nsec, (jlong)buf->st_atim.tv_nsec);
      (*env)->SetLongField(env, attrs, attrs_st_mtime_nsec, (jlong)buf->st_mtim.tv_nsec);
      (*env)->SetLongField(env, attrs, attrs_st_ctime_nsec, (jlong)buf->st_ctim.tv_nsec);
+@@ -1243,6 +1256,9 @@ Java_sun_nio_fs_UnixNativeDispatcher_getpwuid(JNIEnv* env, jclass this, jint uid
+ }
+ 
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++#include <pwd_grp_compat.h>
++#endif
+ JNIEXPORT jbyteArray JNICALL
+ Java_sun_nio_fs_UnixNativeDispatcher_getgrgid(JNIEnv* env, jclass this, jint gid)
+ {
 diff --git a/src/java.desktop/macosx/native/libjawt/jawt.m b/src/java.desktop/macosx/native/libjawt/jawt.m
 index 36d4e897f608d..790a0c1d8a826 100644
 --- a/src/java.desktop/macosx/native/libjawt/jawt.m
