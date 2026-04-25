@@ -28,6 +28,9 @@ static inline int compat_fseeko(FILE *stream, off64_t offset, int whence) {
     return 0;
 }
 
+#define ftello(...) compat_ftello(__VA_ARGS__)
+#define fseeko(...) compat_fseeko(__VA_ARGS__)
+
 #endif // __ANDROID_API__ < 24
 
 #endif // COMPAT_FILE_H
