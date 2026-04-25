@@ -31,9 +31,7 @@ if [[ "${ANDROID_API}" -ge 32 ]]; then
   Set_LDFLAGS -Wl,-plugin-opt=-emulated-tls=0
 fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
 
-if [[ "${TARGET_ARCH}" != "arm32" && "${TARGET_ARCH}" != "x86" ]] || [[ "${ANDROID_API}" -ge 24 ]]; then
-  Set_C_CPPFLAGS -D_FILE_OFFSET_BITS=64
-fi
+Set_C_CPPFLAGS -D_FILE_OFFSET_BITS=64 -Dftello=ftell -Dfseeko=fseek
 
 
 Set_C_CPPFLAGS -O3
