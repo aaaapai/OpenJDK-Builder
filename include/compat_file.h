@@ -8,7 +8,7 @@
 
 #if defined(__ANDROID__) && __ANDROID_API__ < 24
 
-static inline off64_t ftello_compat(FILE *stream) {
+static inline off64_t compat_ftello(FILE *stream) {
     int fd = fileno(stream);
     if (fd == -1) {
         return (off64_t)-1;
@@ -16,7 +16,7 @@ static inline off64_t ftello_compat(FILE *stream) {
     return lseek64(fd, 0, SEEK_CUR);
 }
 
-static inline int fseeko_compat(FILE *stream, off64_t offset, int whence) {
+static inline int compat_fseeko(FILE *stream, off64_t offset, int whence) {
     int fd = fileno(stream);
     if (fd == -1) {
         return -1;
