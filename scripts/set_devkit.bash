@@ -32,7 +32,7 @@ if [[ "${ANDROID_API}" -ge 32 ]]; then
 fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
 
 if [[ "${ANDROID_API}" -lt 24 ]]; then
-  Set_C_CPPFLAGS -include ${DEPS_INCLUDE_DIR}/compat_file.h -Dfseeko=compat_fseeko -Dftello=compat_ftello
+  Set_C_CPPFLAGS -include ${DEPS_INCLUDE_DIR}/compat_file.h
 fi
 
 
