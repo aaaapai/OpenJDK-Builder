@@ -31,6 +31,11 @@ if [[ "${ANDROID_API}" -ge 32 ]]; then
   Set_LDFLAGS -Wl,-plugin-opt=-emulated-tls=0
 fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
 
+if [[ "${ANDROID_API}" -lt 24 ]]; then
+  Set_C_CPPFLAGS -include ${DEPS_INCLUDE_DIR}/compat_file.h -Dfseeko=compat_fseeko -Dftello=compat_ftello
+fi
+
+
 Set_C_CPPFLAGS -O3
 # Set_CPPFLAGS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -stdlib=libc++
 # Set_C_CPPFLAGS -flto
