@@ -2,12 +2,12 @@
 #define COMPAT_FILE_H
 
 
+#if defined(__ANDROID__) && __ANDROID_API__ < 24
+
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
-
-#if defined(__ANDROID__) && __ANDROID_API__ < 24
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +16,7 @@ extern "C" {
 /*__attribute__((weak)) off64_t ftello(FILE *stream);
 __attribute__((weak)) int fseeko(FILE *stream, off64_t offset, int whence);*/
 
-inline off64_t compat_ftello(FILE *stream) {
+static inline off64_t compat_ftello(FILE *stream) {
     int fd = fileno(stream);
     if (fd == -1) {
         return (off64_t)-1;
@@ -24,7 +24,7 @@ inline off64_t compat_ftello(FILE *stream) {
     return lseek64(fd, 0, SEEK_CUR);
 }
 
-inline int compat_fseeko(FILE *stream, off64_t offset, int whence) {
+static inline int compat_fseeko(FILE *stream, off64_t offset, int whence) {
     int fd = fileno(stream);
     if (fd == -1) {
         return -1;
