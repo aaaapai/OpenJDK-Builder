@@ -1,6 +1,11 @@
 #ifndef COMPAT_FILE_H
 #define COMPAT_FILE_H
 
+#ifndef _Nonnull
+#define _Nonnull
+#endif
+
+
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
