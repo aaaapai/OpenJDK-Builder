@@ -1,10 +1,6 @@
 #ifndef COMPAT_FILE_H
 #define COMPAT_FILE_H
 
-#ifndef _Nonnull
-#define _Nonnull
-#endif
-
 
 #include <stdio.h>
 #include <unistd.h>
@@ -20,7 +16,7 @@ extern "C" {
 /*__attribute__((weak)) off64_t ftello(FILE *stream);
 __attribute__((weak)) int fseeko(FILE *stream, off64_t offset, int whence);*/
 
-inline off64_t ftello(FILE *stream) {
+inline off64_t compat_ftello(FILE *stream) {
     int fd = fileno(stream);
     if (fd == -1) {
         return (off64_t)-1;
@@ -28,7 +24,7 @@ inline off64_t ftello(FILE *stream) {
     return lseek64(fd, 0, SEEK_CUR);
 }
 
-inline int fseeko(FILE *stream, off64_t offset, int whence) {
+inline int compat_fseeko(FILE *stream, off64_t offset, int whence) {
     int fd = fileno(stream);
     if (fd == -1) {
         return -1;
