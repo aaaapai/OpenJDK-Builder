@@ -12,8 +12,10 @@
 extern "C" {
 #endif
 
+/*__attribute__((weak)) off64_t ftello(FILE *stream);
+__attribute__((weak)) int fseeko(FILE *stream, off64_t offset, int whence);*/
 
-__attribute__((weak)) static inline off64_t ftello(FILE *stream) {
+inline off64_t ftello(FILE *stream) {
     int fd = fileno(stream);
     if (fd == -1) {
         return (off64_t)-1;
@@ -21,7 +23,7 @@ __attribute__((weak)) static inline off64_t ftello(FILE *stream) {
     return lseek64(fd, 0, SEEK_CUR);
 }
 
-__attribute__((weak)) static inline int fseeko(FILE *stream, off64_t offset, int whence) {
+inline int fseeko(FILE *stream, off64_t offset, int whence) {
     int fd = fileno(stream);
     if (fd == -1) {
         return -1;
