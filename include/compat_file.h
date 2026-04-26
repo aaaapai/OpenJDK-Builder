@@ -9,13 +9,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*__attribute__((weak)) off64_t ftello(FILE *stream);
-__attribute__((weak)) int fseeko(FILE *stream, off64_t offset, int whence);*/
-
 static inline off64_t compat_ftello(FILE *stream) {
     int fd = fileno(stream);
     if (fd == -1) {
@@ -35,11 +28,6 @@ static inline int compat_fseeko(FILE *stream, off64_t offset, int whence) {
     fseek(stream, 0, SEEK_CUR);
     return 0;
 }
-
-#ifdef __cplusplus
-}
-#endif
-
 
 #endif // __ANDROID_API__ < 24
 
