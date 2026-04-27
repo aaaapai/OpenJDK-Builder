@@ -1278,7 +1278,7 @@ index 1c91e9d2599db..6483c5e03f4fc 100644
 +#endif
  #endif // OS_POSIX_FORBIDDENFUNCTIONS_POSIX_HPP
 diff --git a/src/hotspot/os/posix/os_posix.cpp b/src/hotspot/os/posix/os_posix.cpp
-index 1fb2a248bec68..9143cec778b2a 100644
+index 1fb2a248bec68..1b4213e03a4b2 100644
 --- a/src/hotspot/os/posix/os_posix.cpp
 +++ b/src/hotspot/os/posix/os_posix.cpp
 @@ -566,6 +566,7 @@ void os::Posix::print_load_average(outputStream* st) {
@@ -1297,7 +1297,31 @@ index 1fb2a248bec68..9143cec778b2a 100644
  }
  
  static void print_rlimit(outputStream* st, const char* msg,
-@@ -1114,6 +1116,36 @@ bool os::same_files(const char* file1, const char* file2) {
+@@ -888,12 +890,23 @@ void* os::lookup_function(const char* name) {
+   return dlsym(RTLD_DEFAULT, name);
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#endif
+ int64_t os::ftell(FILE* file) {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  return ::compat_ftello(file);
++#else
+   return ::ftell(file);
++#endif
+ }
+ 
+ int os::fseek(FILE* file, int64_t offset, int whence) {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  return ::compat_fseeko(file, offset, whence);
++#else
+   return ::fseek(file, offset, whence);
++#endif
+ }
+ 
+ jlong os::lseek(int fd, jlong offset, int whence) {
+@@ -1114,6 +1127,36 @@ bool os::same_files(const char* file1, const char* file2) {
  
  static char saved_jvm_path[MAXPATHLEN] = {0};
  
@@ -1334,7 +1358,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
  // Find the full path to the current module, libjvm.so
  void os::jvm_path(char *buf, jint buflen) {
    // Error checking.
-@@ -1149,6 +1181,21 @@ void os::jvm_path(char *buf, jint buflen) {
+@@ -1149,6 +1192,21 @@ void os::jvm_path(char *buf, jint buflen) {
    }
    fname = dli_fname;
  #endif // AIX
@@ -1356,7 +1380,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
    char* rp = nullptr;
    if (fname[0] != '\0') {
      rp = os::realpath(fname, buf, buflen);
-@@ -1424,7 +1471,7 @@ static bool _use_clock_monotonic_condattr = false;
+@@ -1424,7 +1482,7 @@ static bool _use_clock_monotonic_condattr = false;
  // Determine what POSIX API's are present and do appropriate
  // configuration.
  void os::Posix::init(void) {
@@ -1365,7 +1389,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
    clock_tics_per_sec = CLK_TCK;
  #else
    clock_tics_per_sec = checked_cast<int>(sysconf(_SC_CLK_TCK));
-@@ -2148,6 +2195,15 @@ char** os::get_environ() { return environ; }
+@@ -2148,6 +2206,15 @@ char** os::get_environ() { return environ; }
  //         doesn't block SIGINT et al.
  //        -this function is unsafe to use in non-error situations, mainly
  //         because the child process will inherit all parent descriptors.
@@ -1381,7 +1405,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
  int os::fork_and_exec(const char* cmd) {
    const char* argv[4] = {"sh", "-c", cmd, nullptr};
    pid_t pid = -1;
-@@ -2155,7 +2211,18 @@ int os::fork_and_exec(const char* cmd) {
+@@ -2155,7 +2222,18 @@ int os::fork_and_exec(const char* cmd) {
    // Note: cast is needed because posix_spawn() requires - for compatibility with ancient
    // C-code - a non-const argv/envp pointer array. But it is fine to hand in literal
    // strings and just cast the constness away. See also ProcessImpl_md.c.
@@ -1874,6 +1898,48 @@ index 0f8342db81933..9b2b6b1afe4f6 100644
  
  #include "utilities/decoder.hpp"
  #include "utilities/elfFile.hpp"
+diff --git a/src/hotspot/share/utilities/elfFile.cpp b/src/hotspot/share/utilities/elfFile.cpp
+index e81f912829291..4b2a789daee75 100644
+--- a/src/hotspot/share/utilities/elfFile.cpp
++++ b/src/hotspot/share/utilities/elfFile.cpp
+@@ -93,12 +93,24 @@ size_t FileReader::read_buffer(void* buf, size_t size) {
+   return fread(buf, 1, size, _fd);
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#endif
+ bool FileReader::set_position(long offset) {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  return compat_fseeko(_fd, offset, SEEK_SET) == 0;
++#else
+   return fseek(_fd, offset, SEEK_SET) == 0;
++#endif
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++MarkedFileReader::MarkedFileReader(FILE* fd) : FileReader(fd), _marked_pos(compat_ftello(fd)) {
++}
++#else
+ MarkedFileReader::MarkedFileReader(FILE* fd) : FileReader(fd), _marked_pos(ftell(fd)) {
+ }
++#endif
+ 
+ MarkedFileReader::~MarkedFileReader() {
+   if (_marked_pos != -1) {
+@@ -1884,7 +1896,12 @@ bool DwarfFile::MarkedDwarfFileReader::has_bytes_left() const {
+ }
+ 
+ bool DwarfFile::MarkedDwarfFileReader::update_to_stored_position() {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  _marked_pos = compat_ftello(_fd);
++#else
+   _marked_pos = ftell(_fd);
++#endif
++
+   if (_marked_pos < 0) {
+     return false;
+   }
 diff --git a/src/hotspot/share/utilities/elfSymbolTable.cpp b/src/hotspot/share/utilities/elfSymbolTable.cpp
 index f8766fc8ef9f1..d66564385a43e 100644
 --- a/src/hotspot/share/utilities/elfSymbolTable.cpp
@@ -2686,10 +2752,10 @@ index e75bf6bc90c24..6170c5344776c 100644
          /* i will be incremented at the top of the loop */
      }
 diff --git a/src/java.base/unix/native/libjli/java_md.c b/src/java.base/unix/native/libjli/java_md.c
-index a75795af5804f..b4bac3e2440fd 100644
+index a75795af5804f..7b1c1e44c0f00 100644
 --- a/src/java.base/unix/native/libjli/java_md.c
 +++ b/src/java.base/unix/native/libjli/java_md.c
-@@ -576,17 +576,87 @@ const char*
+@@ -576,17 +576,80 @@ const char*
  SetExecname(char **argv)
  {
      char* exec_path = NULL;
@@ -2702,78 +2768,71 @@ index a75795af5804f..b4bac3e2440fd 100644
 -            buf[len] = '\0';            /* readlink(2) doesn't NUL terminate */
 -            exec_path = JLI_StringDup(buf);
 +#if defined(__ANDROID__)
-+    // Since both __ANDROID__ and __linux__ are defined, we must let the preprocessor preprocess the __ANDROID__ part first
-+    char *__java_home = getenv("JAVA_HOME");
-+    char *tmpdir = getenv("TMPDIR");
-+    char buf[PATH_MAX+1];
-+    char *p = NULL;
-+
-+    char original_java_path[PATH_MAX+1];
-+    int found = 0;
++    char original_path[PATH_MAX+1];
++    char copy_path[PATH_MAX+1];
++    char *java_home = getenv("JAVA_HOME");
++    int original_found = 0;
 +    
-+    if ((p = JLI_StrRChr(argv[0], '/')) != 0) {
-+        p++;
-+        if ((JLI_StrLen(p) == 4) && JLI_StrCmp(p, "java") == 0) {
-+            if (*argv[0] != '/') {
-+                char *curdir = NULL;
-+                getcwd(buf, PATH_MAX);
-+                curdir = JLI_StringDup(buf);
-+                JLI_Snprintf(original_java_path, PATH_MAX, "%s/%s", curdir, argv[0]);
-+                JLI_MemFree(curdir);
-+            } else {
-+                JLI_Snprintf(original_java_path, PATH_MAX, "%s", argv[0]);
-+            }
-+            found = 1;
++    int len = readlink("/proc/self/exe", original_path, sizeof(original_path)-1);
++    if (len > 0) {
++        original_path[len] = '\0';
++        original_found = 1;
++    } else if (java_home != NULL && java_home[0] != '\0') {
++        JLI_Snprintf(original_path, sizeof(original_path), "%s/bin/java", java_home);
++        if (access(original_path, F_OK) == 0) {
++            original_found = 1;
++        }
++    }
++    
++    if (!original_found) {
++        const char *tmp = FindExecName(argv[0]);
++        if (tmp != NULL) {
++            JLI_StrNCpy(original_path, tmp, PATH_MAX);
++            original_found = 1;
          }
      }
 -#else /* !__linux__ */
 +    
-+    if (!found && __java_home != NULL) {
-+        JLI_Snprintf(original_java_path, PATH_MAX, "%s/bin/java", __java_home);
-+        found = 1;
-+    }
-+    
-+    if (!found) {
-+        JLI_Snprintf(original_java_path, PATH_MAX, "/data/data/%s/storage/jvm/bin/java",
-+                     argv[0]);
-+        found = 1;
-+    }
-+
-+    if (tmpdir == NULL) {
-+        exec_path = JLI_StringDup(buf);
-+        execname = exec_path;
-+        return exec_path;
-+    }
-+
-+    JLI_TraceLauncher("Original java path: %s\n", original_java_path);
-+    
-+    struct stat st;
-+    if (stat(original_java_path, &st) == 0) {
-+        char libjava_path[PATH_MAX+1];
-+        JLI_Snprintf(libjava_path, PATH_MAX, "%s/libjava_bin.so", tmpdir);
-+    
-+        FILE *src = fopen(original_java_path, "rb");
-+        if (src) {
-+            FILE *dst = fopen(libjava_path, "wb");
-+            if (dst) {
-+                char buffer[8192];
-+                size_t bytes;
-+                while ((bytes = fread(buffer, 1, sizeof(buffer), src)) > 0) {
-+                    fwrite(buffer, 1, bytes, dst);
-+                }
-+                fclose(dst);
-+                chmod(libjava_path, 0777);
++    if (original_found) {
++        char *last_slash = JLI_StrRChr(original_path, '/');
++        if (last_slash != NULL) {
++            size_t dir_len = last_slash - original_path + 1;
++            JLI_StrNCpy(copy_path, original_path, dir_len);
++            JLI_Snprintf(copy_path + dir_len, sizeof(copy_path) - dir_len, "java_safe");
 +            
-+                exec_path = JLI_StringDup(libjava_path);
-+            } else {
-+                exec_path = JLI_StringDup(original_java_path);
++            struct stat st;
++            if (stat(copy_path, &st) != 0) {
++                FILE *src = fopen(original_path, "rb");
++                if (src != NULL) {
++                    FILE *dst = fopen(copy_path, "wb");
++                    if (dst != NULL) {
++                        char buffer[8192];
++                        size_t bytes;
++                        while ((bytes = fread(buffer, 1, sizeof(buffer), src)) > 0) {
++                            fwrite(buffer, 1, bytes, dst);
++                        }
++                        fclose(dst);
++                        chmod(copy_path, 0755);
++                        JLI_TraceLauncher("Created copy: %s\n", copy_path);
++                    }
++                    fclose(src);
++                }
 +            }
-+            fclose(src);
++            
++            if (access(copy_path, X_OK) == 0) {
++                exec_path = JLI_StringDup(copy_path);
++                JLI_TraceLauncher("SetExecname: using safe copy %s\n", exec_path);
++            } else {
++                exec_path = JLI_StringDup(original_path);
++                JLI_TraceLauncher("SetExecname: fallback to original %s\n", exec_path);
++            }
 +        } else {
-+            exec_path = JLI_StringDup(original_java_path);
++            exec_path = JLI_StringDup(original_path);
 +        }
++    } else {
++        exec_path = NULL;
 +    }
-+    
++
 +#elif defined(__linux__)
 +    const char* self = "/proc/self/exe";
 +    char buf[PATH_MAX+1];
@@ -3084,6 +3143,57 @@ index c36e072f58502..eceaa70790036 100644
  #define INLINE          inline
  #endif
  
+diff --git a/src/java.desktop/share/native/liblcms/cmserr.c b/src/java.desktop/share/native/liblcms/cmserr.c
+index 877beb9ca6a3c..bdd2c9262e079 100644
+--- a/src/java.desktop/share/native/liblcms/cmserr.c
++++ b/src/java.desktop/share/native/liblcms/cmserr.c
+@@ -77,6 +77,11 @@ int CMSEXPORT cmsstrcasecmp(const char* s1, const char* s2)
+     return (toupper(*us1) - toupper(*--us2));
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#define ftell compat_ftello
++#define fseek compat_fseeko
++#endif
+ // long int because C99 specifies ftell in such way (7.19.9.2)
+ long int CMSEXPORT cmsfilelength(FILE* f)
+ {
+diff --git a/src/java.desktop/share/native/liblcms/cmsio0.c b/src/java.desktop/share/native/liblcms/cmsio0.c
+index 5a4f09af5bcf5..685f68a36b490 100644
+--- a/src/java.desktop/share/native/liblcms/cmsio0.c
++++ b/src/java.desktop/share/native/liblcms/cmsio0.c
+@@ -358,11 +358,18 @@ cmsUInt32Number FileRead(cmsIOHANDLER* iohandler, void *Buffer, cmsUInt32Number
+     return nReaded;
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#endif
+ // Position file pointer in the file
+ static
+ cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
+ {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++    if (compat_fseeko((FILE*) iohandler ->stream, (long) offset, SEEK_SET) != 0) {
++#else
+     if (fseek((FILE*) iohandler ->stream, (long) offset, SEEK_SET) != 0) {
++#endif
+ 
+        cmsSignalError(iohandler ->ContextID, cmsERROR_FILE, "Seek error; probably corrupted file");
+        return FALSE;
+@@ -375,7 +382,11 @@ cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
+ static
+ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
+ {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++    long t = compat_ftello((FILE*)iohandler ->stream);
++#else
+     long t = ftell((FILE*)iohandler ->stream);
++#endif
+     if (t == -1L) {
+         cmsSignalError(iohandler->ContextID, cmsERROR_FILE, "Tell error; probably corrupted file");
+         return 0;
 diff --git a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java b/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
 index 5853298a40b2a..22dcb787c705b 100644
 --- a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
