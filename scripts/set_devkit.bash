@@ -31,7 +31,8 @@ if [[ "${ANDROID_API}" -ge 32 ]]; then
   Set_LDFLAGS -Wl,-plugin-opt=-emulated-tls=0
 fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
 
-Set_C_CPPFLAGS -D_FILE_OFFSET_BITS=64 -Wl,--disable-new-dtags
+Set_C_CPPFLAGS -D_FILE_OFFSET_BITS=64
+sed -i -e 's/\<fseeko\>/compat_fseeko/g' -e 's/\<ftello\>/compat_ftello/g' -e '/#define _LIBCPP_FSTREAM/a #include <compat_file.h>' ${NDK_TOOLCHAIN}/sysroot/usr/include/c++/v1/fstream
 
 
 Set_C_CPPFLAGS -O3
