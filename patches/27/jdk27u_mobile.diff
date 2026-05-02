@@ -35,18 +35,8 @@ index d7b8f8e141b85..f831a32d0a25c 100644
  endif
  
  SLEEF_SUPPORT_DIR := $(MAKESUPPORT_OUTPUTDIR)/sleef
-diff --git a/make/autoconf/buildjdk-spec.gmk.template b/make/autoconf/buildjdk-spec.gmk.template
-index bb020842d595d..f720b0cd4df76 100644
---- a/make/autoconf/buildjdk-spec.gmk.template
-+++ b/make/autoconf/buildjdk-spec.gmk.template
-@@ -108,3 +108,5 @@ override EXTRA_LDFLAGS :=
- # hsdis is not needed
- HSDIS_BACKEND := none
- ENABLE_HSDIS_BUNDLING := false
-+
-+JVM_BUILDJDK := true
 diff --git a/make/autoconf/flags-cflags.m4 b/make/autoconf/flags-cflags.m4
-index 423654cd50ad8..37a8fff55b2c3 100644
+index 423654cd50ad8..cadf94871a441 100644
 --- a/make/autoconf/flags-cflags.m4
 +++ b/make/autoconf/flags-cflags.m4
 @@ -83,7 +83,7 @@ AC_DEFUN([FLAGS_SETUP_DEBUG_SYMBOLS],
@@ -63,8 +53,8 @@ index 423654cd50ad8..37a8fff55b2c3 100644
      CFLAGS_OS_DEF_JVM="-D_ALLBSD_SOURCE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE"
      CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE -D_DARWIN_UNLIMITED_SELECT"
 +  elif test "x$OPENJDK_TARGET_OS" = xandroid; then
-+    CFLAGS_OS_DEF_JVM="-DLINUX -D_ALLBSD_SOURCE -D_FILE_OFFSET_BITS=64 -DANDROID -DS_IFIFO=0010000 -DS_IFBLK=0060000 -DS_IFCHR=0020000 -DS_IFLNK=0120000 -DS_IFDIR=0040000 -DS_IFREG=0100000 -DS_IFMT=00170000 -DPOSIX_FADV_SEQUENTIAL=2 -DPOSIX_FADV_NOREUSE=5 -DPOSIX_FADV_WILLNEED=3"
-+    CFLAGS_OS_DEF_JDK="-DLINUX -D__USE_BSD -D_FILE_OFFSET_BITS=64 -DANDROID -DS_IFIFO=0010000 -DS_IFBLK=0060000 -DS_IFCHR=0020000 -DS_IFLNK=0120000 -DS_IFDIR=0040000 -DS_IFREG=0100000 -DS_IFMT=00170000 -DPOSIX_FADV_SEQUENTIAL=2 -DPOSIX_FADV_NOREUSE=5 -DPOSIX_FADV_WILLNEED=3"
++    CFLAGS_OS_DEF_JVM="-DLINUX -D_ALLBSD_SOURCE -DANDROID -DS_IFIFO=0010000 -DS_IFBLK=0060000 -DS_IFCHR=0020000 -DS_IFLNK=0120000 -DS_IFDIR=0040000 -DS_IFREG=0100000 -DS_IFMT=00170000 -DPOSIX_FADV_SEQUENTIAL=2 -DPOSIX_FADV_NOREUSE=5 -DPOSIX_FADV_WILLNEED=3"
++    CFLAGS_OS_DEF_JDK="-DLINUX -D__USE_BSD -DANDROID -DS_IFIFO=0010000 -DS_IFBLK=0060000 -DS_IFCHR=0020000 -DS_IFLNK=0120000 -DS_IFDIR=0040000 -DS_IFREG=0100000 -DS_IFMT=00170000 -DPOSIX_FADV_SEQUENTIAL=2 -DPOSIX_FADV_NOREUSE=5 -DPOSIX_FADV_WILLNEED=3"
 +  elif test "x$OPENJDK_TARGET_OS" = xios; then
 +    CFLAGS_OS_DEF_JVM="-D_ALLBSD_SOURCE -D__IOS__ -D_XOPEN_SOURCE"
 +    CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE -D__IOS__"
@@ -80,15 +70,6 @@ index 423654cd50ad8..37a8fff55b2c3 100644
        if test "x$DEBUG_LEVEL" = xrelease; then
          # Clang does not inline as much as GCC does for functions with "inline" keyword by default.
          # This causes noticeable slowdown in pause time for G1, and possibly in other areas.
-@@ -630,7 +636,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
-   # Set some additional per-OS defines.
- 
-   # Additional macosx handling
--  if test "x$OPENJDK_TARGET_OS" = xmacosx; then
-+  if test "x$OPENJDK_TARGET_OS" = xmacosx && "$JVM_BUILDJDK" = true; then
-     OS_CFLAGS="-DMAC_OS_X_VERSION_MIN_REQUIRED=$MACOSX_VERSION_MIN_NODOTS \
-         -mmacosx-version-min=$MACOSX_VERSION_MIN"
- 
 @@ -778,6 +784,13 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_CPU_DEP],
        $1_CFLAGS_CPU="-mcpu=pwr8"
      fi
@@ -104,7 +85,7 @@ index 423654cd50ad8..37a8fff55b2c3 100644
      if test "x$FLAGS_CPU" = xx86; then
        $1_CFLAGS_CPU_JVM="-arch:IA32"
 diff --git a/make/autoconf/flags-ldflags.m4 b/make/autoconf/flags-ldflags.m4
-index ff10828731ecc..98fecf8f960fd 100644
+index ff10828731ecc..326066aef3c11 100644
 --- a/make/autoconf/flags-ldflags.m4
 +++ b/make/autoconf/flags-ldflags.m4
 @@ -73,17 +73,19 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
@@ -131,14 +112,7 @@ index ff10828731ecc..98fecf8f960fd 100644
      if test "x$OPENJDK_TARGET_OS" = xaix; then
        BASIC_LDFLAGS="-Wl,-b64 -Wl,-brtl -Wl,-bnorwexec -Wl,-blibpath:/usr/lib:lib -Wl,-bnoexpall \
          -Wl,-bernotok -Wl,-bcdtors:mbr::s -Wl,-bdatapsize:64k -Wl,-btextpsize:64k -Wl,-bstackpsize:64k"
-@@ -105,13 +107,13 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
-   fi
- 
-   # Setup OS-dependent LDFLAGS
--  if test "x$OPENJDK_TARGET_OS" = xmacosx && test "x$TOOLCHAIN_TYPE" = xclang; then
-+  if test "x$OPENJDK_TARGET_OS" = xmacosx && test "x$TOOLCHAIN_TYPE" = xclang && test "$JVM_BUILDJDK" = true; then
-     if test x$DEBUG_LEVEL = xrelease; then
-       BASIC_LDFLAGS_JDK_ONLY="$BASIC_LDFLAGS_JDK_ONLY -Wl,-dead_strip"
+@@ -111,7 +113,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
      fi
      # FIXME: We should really generalize SetSharedLibraryOrigin instead.
      OS_LDFLAGS_JVM_ONLY="-Wl,-rpath,@loader_path/. -Wl,-rpath,@loader_path/.."
@@ -148,7 +122,7 @@ index ff10828731ecc..98fecf8f960fd 100644
  
    # Setup debug level-dependent LDFLAGS
 diff --git a/make/autoconf/flags-other.m4 b/make/autoconf/flags-other.m4
-index 4570f6ede78ac..3f6133c82acbb 100644
+index 4570f6ede78ac..72f966410c637 100644
 --- a/make/autoconf/flags-other.m4
 +++ b/make/autoconf/flags-other.m4
 @@ -115,7 +115,7 @@ AC_DEFUN([FLAGS_SETUP_SVE],
@@ -160,18 +134,6 @@ index 4570f6ede78ac..3f6133c82acbb 100644
      if test "x$TOOLCHAIN_TYPE" = xgcc || test "x$TOOLCHAIN_TYPE" = xclang; then
        # check the compiler and binutils support sve or not
        AC_MSG_CHECKING([if Arm SVE ACLE is supported])
-@@ -184,9 +184,11 @@ AC_DEFUN([FLAGS_SETUP_ASFLAGS],
- 
-     # Fix linker warning.
-     # Code taken from make/autoconf/flags-cflags.m4 and adapted.
-+    if test "$JVM_BUILDJDK" = true; then
-     JVM_BASIC_ASFLAGS="$JVM_BASIC_ASFLAGS \
-         -DMAC_OS_X_VERSION_MIN_REQUIRED=$MACOSX_VERSION_MIN_NODOTS \
-         -mmacosx-version-min=$MACOSX_VERSION_MIN"
-+    fi
- 
-     if test -n "$MACOSX_VERSION_MAX"; then
-         JVM_BASIC_ASFLAGS="$JVM_BASIC_ASFLAGS $OS_CFLAGS \
 diff --git a/make/autoconf/flags.m4 b/make/autoconf/flags.m4
 index c47947154c282..b71bde2358d2b 100644
 --- a/make/autoconf/flags.m4
@@ -326,10 +288,10 @@ index 90d5d79562643..0780540e7c55a 100644
    AC_SUBST(RELEASE_FILE_OS_ARCH)
    AC_SUBST(RELEASE_FILE_LIBC)
 diff --git a/make/autoconf/spec.gmk.template b/make/autoconf/spec.gmk.template
-index c4e5a23d31a1e..86ab23c0875ba 100644
+index 2a3f2793a32c1..dd40d9102c1ed 100644
 --- a/make/autoconf/spec.gmk.template
 +++ b/make/autoconf/spec.gmk.template
-@@ -600,8 +600,8 @@ LIBCXX := @LIBCXX@
+@@ -601,8 +601,8 @@ LIBCXX := @LIBCXX@
  
  # BUILD_CC/BUILD_LD is a compiler/linker that generates code that is runnable on the
  # build platform.
@@ -374,27 +336,18 @@ index c882deb10a7bf..67f07ef312ac9 100644
      # building the build platform executables.
      BUILD_CC="$CC"
 diff --git a/make/common/JdkNativeCompilation.gmk b/make/common/JdkNativeCompilation.gmk
-index 29001e09bd08a..5e3342e55accc 100644
+index 29001e09bd08a..8baa24cd77b71 100644
 --- a/make/common/JdkNativeCompilation.gmk
 +++ b/make/common/JdkNativeCompilation.gmk
-@@ -56,6 +56,16 @@ else ifeq ($(call isCompiler, clang), true)
-           -Wl,-rpath,\$(DOLLAR)ORIGIN$1
-     endif
- 
-+    ifeq ($(CREATING_BUILDJDK), true)
-+      ifeq ($(OPENJDK_BUILD_OS), linux)
-+         SetBuildExecutableOrigin = \
-+            -Wl,-rpath,\$(DOLLAR)ORIGIN$1 -Wl,--disable-new-dtags
-+      endif
-+    else
-+         SetBuildExecutableOrigin = \
-+            -Wl,-rpath,\$(DOLLAR)ORIGIN$1
-+    endif
-+
-     ifeq ($(call isTargetOs, arm), true)
+@@ -63,6 +63,7 @@ else ifeq ($(call isCompiler, clang), true)
        SetSharedLibraryOrigin = \
-           -Wl,-rpath,\$(DOLLAR)ORIGIN$1
-@@ -77,6 +87,18 @@ FindSrcDirsForComponent += \
+           -Wl,-z,origin -Wl,-rpath,\$(DOLLAR)ORIGIN$1
+     endif
++
+   endif
+ else ifeq ($(call isCompiler, microsoft), true)
+   SetExecutableOrigin =
+@@ -77,6 +78,18 @@ FindSrcDirsForComponent += \
        $(TOPDIR)/src/$(strip $1)/$(OPENJDK_TARGET_OS_TYPE)/native/$(strip $2) \
        $(TOPDIR)/src/$(strip $1)/share/native/$(strip $2)))
  
@@ -519,7 +472,7 @@ index bdb8828eb3279..dcc0c65d7cac7 100644
        endif
      endif
 diff --git a/make/hotspot/lib/CompileJvm.gmk b/make/hotspot/lib/CompileJvm.gmk
-index 4c1b0a0a96f4b..e20fae93ffdaf 100644
+index e8db4888d3afe..eb8297deacacd 100644
 --- a/make/hotspot/lib/CompileJvm.gmk
 +++ b/make/hotspot/lib/CompileJvm.gmk
 @@ -121,10 +121,10 @@ DISABLED_WARNINGS_microsoft := 4624 4244 4291 4146 4127 4722
@@ -549,7 +502,7 @@ index 90ea8a985e3d9..68c5e235574f2 100644
      # minimal JVM
      JVM_STRIPFLAGS := --strip-unneeded
 diff --git a/make/hotspot/lib/JvmFlags.gmk b/make/hotspot/lib/JvmFlags.gmk
-index 27a96cc486535..9e4080cfb070f 100644
+index 121f71bfa278e..a35c78ae67606 100644
 --- a/make/hotspot/lib/JvmFlags.gmk
 +++ b/make/hotspot/lib/JvmFlags.gmk
 @@ -57,6 +57,22 @@ JVM_CFLAGS_INCLUDES += \
@@ -1318,7 +1271,7 @@ index 1c91e9d2599db..6483c5e03f4fc 100644
 +#endif
  #endif // OS_POSIX_FORBIDDENFUNCTIONS_POSIX_HPP
 diff --git a/src/hotspot/os/posix/os_posix.cpp b/src/hotspot/os/posix/os_posix.cpp
-index 1fb2a248bec68..9143cec778b2a 100644
+index 1fb2a248bec68..1b4213e03a4b2 100644
 --- a/src/hotspot/os/posix/os_posix.cpp
 +++ b/src/hotspot/os/posix/os_posix.cpp
 @@ -566,6 +566,7 @@ void os::Posix::print_load_average(outputStream* st) {
@@ -1337,7 +1290,31 @@ index 1fb2a248bec68..9143cec778b2a 100644
  }
  
  static void print_rlimit(outputStream* st, const char* msg,
-@@ -1114,6 +1116,36 @@ bool os::same_files(const char* file1, const char* file2) {
+@@ -888,12 +890,23 @@ void* os::lookup_function(const char* name) {
+   return dlsym(RTLD_DEFAULT, name);
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#endif
+ int64_t os::ftell(FILE* file) {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  return ::compat_ftello(file);
++#else
+   return ::ftell(file);
++#endif
+ }
+ 
+ int os::fseek(FILE* file, int64_t offset, int whence) {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  return ::compat_fseeko(file, offset, whence);
++#else
+   return ::fseek(file, offset, whence);
++#endif
+ }
+ 
+ jlong os::lseek(int fd, jlong offset, int whence) {
+@@ -1114,6 +1127,36 @@ bool os::same_files(const char* file1, const char* file2) {
  
  static char saved_jvm_path[MAXPATHLEN] = {0};
  
@@ -1374,7 +1351,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
  // Find the full path to the current module, libjvm.so
  void os::jvm_path(char *buf, jint buflen) {
    // Error checking.
-@@ -1149,6 +1181,21 @@ void os::jvm_path(char *buf, jint buflen) {
+@@ -1149,6 +1192,21 @@ void os::jvm_path(char *buf, jint buflen) {
    }
    fname = dli_fname;
  #endif // AIX
@@ -1396,7 +1373,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
    char* rp = nullptr;
    if (fname[0] != '\0') {
      rp = os::realpath(fname, buf, buflen);
-@@ -1424,7 +1471,7 @@ static bool _use_clock_monotonic_condattr = false;
+@@ -1424,7 +1482,7 @@ static bool _use_clock_monotonic_condattr = false;
  // Determine what POSIX API's are present and do appropriate
  // configuration.
  void os::Posix::init(void) {
@@ -1405,7 +1382,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
    clock_tics_per_sec = CLK_TCK;
  #else
    clock_tics_per_sec = checked_cast<int>(sysconf(_SC_CLK_TCK));
-@@ -2148,6 +2195,15 @@ char** os::get_environ() { return environ; }
+@@ -2148,6 +2206,15 @@ char** os::get_environ() { return environ; }
  //         doesn't block SIGINT et al.
  //        -this function is unsafe to use in non-error situations, mainly
  //         because the child process will inherit all parent descriptors.
@@ -1421,7 +1398,7 @@ index 1fb2a248bec68..9143cec778b2a 100644
  int os::fork_and_exec(const char* cmd) {
    const char* argv[4] = {"sh", "-c", cmd, nullptr};
    pid_t pid = -1;
-@@ -2155,7 +2211,18 @@ int os::fork_and_exec(const char* cmd) {
+@@ -2155,7 +2222,18 @@ int os::fork_and_exec(const char* cmd) {
    // Note: cast is needed because posix_spawn() requires - for compatibility with ancient
    // C-code - a non-const argv/envp pointer array. But it is fine to hand in literal
    // strings and just cast the constness away. See also ProcessImpl_md.c.
@@ -1914,6 +1891,48 @@ index 0f8342db81933..9b2b6b1afe4f6 100644
  
  #include "utilities/decoder.hpp"
  #include "utilities/elfFile.hpp"
+diff --git a/src/hotspot/share/utilities/elfFile.cpp b/src/hotspot/share/utilities/elfFile.cpp
+index e81f912829291..4b2a789daee75 100644
+--- a/src/hotspot/share/utilities/elfFile.cpp
++++ b/src/hotspot/share/utilities/elfFile.cpp
+@@ -93,12 +93,24 @@ size_t FileReader::read_buffer(void* buf, size_t size) {
+   return fread(buf, 1, size, _fd);
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#endif
+ bool FileReader::set_position(long offset) {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  return compat_fseeko(_fd, offset, SEEK_SET) == 0;
++#else
+   return fseek(_fd, offset, SEEK_SET) == 0;
++#endif
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++MarkedFileReader::MarkedFileReader(FILE* fd) : FileReader(fd), _marked_pos(compat_ftello(fd)) {
++}
++#else
+ MarkedFileReader::MarkedFileReader(FILE* fd) : FileReader(fd), _marked_pos(ftell(fd)) {
+ }
++#endif
+ 
+ MarkedFileReader::~MarkedFileReader() {
+   if (_marked_pos != -1) {
+@@ -1884,7 +1896,12 @@ bool DwarfFile::MarkedDwarfFileReader::has_bytes_left() const {
+ }
+ 
+ bool DwarfFile::MarkedDwarfFileReader::update_to_stored_position() {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++  _marked_pos = compat_ftello(_fd);
++#else
+   _marked_pos = ftell(_fd);
++#endif
++
+   if (_marked_pos < 0) {
+     return false;
+   }
 diff --git a/src/hotspot/share/utilities/elfSymbolTable.cpp b/src/hotspot/share/utilities/elfSymbolTable.cpp
 index f8766fc8ef9f1..d66564385a43e 100644
 --- a/src/hotspot/share/utilities/elfSymbolTable.cpp
@@ -2198,7 +2217,7 @@ index 9c2a2c84511fc..dc6b3333e4f24 100644
      // The Architecture value for the current architecture
      static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
 diff --git a/src/java.base/share/native/libjli/java.c b/src/java.base/share/native/libjli/java.c
-index 4621ab588d19c..50223819ce778 100644
+index e19ba280fa7b7..703d135f7361a 100644
 --- a/src/java.base/share/native/libjli/java.c
 +++ b/src/java.base/share/native/libjli/java.c
 @@ -52,6 +52,31 @@
@@ -2348,7 +2367,7 @@ index 06cc2be112fdd..bd1f74ce55c92 100644
  Java_jdk_internal_io_JdkConsoleImpl_echo(JNIEnv *env,
                            jclass cls,
 diff --git a/src/java.base/unix/native/libjava/ProcessImpl_md.c b/src/java.base/unix/native/libjava/ProcessImpl_md.c
-index 69af948d2da69..486aca750e815 100644
+index 69af948d2da69..e0b636fe43237 100644
 --- a/src/java.base/unix/native/libjava/ProcessImpl_md.c
 +++ b/src/java.base/unix/native/libjava/ProcessImpl_md.c
 @@ -37,6 +37,7 @@
@@ -2438,7 +2457,7 @@ index 69af948d2da69..486aca750e815 100644
 +    if (deviceApiLevel >= 28) {
 +      rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
 +    } else {
-+      rval = simple_posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
++      rval = simple_posix_spawn(&resultPid, helperpath, (const simple_posix_spawn_file_actions_t*) &file_actions, 0, (char * const *) hlpargs, environ);
 +    }
 +#else
      rval = posix_spawn(&resultPid, helperpath, &file_actions, 0, (char * const *) hlpargs, environ);
@@ -2447,7 +2466,7 @@ index 69af948d2da69..486aca750e815 100644
      if (rval != 0) {
          return -1;
 diff --git a/src/java.base/unix/native/libjava/TimeZone_md.c b/src/java.base/unix/native/libjava/TimeZone_md.c
-index cd253edde6017..7efaa3497f524 100644
+index 2f163cf27f1fd..03bdb04f89545 100644
 --- a/src/java.base/unix/native/libjava/TimeZone_md.c
 +++ b/src/java.base/unix/native/libjava/TimeZone_md.c
 @@ -56,7 +56,7 @@ static const char *DEFAULT_ZONEINFO_FILE = "/usr/share/lib/zoneinfo/localtime";
@@ -2726,94 +2745,72 @@ index e75bf6bc90c24..6170c5344776c 100644
          /* i will be incremented at the top of the loop */
      }
 diff --git a/src/java.base/unix/native/libjli/java_md.c b/src/java.base/unix/native/libjli/java_md.c
-index a75795af5804f..b4bac3e2440fd 100644
+index a75795af5804f..db40bcfc4ab82 100644
 --- a/src/java.base/unix/native/libjli/java_md.c
 +++ b/src/java.base/unix/native/libjli/java_md.c
-@@ -576,17 +576,87 @@ const char*
+@@ -576,17 +576,67 @@ const char*
  SetExecname(char **argv)
  {
      char* exec_path = NULL;
 -#if defined(__linux__)
 -    {
 -        const char* self = "/proc/self/exe";
--        char buf[PATH_MAX+1];
++#if defined(__ANDROID__) //Since both __ANDROID__ and __linux__ are defined, we must let the preprocessor preprocess the __ANDRIOD__ part first
++    char *__java_home = getenv("JAVA_HOME");
++    // From http://hg.openjdk.java.net/mobile/jdk9/jdk/file/17bb8a98d5e3/src/java.base/unix/native/libjli/java_md_solinux.c#l844
++        /* For Android, 'self' would point to /system/bin/app_process
++         * since we are really executing a Dalvik program at this point.
++         * argv[0] points to the Dalvik application name and we set the
++         * path to __java_home.
++         */
+         char buf[PATH_MAX+1];
 -        int len = readlink(self, buf, PATH_MAX);
 -        if (len >= 0) {
 -            buf[len] = '\0';            /* readlink(2) doesn't NUL terminate */
 -            exec_path = JLI_StringDup(buf);
-+#if defined(__ANDROID__)
-+    // Since both __ANDROID__ and __linux__ are defined, we must let the preprocessor preprocess the __ANDROID__ part first
-+    char *__java_home = getenv("JAVA_HOME");
-+    char *tmpdir = getenv("TMPDIR");
-+    char buf[PATH_MAX+1];
-+    char *p = NULL;
-+
-+    char original_java_path[PATH_MAX+1];
-+    int found = 0;
-+    
-+    if ((p = JLI_StrRChr(argv[0], '/')) != 0) {
-+        p++;
-+        if ((JLI_StrLen(p) == 4) && JLI_StrCmp(p, "java") == 0) {
-+            if (*argv[0] != '/') {
-+                char *curdir = NULL;
-+                getcwd(buf, PATH_MAX);
-+                curdir = JLI_StringDup(buf);
-+                JLI_Snprintf(original_java_path, PATH_MAX, "%s/%s", curdir, argv[0]);
-+                JLI_MemFree(curdir);
++        char *p = NULL;
++       if ((p = JLI_StrRChr(argv[0], '/')) != 0) {
++         /* may be running from command line */
++         p++;
++         if ((JLI_StrLen(p) == 4) && JLI_StrCmp(p, "java") == 0) {
++           /* started as 'java'. Must be command line */
++           JLI_TraceLauncher("SetExecName maybe command line = %s\n", argv[0]);
++         if (*argv[0] != '/') {
++            char *curdir = NULL;
++            /* get absolute path */
++              getcwd(buf, PATH_MAX);
++             curdir = JLI_StringDup(buf);
++              JLI_Snprintf(buf, PATH_MAX, "%s/%s", curdir, argv[0]);
++              JLI_MemFree(curdir);
 +            } else {
-+                JLI_Snprintf(original_java_path, PATH_MAX, "%s", argv[0]);
++              JLI_Snprintf(buf, PATH_MAX, "%s", argv[0]);
 +            }
-+            found = 1;
-         }
-     }
--#else /* !__linux__ */
-+    
-+    if (!found && __java_home != NULL) {
-+        JLI_Snprintf(original_java_path, PATH_MAX, "%s/bin/java", __java_home);
-+        found = 1;
-+    }
-+    
-+    if (!found) {
-+        JLI_Snprintf(original_java_path, PATH_MAX, "/data/data/%s/storage/jvm/bin/java",
-+                     argv[0]);
-+        found = 1;
-+    }
-+
-+    if (tmpdir == NULL) {
-+        exec_path = JLI_StringDup(buf);
-+        execname = exec_path;
-+        return exec_path;
-+    }
-+
-+    JLI_TraceLauncher("Original java path: %s\n", original_java_path);
-+    
-+    struct stat st;
-+    if (stat(original_java_path, &st) == 0) {
-+        char libjava_path[PATH_MAX+1];
-+        JLI_Snprintf(libjava_path, PATH_MAX, "%s/libjava_bin.so", tmpdir);
-+    
-+        FILE *src = fopen(original_java_path, "rb");
-+        if (src) {
-+            FILE *dst = fopen(libjava_path, "wb");
-+            if (dst) {
-+                char buffer[8192];
-+                size_t bytes;
-+                while ((bytes = fread(buffer, 1, sizeof(buffer), src)) > 0) {
-+                    fwrite(buffer, 1, bytes, dst);
-+                }
-+                fclose(dst);
-+                chmod(libjava_path, 0777);
-+            
-+                exec_path = JLI_StringDup(libjava_path);
++          } else {
++            /* Not command line, see if __java_home set */
++            if (__java_home != NULL) {
++              JLI_TraceLauncher("SetExecName not java = %s\n", __java_home);
++              JLI_Snprintf(buf, PATH_MAX, "%s/bin/java", __java_home);
 +            } else {
-+                exec_path = JLI_StringDup(original_java_path);
++              /* Fake it as best we can or should we punt? */
++              JLI_TraceLauncher("SetExecName fake it = %s\n", argv[0]);
++              JLI_Snprintf(buf, PATH_MAX, "/data/data/%s/storage/jvm/bin/java",
++                           argv[0]);
 +            }
-+            fclose(src);
++          }
 +        } else {
-+            exec_path = JLI_StringDup(original_java_path);
-+        }
-+    }
-+    
++           /* Not started as 'java', see if __java_home set */
++            if (__java_home != NULL) {
++              JLI_TraceLauncher("SetExecName not command line = %s\n", __java_home);
++              JLI_Snprintf(buf, PATH_MAX, "%s/bin/java", __java_home);
++           } else {
++             /* Fake it as best we can or should we punt? */
++             JLI_TraceLauncher("SetExecName fake it 2 = %s\n", argv[0]);
++             JLI_Snprintf(buf, PATH_MAX, "/data/data/%s/storage/jvm/bin/java",
++                           argv[0]);
++            }
+         }
++        exec_path = JLI_StringDup(buf);
++
 +#elif defined(__linux__)
 +    const char* self = "/proc/self/exe";
 +    char buf[PATH_MAX+1];
@@ -2821,13 +2818,14 @@ index a75795af5804f..b4bac3e2440fd 100644
 +    if (len >= 0) {
 +        buf[len] = '\0';
 +        exec_path = JLI_StringDup(buf);
-+    }
+     }
+-#else /* !__linux__ */
 +#else
      {
          /* Not implemented */
      }
 diff --git a/src/java.base/unix/native/libnet/NetworkInterface.c b/src/java.base/unix/native/libnet/NetworkInterface.c
-index f5025b9f48864..027b29c69f2bb 100644
+index 5ed99f256d809..5b3bff3dab509 100644
 --- a/src/java.base/unix/native/libnet/NetworkInterface.c
 +++ b/src/java.base/unix/native/libnet/NetworkInterface.c
 @@ -25,7 +25,9 @@
@@ -2856,7 +2854,7 @@ index 639cf00515fa0..44fe613fe5fbf 100644
  #include <poll.h>
  #include <sys/socket.h>
 diff --git a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
-index 4b5cfabebfbc5..0bf39a3845c8d 100644
+index 4b5cfabebfbc5..ada9413ae3c95 100644
 --- a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 +++ b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c
 @@ -375,11 +375,24 @@ Java_sun_nio_fs_UnixNativeDispatcher_init(JNIEnv* env, jclass this)
@@ -2894,6 +2892,90 @@ index 4b5cfabebfbc5..0bf39a3845c8d 100644
      (*env)->SetLongField(env, attrs, attrs_st_atime_nsec, (jlong)buf->st_atim.tv_nsec);
      (*env)->SetLongField(env, attrs, attrs_st_mtime_nsec, (jlong)buf->st_mtim.tv_nsec);
      (*env)->SetLongField(env, attrs, attrs_st_ctime_nsec, (jlong)buf->st_ctim.tv_nsec);
+@@ -1202,6 +1215,14 @@ Java_sun_nio_fs_UnixNativeDispatcher_mknod0(JNIEnv* env, jclass this,
+     }
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++#include <android/api-level.h>
++#include <pwd_grp_compat.h>
++__attribute__((weak)) int getgrgid_r(gid_t gid, struct group* grp, char* buf, size_t buflen, struct group** result);
++__attribute__((weak)) int getgrnam_r(const char* name, struct group* grp, char* buf, size_t buflen, struct group** result);
++__attribute__((weak)) int getpwnam_r(const char* name, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result);
++__attribute__((weak)) int getpwuid_r(uid_t uid, struct passwd* pwd, char* buf, size_t buflen, struct passwd** result);
++#endif
+ JNIEXPORT jbyteArray JNICALL
+ Java_sun_nio_fs_UnixNativeDispatcher_getpwuid(JNIEnv* env, jclass this, jint uid)
+ {
+@@ -1222,7 +1243,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getpwuid(JNIEnv* env, jclass this, jint uid
+         int res = 0;
+ 
+         errno = 0;
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getpwuid_r((uid_t)uid, &pwent, pwbuf, (size_t)buflen, &p), res);
++        } else {
++          RESTARTABLE(compat_getpwuid_r((uid_t)uid, &pwent, pwbuf, (size_t)buflen, &p), res);
++        }
++#else
+         RESTARTABLE(getpwuid_r((uid_t)uid, &pwent, pwbuf, (size_t)buflen, &p), res);
++#endif
+ 
+         if (res != 0 || p == NULL || p->pw_name == NULL || *(p->pw_name) == '\0') {
+             /* not found or error */
+@@ -1267,7 +1297,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getgrgid(JNIEnv* env, jclass this, jint gid
+         }
+ 
+         errno = 0;
+-        RESTARTABLE(getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++        } else {
++          RESTARTABLE(compat_getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++        }
++#else
++          RESTARTABLE(getgrgid_r((gid_t)gid, &grent, grbuf, (size_t)buflen, &g), res);
++#endif
+ 
+         retry = 0;
+         if (res != 0 || g == NULL || g->gr_name == NULL || *(g->gr_name) == '\0') {
+@@ -1318,7 +1357,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getpwnam0(JNIEnv* env, jclass this,
+         const char* name = (const char*)jlong_to_ptr(nameAddress);
+ 
+         errno = 0;
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getpwnam_r(name, &pwent, pwbuf, (size_t)buflen, &p), res);
++        } else {
++          RESTARTABLE(compat_getpwnam_r(name, &pwent, pwbuf, (size_t)buflen, &p), res);
++        }
++#else
+         RESTARTABLE(getpwnam_r(name, &pwent, pwbuf, (size_t)buflen, &p), res);
++#endif
+ 
+         if (res != 0 || p == NULL || p->pw_name == NULL || *(p->pw_name) == '\0') {
+             /* not found or error */
+@@ -1362,7 +1410,16 @@ Java_sun_nio_fs_UnixNativeDispatcher_getgrnam0(JNIEnv* env, jclass this,
+         }
+ 
+         errno = 0;
++#if defined(__ANDROID__) && __ANDROID_API__ <= 23
++        int deviceApiLevel = android_get_device_api_level();
++        if (deviceApiLevel >= 24) {
++          RESTARTABLE(getgrnam_r(name, &grent, grbuf, (size_t)buflen, &g), res);
++        } else {
++          RESTARTABLE(compat_getgrnam_r(name, &grent, grbuf, (size_t)buflen, &g), res);
++        }
++#else
+         RESTARTABLE(getgrnam_r(name, &grent, grbuf, (size_t)buflen, &g), res);
++#endif
+ 
+         retry = 0;
+         if (res != 0 || g == NULL || g->gr_name == NULL || *(g->gr_name) == '\0') {
 diff --git a/src/java.desktop/macosx/native/libjawt/jawt.m b/src/java.desktop/macosx/native/libjawt/jawt.m
 index 36d4e897f608d..790a0c1d8a826 100644
 --- a/src/java.desktop/macosx/native/libjawt/jawt.m
@@ -3040,6 +3122,57 @@ index c36e072f58502..eceaa70790036 100644
  #define INLINE          inline
  #endif
  
+diff --git a/src/java.desktop/share/native/liblcms/cmserr.c b/src/java.desktop/share/native/liblcms/cmserr.c
+index 877beb9ca6a3c..bdd2c9262e079 100644
+--- a/src/java.desktop/share/native/liblcms/cmserr.c
++++ b/src/java.desktop/share/native/liblcms/cmserr.c
+@@ -77,6 +77,11 @@ int CMSEXPORT cmsstrcasecmp(const char* s1, const char* s2)
+     return (toupper(*us1) - toupper(*--us2));
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#define ftell compat_ftello
++#define fseek compat_fseeko
++#endif
+ // long int because C99 specifies ftell in such way (7.19.9.2)
+ long int CMSEXPORT cmsfilelength(FILE* f)
+ {
+diff --git a/src/java.desktop/share/native/liblcms/cmsio0.c b/src/java.desktop/share/native/liblcms/cmsio0.c
+index 5a4f09af5bcf5..685f68a36b490 100644
+--- a/src/java.desktop/share/native/liblcms/cmsio0.c
++++ b/src/java.desktop/share/native/liblcms/cmsio0.c
+@@ -358,11 +358,18 @@ cmsUInt32Number FileRead(cmsIOHANDLER* iohandler, void *Buffer, cmsUInt32Number
+     return nReaded;
+ }
+ 
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++#include <compat_file.h>
++#endif
+ // Position file pointer in the file
+ static
+ cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
+ {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++    if (compat_fseeko((FILE*) iohandler ->stream, (long) offset, SEEK_SET) != 0) {
++#else
+     if (fseek((FILE*) iohandler ->stream, (long) offset, SEEK_SET) != 0) {
++#endif
+ 
+        cmsSignalError(iohandler ->ContextID, cmsERROR_FILE, "Seek error; probably corrupted file");
+        return FALSE;
+@@ -375,7 +382,11 @@ cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
+ static
+ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
+ {
++#if defined(__ANDROID__) && __ANDROID_API__ < 24
++    long t = compat_ftello((FILE*)iohandler ->stream);
++#else
+     long t = ftell((FILE*)iohandler ->stream);
++#endif
+     if (t == -1L) {
+         cmsSignalError(iohandler->ContextID, cmsERROR_FILE, "Tell error; probably corrupted file");
+         return 0;
 diff --git a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java b/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
 index 5853298a40b2a..22dcb787c705b 100644
 --- a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
@@ -3170,8 +3303,24 @@ index af50fdbb5c088..ffd3f485ce250 100644
    #define LWAWT_PATH "/libawt_lwawt.dylib"
    #define DEFAULT_PATH LWAWT_PATH
  #else
+diff --git a/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c b/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c
+index e89d813fff460..a1e0777860e55 100644
+--- a/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c
++++ b/src/java.desktop/unix/native/libsplashscreen/splashscreen_sys.c
+@@ -65,7 +65,11 @@ char* SplashConvertStringAlloc(const char* in, int* size) {
+     }
+     old_locale = setlocale(LC_ALL, "");
+ 
++#ifdef __BIONIC__
++    codeset = "UTF-8";
++#else
+     codeset = nl_langinfo(CODESET);
++#endif
+     if ( codeset == NULL || codeset[0] == 0 ) {
+         goto done;
+     }
 diff --git a/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c b/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c
-index 490eea9a5ac33..8350a6797187e 100644
+index 490eea9a5ac33..d4a42b47dd4c5 100644
 --- a/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c
 +++ b/src/java.instrument/unix/native/libinstrument/EncodingSupport_md.c
 @@ -22,6 +22,8 @@
@@ -3191,6 +3340,18 @@ index 490eea9a5ac33..8350a6797187e 100644
  
  /* Routines to convert back and forth between Platform Encoding and UTF-8 */
  
+@@ -65,7 +66,11 @@ utfInitialize(void)
+     (void)setlocale(LC_ALL, "");
+ 
+     /* Get the codeset name */
++#if defined(__BIONIC__)
++    codeset = "UTF-8";
++#else
+     codeset = (char*)nl_langinfo(CODESET);
++#endif
+     if ( codeset == NULL || codeset[0] == 0 ) {
+         UTF_DEBUG(("NO codeset returned by nl_langinfo(CODESET)\n"));
+         return;
 diff --git a/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java b/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
 index ad24432f1889e..ac04d06a9ff12 100644
 --- a/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
@@ -3713,6 +3874,22 @@ index c2bccb1bac141..ae01b0d861894 100644
              case LINUX: return "Linux";
              case MACOS: return "Mac OS X";
              case AIX: return "AIX";
+diff --git a/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c b/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c
+index 6bae02fce549c..9c747f5a02779 100644
+--- a/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c
++++ b/src/jdk.jdwp.agent/share/native/libjdwp/utf_util.c
+@@ -483,7 +483,11 @@ static int iconvConvert(conv_direction drn, char *bytes, size_t len, char *outpu
+         // locale is not initialized, do it now
+         if (setlocale(LC_ALL, "") != NULL) {
+             // nl_langinfo returns ANSI_X3.4-1968 by default
++#ifdef __BIONIC__
++            codeset = "UTF-8";
++#else
+             codeset = (char*)nl_langinfo(CODESET);
++#endif
+         }
+ 
+         if (codeset == NULL) {
 diff --git a/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java b/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java
 index a3f465ca05179..791c22b632ec3 100644
 --- a/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java

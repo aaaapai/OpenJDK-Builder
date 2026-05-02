@@ -31,6 +31,12 @@ if [[ "${ANDROID_API}" -ge 32 ]]; then
   Set_LDFLAGS -Wl,-plugin-opt=-emulated-tls=0
 fi # Real LTS support is started at Android 12L, I disabled emulated lts here for better performence.
 
+
+if [[ "${ANDROID_API}" -le 23 ]]; then
+Set_C_CPPFLAGS -D_FILE_OFFSET_BITS=64
+sed -i -e 's/\<fseeko\>/compat_fseeko/g' -e 's/\<ftello\>/compat_ftello/g' -e '/#define _LIBCPP_FSTREAM/a #include <compat_file.h>' ${NDK_TOOLCHAIN}/sysroot/usr/include/c++/v1/fstream
+fi
+
 Set_C_CPPFLAGS -O3
 # Set_CPPFLAGS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -stdlib=libc++
 # Set_C_CPPFLAGS -flto
@@ -81,7 +87,7 @@ case "${TARGET_OS}" in
 
         Set_CFLAGS -I${FREETYPE_DIR}/include/freetype2 -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
         Set_CPPFLAGS -I${FREETYPE_DIR}/include/freetype2 -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
-        Set_LDFLAGS -L${FREETYPE_DIR}/lib -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API}
+        Set_LDFLAGS -Wl,--as-needed -L${FREETYPE_DIR}/lib -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API} -Wl,--disable-new-dtags
         ;;
     
     *)

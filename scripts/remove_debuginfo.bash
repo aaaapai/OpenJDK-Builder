@@ -51,6 +51,6 @@ exit 1
 ' bash {} \; -print
 }
 
-chmod +x ${CURRENT_DIR}/termux-elf-cleaner
-findexec images/jre | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
-findexec images/jdk | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
+# chmod +x ${CURRENT_DIR}/termux-elf-cleaner
+# findexec images/jre | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
+# findexec images/jdk | xargs ${CURRENT_DIR}/termux-elf-cleaner --api-level ${ANDROID_API}
