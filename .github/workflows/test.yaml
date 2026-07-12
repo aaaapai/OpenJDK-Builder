@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
 
 env:
-  ANDROID_API: 21
-  TARGET_ARCH: arm32
+  ANDROID_API: 26
+  TARGET_ARCH: arm64
   TARGET_OS: android
-  TARGET_JAVA_VERSION: 27
+  TARGET_JAVA_VERSION: 28
 
 jobs:
   build:
