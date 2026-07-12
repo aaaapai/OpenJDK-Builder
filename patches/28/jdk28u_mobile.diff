@@ -2399,10 +2399,25 @@ index 5e9451e850c1c..d53ba216e9a57 100644
  
      return result;
 diff --git a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
-index 927ab682c3e83..6782832fe3e5a 100644
+index 927ab682c3e83..3878e8144a486 100644
 --- a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
 +++ b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
-@@ -91,7 +91,7 @@ public enum OperatingSystem {
+@@ -81,6 +81,14 @@ public enum OperatingSystem {
+      * The AIX Operating system.
+      */
+     AIX,
++    /**
++     * The ANDROID Operating system.
++     */
++    ANDROID,
++    /**
++     * The IOS Operating system.
++     */
++    IOS,
+     ;
+ 
+     // The current OperatingSystem
+@@ -91,7 +99,7 @@ public enum OperatingSystem {
       */
      @ForceInline
      public static boolean isLinux() {
@@ -2411,7 +2426,7 @@ index 927ab682c3e83..6782832fe3e5a 100644
      }
  
      /**
-@@ -99,7 +99,7 @@ public static boolean isLinux() {
+@@ -99,7 +107,7 @@ public static boolean isLinux() {
       */
      @ForceInline
      public static boolean isMacOS() {
