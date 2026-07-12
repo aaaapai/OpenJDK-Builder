@@ -2398,49 +2398,16 @@ index 5e9451e850c1c..d53ba216e9a57 100644
      }
  
      return result;
-diff --git a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
-index 927ab682c3e83..3878e8144a486 100644
---- a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
-+++ b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
-@@ -81,6 +81,14 @@ public enum OperatingSystem {
-      * The AIX Operating system.
-      */
-     AIX,
-+    /**
-+     * The ANDROID Operating system.
-+     */
-+    ANDROID,
-+    /**
-+     * The IOS Operating system.
-+     */
-+    IOS,
-     ;
- 
-     // The current OperatingSystem
-@@ -91,7 +99,7 @@ public enum OperatingSystem {
-      */
-     @ForceInline
-     public static boolean isLinux() {
--        return PlatformProps.TARGET_OS_IS_LINUX;
-+        return (PlatformProps.TARGET_OS_IS_LINUX);
-     }
- 
-     /**
-@@ -99,7 +107,7 @@ public static boolean isLinux() {
-      */
-     @ForceInline
-     public static boolean isMacOS() {
--        return PlatformProps.TARGET_OS_IS_MACOS;
-+        return (PlatformProps.TARGET_OS_IS_MACOS);
-     }
- 
-     /**
 diff --git a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
-index 9c2a2c84511fc..867d164a4225d 100644
+index 9c2a2c84511fc..410aa4a8f1e39 100644
 --- a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
 +++ b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
-@@ -35,8 +35,8 @@ class PlatformProps {
-     static final String CURRENT_OS_STRING = "@@OPENJDK_TARGET_OS@@";
+@@ -32,11 +32,11 @@ package jdk.internal.util;
+ class PlatformProps {
+ 
+     // Name of the current OperatingSystem enum as substituted by the build
+-    static final String CURRENT_OS_STRING = "@@OPENJDK_TARGET_OS@@";
++    static final String CURRENT_OS_STRING = ("@@OPENJDK_TARGET_OS@@" == "android") ? "linux" : ("@@OPENJDK_TARGET_OS@@" == "ios")   ? "macos" : "@@OPENJDK_TARGET_OS@@";
  
      // Precomputed booleans for each Operating System
 -    static final boolean TARGET_OS_IS_LINUX   = "@@OPENJDK_TARGET_OS@@" == "linux";
