@@ -2073,19 +2073,6 @@ index 2c389d37fecc3..4e49b55547ed2 100644
  #endif
    return ret;
  WB_END
-diff --git a/src/hotspot/share/runtime/thread.hpp b/src/hotspot/share/runtime/thread.hpp
-index 8ebedb79bfc6d..11ec4bff6ff9e 100644
---- a/src/hotspot/share/runtime/thread.hpp
-+++ b/src/hotspot/share/runtime/thread.hpp
-@@ -657,7 +657,7 @@ inline Thread* Thread::current() {
- }
- 
- inline Thread* Thread::current_or_null() {
--  return _thr_current;
-+    return _thr_current;
- }
- 
- inline Thread* Thread::current_or_null_safe() {
 diff --git a/src/hotspot/share/services/diagnosticCommand.cpp b/src/hotspot/share/services/diagnosticCommand.cpp
 index f2fa114133e76..fab5b940caecf 100644
 --- a/src/hotspot/share/services/diagnosticCommand.cpp
@@ -2398,25 +2385,67 @@ index 5e9451e850c1c..d53ba216e9a57 100644
      }
  
      return result;
+diff --git a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
+index 927ab682c3e83..6039fbd5a9098 100644
+--- a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
++++ b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
+@@ -59,6 +59,7 @@
+  *          case AIX->32768;
+  *          case MACOS->49152;
+  *          case WINDOWS->49152;
++ *          case IOS->49152;
+  *      };
+  * }
+  *}
+@@ -81,6 +82,14 @@ public enum OperatingSystem {
+      * The AIX Operating system.
+      */
+     AIX,
++    /**
++     * The Android Operating system.
++     */
++    ANDROID,
++    /**
++     * The iOS Operating system.
++     */
++    IOS,
+     ;
+ 
+     // The current OperatingSystem
+@@ -118,6 +127,20 @@ public static boolean isAix() {
+         return PlatformProps.TARGET_OS_IS_AIX;
+     }
+ 
++    /**
++     * {@return {@code true} if built for the Android operating system}
++     */
++    public static boolean isAndroid() {
++        return PlatformProps.TARGET_OS_IS_ANDROID;
++    }
++
++    /**
++     * {@return {@code true} if built for the iOS operating system}
++     */
++    public static boolean isIos() {
++        return PlatformProps.TARGET_OS_IS_IOS;
++    }
++
+     /**
+      * {@return the current operating system}
+      */
 diff --git a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
-index 9c2a2c84511fc..410aa4a8f1e39 100644
+index 9c2a2c84511fc..dc6b3333e4f24 100644
 --- a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
 +++ b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
-@@ -32,11 +32,11 @@ package jdk.internal.util;
- class PlatformProps {
- 
-     // Name of the current OperatingSystem enum as substituted by the build
--    static final String CURRENT_OS_STRING = "@@OPENJDK_TARGET_OS@@";
-+    static final String CURRENT_OS_STRING = ("@@OPENJDK_TARGET_OS@@" == "android") ? "linux" : ("@@OPENJDK_TARGET_OS@@" == "ios")   ? "macos" : "@@OPENJDK_TARGET_OS@@";
- 
-     // Precomputed booleans for each Operating System
--    static final boolean TARGET_OS_IS_LINUX   = "@@OPENJDK_TARGET_OS@@" == "linux";
--    static final boolean TARGET_OS_IS_MACOS   = "@@OPENJDK_TARGET_OS@@" == "macos";
-+    static final boolean TARGET_OS_IS_LINUX   = ("@@OPENJDK_TARGET_OS@@" == "linux" || "@@OPENJDK_TARGET_OS@@" == "android");
-+    static final boolean TARGET_OS_IS_MACOS   = ("@@OPENJDK_TARGET_OS@@" == "macos" || "@@OPENJDK_TARGET_OS@@" == "ios");
+@@ -39,6 +39,8 @@ class PlatformProps {
+     static final boolean TARGET_OS_IS_MACOS   = "@@OPENJDK_TARGET_OS@@" == "macos";
      static final boolean TARGET_OS_IS_WINDOWS = "@@OPENJDK_TARGET_OS@@" == "windows";
      static final boolean TARGET_OS_IS_AIX     = "@@OPENJDK_TARGET_OS@@" == "aix";
++    static final boolean TARGET_OS_IS_ANDROID = "@@OPENJDK_TARGET_OS@@" == "android";
++    static final boolean TARGET_OS_IS_IOS     = "@@OPENJDK_TARGET_OS@@" == "ios";
  
+     // The Architecture value for the current architecture
+     static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
 diff --git a/src/java.base/share/native/libjli/java.c b/src/java.base/share/native/libjli/java.c
 index 4c3b503b08a0b..c30eeda073244 100644
 --- a/src/java.base/share/native/libjli/java.c
@@ -2462,16 +2491,25 @@ index 4c3b503b08a0b..c30eeda073244 100644
      DumpState();
      if (JLI_IsTraceLauncher()) {
 diff --git a/src/java.base/unix/classes/java/lang/ProcessImpl.java b/src/java.base/unix/classes/java/lang/ProcessImpl.java
-index d9a4547848f03..3def663de5e52 100644
+index d9a4547848f03..c4510b36acc2e 100644
 --- a/src/java.base/unix/classes/java/lang/ProcessImpl.java
 +++ b/src/java.base/unix/classes/java/lang/ProcessImpl.java
+@@ -98,7 +98,7 @@ private static LaunchMechanism launchMechanism() {
+         try {
+             // Should be value of a LaunchMechanism enum
+             String launchMechanism = s.toUpperCase(Locale.ROOT);
+-            if (launchMechanism.equals("VFORK") && OperatingSystem.isLinux()) {
++            if (launchMechanism.equals("VFORK") && (OperatingSystem.isLinux() || OperatingSystem.isAndroid())) {
+                 launchMechanism = "FORK";
+                 System.err.println(String.format("""
+                                    The VFORK launch mechanism has been removed. Switching to %s instead.
 @@ -115,7 +115,14 @@ or use FORK mode instead (-Djdk.lang.Process.launchMechanism=FORK).%n
      }
  
      private static final LaunchMechanism launchMechanism = launchMechanism();
 -    private static final byte[] helperpath = toCString(StaticProperty.javaHome() + "/lib/jspawnhelper");
 +    private static String getJspawnhelperName() {
-+    if (OperatingSystem.isLinux()) {
++    if (OperatingSystem.isAndroid()) {
 +           return "libjspawnhelper.so";
 +       } else {
 +           return "jspawnhelper";
@@ -2481,6 +2519,41 @@ index d9a4547848f03..3def663de5e52 100644
  
      private static byte[] toCString(String s) {
          if (s == null)
+@@ -310,6 +317,8 @@ static FileDescriptor newFileDescriptor(int fd) {
+      */
+     void initStreams(int[] fds, boolean forceNullOutputStream) throws IOException {
+         switch (OperatingSystem.current()) {
++            case IOS:
++            case ANDROID:
+             case LINUX:
+             case MACOS:
+                 stdin = (fds[0] == -1) ?
+@@ -442,6 +451,8 @@ public int exitValue() {
+ 
+     private void destroy(boolean force) {
+         switch (OperatingSystem.current()) {
++            case IOS:
++            case ANDROID:
+             case LINUX:
+             case MACOS:
+             case AIX:
+diff --git a/src/java.base/unix/classes/sun/net/PortConfig.java b/src/java.base/unix/classes/sun/net/PortConfig.java
+index e0130ac2acb80..d1bc65a0ae305 100644
+--- a/src/java.base/unix/classes/sun/net/PortConfig.java
++++ b/src/java.base/unix/classes/sun/net/PortConfig.java
+@@ -44,10 +44,12 @@ private PortConfig() {}
+         int defaultUpper;
+         int defaultLower;
+         switch (OperatingSystem.current()) {
++            case ANDROID:
+             case LINUX:
+                 defaultLower = 32768;
+                 defaultUpper = 61000;
+                 break;
++            case IOS:
+             case MACOS:
+                 defaultLower = 49152;
+                 defaultUpper = 65535;
 diff --git a/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template b/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template
 index 7a9a22ac40db3..c95ce66f7e63e 100644
 --- a/src/java.base/unix/classes/sun/nio/fs/UnixConstants.java.template
@@ -2996,22 +3069,22 @@ index 5ed99f256d809..5b3bff3dab509 100644
  #include <string.h>
  #include <sys/ioctl.h>
 diff --git a/src/java.base/unix/native/libnet/net_util_md.c b/src/java.base/unix/native/libnet/net_util_md.c
-index f7b690f10324d..157b508682c54 100644
+index f7b690f10324d..e1410740ce4c2 100644
 --- a/src/java.base/unix/native/libnet/net_util_md.c
 +++ b/src/java.base/unix/native/libnet/net_util_md.c
-@@ -109,6 +109,7 @@ jint  IPv6_supported()
+@@ -109,6 +109,8 @@ jint  IPv6_supported()
      SOCKETADDRESS sa;
      socklen_t sa_len = sizeof(SOCKETADDRESS);
  
 +#ifndef __ANDROID__  // ANDROID: skip check, see libcore commit ae218d9b
++
      fd = socket(AF_INET6, SOCK_STREAM, 0) ;
      if (fd < 0) {
          /*
-@@ -140,6 +141,9 @@ jint  IPv6_supported()
+@@ -140,6 +142,8 @@ jint  IPv6_supported()
      }
  #endif
  
-+
 +#endif  // !defined __ANDROID__
 +
      /*
@@ -3233,37 +3306,96 @@ index 0000000000000..85813abab4ac5
 +  }
 +}
 +#endif
+diff --git a/src/java.desktop/share/classes/sun/awt/OSInfo.java b/src/java.desktop/share/classes/sun/awt/OSInfo.java
+index decd3e35402eb..a372951e3147a 100644
+--- a/src/java.desktop/share/classes/sun/awt/OSInfo.java
++++ b/src/java.desktop/share/classes/sun/awt/OSInfo.java
+@@ -40,6 +40,8 @@ public static enum OSType {
+         WINDOWS,
+         LINUX,
+         MACOSX,
++        ANDROID,
++        IOS,
+         AIX,
+         UNKNOWN
+     }
+@@ -96,6 +98,8 @@ private static OSType getOSTypeImpl() {
+             case WINDOWS -> WINDOWS;
+             case LINUX -> LINUX;
+             case MACOS -> MACOSX;
++            case ANDROID -> ANDROID;
++            case IOS -> IOS;
+             case AIX -> AIX;
+             default -> UNKNOWN;
+         };
+diff --git a/src/java.desktop/share/classes/sun/font/FontUtilities.java b/src/java.desktop/share/classes/sun/font/FontUtilities.java
+index a14214ab751e3..f41a89d108707 100644
+--- a/src/java.desktop/share/classes/sun/font/FontUtilities.java
++++ b/src/java.desktop/share/classes/sun/font/FontUtilities.java
+@@ -39,6 +39,9 @@
+  */
+ public final class FontUtilities {
+ 
++    public static boolean isiOS;
++    public static boolean isAndroid;
++
+     public static boolean isLinux;
+ 
+     public static boolean isMacOSX;
+@@ -60,6 +63,9 @@ public final class FontUtilities {
+     @SuppressWarnings("deprecation") // PlatformLogger.setLevel is deprecated.
+     private static void initStatic() {
+ 
++        isiOS = OSInfo.getOSType() == OSInfo.OSType.IOS;
++        isAndroid = OSInfo.getOSType() == OSInfo.OSType.ANDROID;
++
+         isLinux = OSInfo.getOSType() == OSInfo.OSType.LINUX;
+ 
+         isMacOSX = OSInfo.getOSType() == OSInfo.OSType.MACOSX;
+diff --git a/src/java.desktop/share/native/libjsound/SoundDefs.h b/src/java.desktop/share/native/libjsound/SoundDefs.h
+index c36e072f58502..eceaa70790036 100644
+--- a/src/java.desktop/share/native/libjsound/SoundDefs.h
++++ b/src/java.desktop/share/native/libjsound/SoundDefs.h
+@@ -44,7 +44,7 @@
+ 
+ 
+ // following is needed for _LP64
+-#if ((X_PLATFORM == X_LINUX) || (X_PLATFORM == X_MACOSX))
++#if ((X_PLATFORM == X_ANDROID) || (X_PLATFORM == X_LINUX) || (X_PLATFORM == X_MACOSX))
+ #include <sys/types.h>
+ #endif
+ 
+@@ -114,7 +114,7 @@ typedef char            SBYTE;
+ #endif
+ 
+ 
+-#if X_PLATFORM == X_LINUX
++#if ((X_PLATFORM == X_ANDROID) || (X_PLATFORM == X_LINUX))
+ #define INLINE          inline
+ #endif
+ 
 diff --git a/src/java.desktop/share/native/liblcms/cmserr.c b/src/java.desktop/share/native/liblcms/cmserr.c
-index 220602d4a361c..969e6b287114d 100644
+index 220602d4a361c..d68842d3b0428 100644
 --- a/src/java.desktop/share/native/liblcms/cmserr.c
 +++ b/src/java.desktop/share/native/liblcms/cmserr.c
-@@ -54,6 +54,11 @@
- 
+@@ -55,6 +55,12 @@
  #include "lcms2_internal.h"
+ 
  
 +#if defined(__ANDROID__) && __ANDROID_API__ < 24
 +#include <compat_file.h>
 +#define ftell compat_ftello
 +#define fseek compat_fseeko
 +#endif
- 
++
  // This function is here to help applications to prevent mixing lcms versions on header and shared objects.
  int CMSEXPORT cmsGetEncodedCMMversion(void)
+ {
 diff --git a/src/java.desktop/share/native/liblcms/cmsio0.c b/src/java.desktop/share/native/liblcms/cmsio0.c
-index 6e2a856b4b813..c621ec9ddd850 100644
+index 6e2a856b4b813..2b093fb3bfb72 100644
 --- a/src/java.desktop/share/native/liblcms/cmsio0.c
 +++ b/src/java.desktop/share/native/liblcms/cmsio0.c
-@@ -377,6 +377,9 @@ cmsUInt32Number FileRead(cmsIOHANDLER* iohandler, void *Buffer, cmsUInt32Number
-     return nReaded;
- }
- 
-+#if defined(__ANDROID__) && __ANDROID_API__ < 24
-+#include <compat_file.h>
-+#endif
- // Position file pointer in the file
- static
- cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
-@@ -413,11 +416,12 @@ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
+@@ -413,6 +413,7 @@ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
      }
  #else
      long t = ftell((FILE*)iohandler ->stream);
@@ -3271,12 +3403,25 @@ index 6e2a856b4b813..c621ec9ddd850 100644
      if (t == -1L) {
          cmsSignalError(iohandler->ContextID, cmsERROR_FILE, "Tell error; probably corrupted file");
          return 0;
+diff --git a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java b/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
+index 5853298a40b2a..22dcb787c705b 100644
+--- a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
++++ b/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
+@@ -135,6 +135,14 @@ public final class PrintServiceLookupProvider extends PrintServiceLookup
+         }
      }
--#endif
-+
-     return (cmsUInt32Number) t;
- }
  
++    static boolean isiOS() {
++        return OSInfo.getOSType() == OSInfo.OSType.IOS;
++    }
++
++    static boolean isAndroid() {
++        return OSInfo.getOSType() == OSInfo.OSType.ANDROID;
++    }
++
+     static boolean isMac() {
+         return OSInfo.getOSType() == OSInfo.OSType.MACOSX;
+     }
 diff --git a/src/java.desktop/unix/native/common/awt/fontpath.c b/src/java.desktop/unix/native/common/awt/fontpath.c
 index cb8e91a373b6b..10bb2a2bb6669 100644
 --- a/src/java.desktop/unix/native/common/awt/fontpath.c
@@ -3437,6 +3582,25 @@ index 490eea9a5ac33..d4a42b47dd4c5 100644
      if ( codeset == NULL || codeset[0] == 0 ) {
          UTF_DEBUG(("NO codeset returned by nl_langinfo(CODESET)\n"));
          return;
+diff --git a/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java b/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
+index ad24432f1889e..ac04d06a9ff12 100644
+--- a/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
++++ b/src/java.security.jgss/share/classes/sun/security/jgss/wrapper/SunNativeProvider.java
+@@ -83,6 +83,14 @@ private static Oid[] getMechOIDs() {
+         String defaultLib = System.getProperty("sun.security.jgss.lib");
+         if (defaultLib == null || defaultLib.trim().equals("")) {
+             gssLibs = switch (OperatingSystem.current()) {
++                case ANDROID -> new String[]{
++                        "libgssapi.so",
++                        "libgssapi_krb5.so",
++                };
++                case IOS -> new String[]{
++                        "libgssapi_krb5.dylib",
++                        "/usr/lib/sasl2/libgssapiv2.2.so",
++                };
+                 case LINUX -> new String[]{
+                         "libgssapi.so",
+                         "libgssapi_krb5.so",
 diff --git a/src/jdk.hotspot.agent/linux/native/libsaproc/elfmacros.h b/src/jdk.hotspot.agent/linux/native/libsaproc/elfmacros.h
 index 2dc0b611c2e72..bd4da1191776a 100644
 --- a/src/jdk.hotspot.agent/linux/native/libsaproc/elfmacros.h
@@ -3930,7 +4094,7 @@ index 6bae02fce549c..9c747f5a02779 100644
  
          if (codeset == NULL) {
 diff --git a/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java b/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java
-index a3f465ca05179..d20e9c7a67894 100644
+index a3f465ca05179..791c22b632ec3 100644
 --- a/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java
 +++ b/src/jdk.jlink/share/classes/jdk/tools/jlink/builder/DefaultImageBuilder.java
 @@ -209,9 +209,17 @@ public void storeFiles(ResourcePool files) {
@@ -3938,7 +4102,7 @@ index a3f465ca05179..d20e9c7a67894 100644
                  // jspawnhelper is in lib or lib/<arch>
                  Path lib = root.resolve(LIB_DIRNAME);
 +                String jspawnhelperName;
-+                if (OperatingSystem.isLinux()) {
++                if (OperatingSystem.isAndroid()) {
 +                   jspawnhelperName = "libjspawnhelper.so";
 +                } else {
 +                   jspawnhelperName = "jspawnhelper";
@@ -3952,6 +4116,40 @@ index a3f465ca05179..d20e9c7a67894 100644
                                        || path.getFileName().toString().equals("jexec"),
                          this::setExecutable);
                  }
+diff --git a/src/jdk.jpackage/share/classes/jdk/jpackage/internal/LauncherBuilder.java b/src/jdk.jpackage/share/classes/jdk/jpackage/internal/LauncherBuilder.java
+index 5658760b4d66a..d95d403cef451 100644
+--- a/src/jdk.jpackage/share/classes/jdk/jpackage/internal/LauncherBuilder.java
++++ b/src/jdk.jpackage/share/classes/jdk/jpackage/internal/LauncherBuilder.java
+@@ -178,6 +178,12 @@ private static String defaultIconResourceName() {
+             case WINDOWS -> {
+                 return "JavaApp.ico";
+             }
++            case ANDROID -> {
++                return "JavaApp.png";
++            }
++            case IOS -> {
++                return "JavaApp.icns";
++            }
+             case LINUX -> {
+                 return "JavaApp.png";
+             }
+diff --git a/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java b/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java
+index 1cfdf32611052..c6cc3314630f4 100644
+--- a/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java
++++ b/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java
+@@ -793,6 +793,12 @@ private static BundleType parseBundleType(String str, OperatingSystem appImageOS
+ 
+     private static String resourceKeySuffix(OperatingSystem os) {
+         switch (os) {
++            case IOS -> {
++                return ".ios";
++            }
++            case ANDROID -> {
++                return ".android";
++            }
+             case LINUX -> {
+                 return ".linux";
+             }
 diff --git a/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c b/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c
 index 81a972999edfc..7feb0140d3184 100644
 --- a/src/jdk.management/unix/native/libmanagement_ext/OperatingSystemImpl.c
@@ -3986,3 +4184,16 @@ index 81a972999edfc..7feb0140d3184 100644
  #elif defined(_ALLBSD_SOURCE)
      /*
       * XXXBSD: there's no way available to do it in FreeBSD, AFAIK.
+diff --git a/src/jdk.net/share/classes/jdk/net/ExtendedSocketOptions.java b/src/jdk.net/share/classes/jdk/net/ExtendedSocketOptions.java
+index 51221df64eadd..188057a865393 100644
+--- a/src/jdk.net/share/classes/jdk/net/ExtendedSocketOptions.java
++++ b/src/jdk.net/share/classes/jdk/net/ExtendedSocketOptions.java
+@@ -402,6 +402,8 @@ private static PlatformSocketOptions newInstance(String cn) {
+ 
+         private static PlatformSocketOptions create() {
+             return switch (OperatingSystem.current()) {
++                case ANDROID -> newInstance("jdk.net.LinuxSocketOptions");
++                case IOS -> newInstance("jdk.net.MacOSXSocketOptions");
+                 case LINUX -> newInstance("jdk.net.LinuxSocketOptions");
+                 case MACOS -> newInstance("jdk.net.MacOSXSocketOptions");
+                 case WINDOWS -> newInstance("jdk.net.WindowsSocketOptions");
