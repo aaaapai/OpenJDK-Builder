@@ -3283,7 +3283,7 @@ index 220602d4a361c..969e6b287114d 100644
  // This function is here to help applications to prevent mixing lcms versions on header and shared objects.
  int CMSEXPORT cmsGetEncodedCMMversion(void)
 diff --git a/src/java.desktop/share/native/liblcms/cmsio0.c b/src/java.desktop/share/native/liblcms/cmsio0.c
-index 6e2a856b4b813..c161ed8bbc650 100644
+index 6e2a856b4b813..c621ec9ddd850 100644
 --- a/src/java.desktop/share/native/liblcms/cmsio0.c
 +++ b/src/java.desktop/share/native/liblcms/cmsio0.c
 @@ -377,6 +377,9 @@ cmsUInt32Number FileRead(cmsIOHANDLER* iohandler, void *Buffer, cmsUInt32Number
@@ -3296,7 +3296,7 @@ index 6e2a856b4b813..c161ed8bbc650 100644
  // Position file pointer in the file
  static
  cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
-@@ -413,6 +416,7 @@ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
+@@ -413,11 +416,12 @@ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
      }
  #else
      long t = ftell((FILE*)iohandler ->stream);
@@ -3304,6 +3304,12 @@ index 6e2a856b4b813..c161ed8bbc650 100644
      if (t == -1L) {
          cmsSignalError(iohandler->ContextID, cmsERROR_FILE, "Tell error; probably corrupted file");
          return 0;
+     }
+-#endif
++
+     return (cmsUInt32Number) t;
+ }
+ 
 diff --git a/src/java.desktop/unix/native/common/awt/fontpath.c b/src/java.desktop/unix/native/common/awt/fontpath.c
 index cb8e91a373b6b..10bb2a2bb6669 100644
 --- a/src/java.desktop/unix/native/common/awt/fontpath.c
