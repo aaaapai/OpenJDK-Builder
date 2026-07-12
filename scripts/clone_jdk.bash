@@ -17,7 +17,7 @@ if [ -d "openjdk" ]; then
     rm -rf openjdk
 fi
 
-if [[ "${TARGET_JAVA_VERSION}" = "latest" ]] || [[ "${TARGET_JAVA_VERSION}" = "27" ]] || [[ "${TARGET_JAVA_VERSION}" = "main" ]] || [[ "${TARGET_JAVA_VERSION}" = "dev" ]]; then
+if [[ "${TARGET_JAVA_VERSION}" = "latest" ]] || [[ "${TARGET_JAVA_VERSION}" = "28" ]] || [[ "${TARGET_JAVA_VERSION}" = "main" ]] || [[ "${TARGET_JAVA_VERSION}" = "dev" ]]; then
     echo "Use the latest version of JDK."
     git clone --depth 1 -b master https://github.com/openjdk/jdk openjdk
     exit 0

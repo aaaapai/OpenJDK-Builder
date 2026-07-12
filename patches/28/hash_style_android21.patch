@@ -1,0 +1,22 @@
+From 75228d158cfe609f55e3e899d6cd30a2526c39a6 Mon Sep 17 00:00:00 2001
+From: aaaapai <89151134+aaaapai@users.noreply.github.com>
+Date: Fri, 24 Apr 2026 00:03:55 +0800
+Subject: [PATCH] Update flags-ldflags.m4
+
+---
+ make/autoconf/flags-ldflags.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/make/autoconf/flags-ldflags.m4 b/make/autoconf/flags-ldflags.m4
+index 98fecf8f960fd..bfc8160c475fc 100644
+--- a/make/autoconf/flags-ldflags.m4
++++ b/make/autoconf/flags-ldflags.m4
+@@ -190,7 +190,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_CPU_DEP],
+         test "x${OPENJDK_$1_CPU}" = xmips64el; then
+       $1_CPU_LDFLAGS="${$1_CPU_LDFLAGS} -Wl,--hash-style=sysv"
+     else
+-      $1_CPU_LDFLAGS="${$1_CPU_LDFLAGS} -Wl,--hash-style=gnu"
++      $1_CPU_LDFLAGS="${$1_CPU_LDFLAGS} -Wl,--hash-style=sysv"
+     fi
+ 
+   elif test "x$TOOLCHAIN_TYPE" = xmicrosoft; then

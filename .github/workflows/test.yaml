@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
 
 env:
-  ANDROID_API: 21
-  TARGET_ARCH: arm32
+  ANDROID_API: 26
+  TARGET_ARCH: arm64
   TARGET_OS: android
-  TARGET_JAVA_VERSION: 27
+  TARGET_JAVA_VERSION: 28
 
 jobs:
   build:
@@ -55,19 +55,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-jre-build
-          path: openjdk/build/**/images/jre27*.tar.xz
+          path: openjdk/build/**/images/jre28*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-jdk-build
-          path: openjdk/build/**/images/jdk27*.tar.xz
+          path: openjdk/build/**/images/jdk28*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-symbols-build
-          path: openjdk/build/**/images/symbols27*.tar.xz
+          path: openjdk/build/**/images/symbols28*.tar.xz
           if-no-files-found: error
