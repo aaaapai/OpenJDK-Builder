@@ -3392,10 +3392,10 @@ index 220602d4a361c..d68842d3b0428 100644
  int CMSEXPORT cmsGetEncodedCMMversion(void)
  {
 diff --git a/src/java.desktop/share/native/liblcms/cmsio0.c b/src/java.desktop/share/native/liblcms/cmsio0.c
-index 6e2a856b4b813..2b093fb3bfb72 100644
+index 6e2a856b4b813..c53c6f1dfe2ab 100644
 --- a/src/java.desktop/share/native/liblcms/cmsio0.c
 +++ b/src/java.desktop/share/native/liblcms/cmsio0.c
-@@ -413,6 +413,7 @@ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
+@@ -413,11 +413,11 @@ cmsUInt32Number FileTell(cmsIOHANDLER* iohandler)
      }
  #else
      long t = ftell((FILE*)iohandler ->stream);
@@ -3403,6 +3403,11 @@ index 6e2a856b4b813..2b093fb3bfb72 100644
      if (t == -1L) {
          cmsSignalError(iohandler->ContextID, cmsERROR_FILE, "Tell error; probably corrupted file");
          return 0;
+     }
+-#endif
+     return (cmsUInt32Number) t;
+ }
+ 
 diff --git a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java b/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
 index 5853298a40b2a..22dcb787c705b 100644
 --- a/src/java.desktop/unix/classes/sun/print/PrintServiceLookupProvider.java
