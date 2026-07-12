@@ -2399,7 +2399,7 @@ index 5e9451e850c1c..d53ba216e9a57 100644
  
      return result;
 diff --git a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
-index 927ab682c3e83..e2c596cb618a2 100644
+index 927ab682c3e83..6782832fe3e5a 100644
 --- a/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
 +++ b/src/java.base/share/classes/jdk/internal/util/OperatingSystem.java
 @@ -91,7 +91,7 @@ public enum OperatingSystem {
@@ -2407,7 +2407,7 @@ index 927ab682c3e83..e2c596cb618a2 100644
      @ForceInline
      public static boolean isLinux() {
 -        return PlatformProps.TARGET_OS_IS_LINUX;
-+        return (PlatformProps.TARGET_OS_IS_LINUX || PlatformProps.TARGET_OS_IS_ANDROID);
++        return (PlatformProps.TARGET_OS_IS_LINUX);
      }
  
      /**
@@ -2416,23 +2416,25 @@ index 927ab682c3e83..e2c596cb618a2 100644
      @ForceInline
      public static boolean isMacOS() {
 -        return PlatformProps.TARGET_OS_IS_MACOS;
-+        return (PlatformProps.TARGET_OS_IS_MACOS || PlatformProps.TARGET_OS_IS_IOS);
++        return (PlatformProps.TARGET_OS_IS_MACOS);
      }
  
      /**
 diff --git a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
-index 9c2a2c84511fc..dc6b3333e4f24 100644
+index 9c2a2c84511fc..867d164a4225d 100644
 --- a/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
 +++ b/src/java.base/share/classes/jdk/internal/util/PlatformProps.java.template
-@@ -39,6 +39,8 @@ class PlatformProps {
-     static final boolean TARGET_OS_IS_MACOS   = "@@OPENJDK_TARGET_OS@@" == "macos";
+@@ -35,8 +35,8 @@ class PlatformProps {
+     static final String CURRENT_OS_STRING = "@@OPENJDK_TARGET_OS@@";
+ 
+     // Precomputed booleans for each Operating System
+-    static final boolean TARGET_OS_IS_LINUX   = "@@OPENJDK_TARGET_OS@@" == "linux";
+-    static final boolean TARGET_OS_IS_MACOS   = "@@OPENJDK_TARGET_OS@@" == "macos";
++    static final boolean TARGET_OS_IS_LINUX   = ("@@OPENJDK_TARGET_OS@@" == "linux" || "@@OPENJDK_TARGET_OS@@" == "android");
++    static final boolean TARGET_OS_IS_MACOS   = ("@@OPENJDK_TARGET_OS@@" == "macos" || "@@OPENJDK_TARGET_OS@@" == "ios");
      static final boolean TARGET_OS_IS_WINDOWS = "@@OPENJDK_TARGET_OS@@" == "windows";
      static final boolean TARGET_OS_IS_AIX     = "@@OPENJDK_TARGET_OS@@" == "aix";
-+    static final boolean TARGET_OS_IS_ANDROID = "@@OPENJDK_TARGET_OS@@" == "android";
-+    static final boolean TARGET_OS_IS_IOS     = "@@OPENJDK_TARGET_OS@@" == "ios";
  
-     // The Architecture value for the current architecture
-     static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
 diff --git a/src/java.base/share/native/libjli/java.c b/src/java.base/share/native/libjli/java.c
 index 4c3b503b08a0b..c30eeda073244 100644
 --- a/src/java.base/share/native/libjli/java.c
