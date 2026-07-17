@@ -89,10 +89,10 @@ index 423654cd50ad8..189206b93d02f 100644
      if test "x$FLAGS_CPU" = xx86; then
        $1_CFLAGS_CPU_JVM="-arch:IA32"
 diff --git a/make/autoconf/flags-ldflags.m4 b/make/autoconf/flags-ldflags.m4
-index 7876511328b9d..179131a0d2977 100644
+index 1da98f5cdebf7..128b8be93bff3 100644
 --- a/make/autoconf/flags-ldflags.m4
 +++ b/make/autoconf/flags-ldflags.m4
-@@ -73,17 +73,19 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
+@@ -73,11 +73,12 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
      LDFLAGS_LTO="-flto=auto -fuse-linker-plugin -fno-strict-aliasing $DEBUG_PREFIX_CFLAGS"
      LDFLAGS_CXX_PARTIAL_LINKING="$MACHINE_FLAG -r"
  
@@ -109,6 +109,7 @@ index 7876511328b9d..179131a0d2977 100644
        fi
  
        if test "x$ENABLE_LINKTIME_GC" = xtrue; then
+@@ -85,6 +86,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
          BASIC_LDFLAGS_JDK_ONLY="$BASIC_LDFLAGS_JDK_ONLY -Wl,--gc-sections"
        fi
      fi
@@ -116,7 +117,7 @@ index 7876511328b9d..179131a0d2977 100644
      if test "x$OPENJDK_TARGET_OS" = xaix; then
        BASIC_LDFLAGS="-Wl,-b64 -Wl,-brtl -Wl,-bnorwexec -Wl,-blibpath:/usr/lib:lib -Wl,-bnoexpall \
          -Wl,-bernotok -Wl,-bcdtors:mbr::s -Wl,-bdatapsize:64k -Wl,-btextpsize:64k -Wl,-bstackpsize:64k"
-@@ -111,7 +113,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
+@@ -112,7 +114,7 @@ AC_DEFUN([FLAGS_SETUP_LDFLAGS_HELPER],
      fi
      # FIXME: We should really generalize SetSharedLibraryOrigin instead.
      OS_LDFLAGS_JVM_ONLY="-Wl,-rpath,@loader_path/. -Wl,-rpath,@loader_path/.."
@@ -1316,10 +1317,10 @@ index 47fe3a0d7e99f..a13fa298712a8 100644
  }
 +#endif // IOS
 diff --git a/src/hotspot/os/linux/os_linux.cpp b/src/hotspot/os/linux/os_linux.cpp
-index aad18edf2a656..049ed2a22898b 100644
+index 12a4ea2bda47f..b8b20cede9afe 100644
 --- a/src/hotspot/os/linux/os_linux.cpp
 +++ b/src/hotspot/os/linux/os_linux.cpp
-@@ -536,10 +536,12 @@ bool os::Linux::get_tick_information(CPUPerfTicks* pticks, int which_logical_cpu
+@@ -537,10 +537,12 @@ bool os::Linux::get_tick_information(CPUPerfTicks* pticks, int which_logical_cpu
  
  #ifndef SYS_gettid
  // i386: 224, amd64: 186
@@ -1333,7 +1334,7 @@ index aad18edf2a656..049ed2a22898b 100644
    #else
      #error "Define SYS_gettid for this architecture"
    #endif
-@@ -729,16 +731,21 @@ void os::init_system_properties_values() {
+@@ -730,16 +732,21 @@ void os::init_system_properties_values() {
  
  void os::Linux::libpthread_init() {
    // Save glibc and pthread version strings.
@@ -1356,7 +1357,7 @@ index aad18edf2a656..049ed2a22898b 100644
  #else
    size_t n = confstr(_CS_GNU_LIBC_VERSION, nullptr, 0);
    assert(n > 0, "cannot retrieve glibc version");
-@@ -2029,10 +2036,37 @@ const char* os::Linux::dll_path(void* lib) {
+@@ -2066,10 +2073,37 @@ const char* os::Linux::dll_path(void* lib) {
    const char* l_path = nullptr;
    assert(lib != nullptr, "dll_path parameter must not be null");
  
@@ -1394,7 +1395,7 @@ index aad18edf2a656..049ed2a22898b 100644
    return l_path;
  }
  
-@@ -3259,7 +3293,8 @@ void os::Linux::sched_getcpu_init() {
+@@ -3296,7 +3330,8 @@ void os::Linux::sched_getcpu_init() {
    }
  
    if (sched_getcpu() == -1) {
@@ -1404,7 +1405,7 @@ index aad18edf2a656..049ed2a22898b 100644
    }
  }
  
-@@ -3270,7 +3305,11 @@ extern "C" JNIEXPORT void numa_error(char *where) { }
+@@ -3307,7 +3342,11 @@ extern "C" JNIEXPORT void numa_error(char *where) { }
  // Handle request to load libnuma symbol version 1.1 (API v1). If it fails
  // load symbol from base version instead.
  void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
@@ -1416,7 +1417,7 @@ index aad18edf2a656..049ed2a22898b 100644
    if (f == nullptr) {
      f = dlsym(handle, name);
    }
-@@ -3280,7 +3319,11 @@ void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
+@@ -3317,7 +3356,11 @@ void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
  // Handle request to load libnuma symbol version 1.2 (API v2) only.
  // Return null if the symbol is not defined in this particular version.
  void* os::Linux::libnuma_v2_dlsym(void* handle, const char* name) {
@@ -1428,7 +1429,7 @@ index aad18edf2a656..049ed2a22898b 100644
  }
  
  // Check numa dependent syscalls
-@@ -3303,7 +3346,11 @@ static bool numa_syscall_check() {
+@@ -3340,7 +3383,11 @@ static bool numa_syscall_check() {
  bool os::Linux::libnuma_init() {
    // Requires sched_getcpu() and numa dependent syscalls support
    if ((sched_getcpu() != -1) && numa_syscall_check()) {
@@ -1440,7 +1441,7 @@ index aad18edf2a656..049ed2a22898b 100644
      if (handle != nullptr) {
        set_numa_node_to_cpus(CAST_TO_FN_PTR(numa_node_to_cpus_func_t,
                                             libnuma_dlsym(handle, "numa_node_to_cpus")));
-@@ -4592,7 +4639,8 @@ void os::init(void) {
+@@ -4629,7 +4676,8 @@ void os::init(void) {
    check_pax();
  
    // Check the availability of MADV_POPULATE_WRITE.
@@ -1450,7 +1451,7 @@ index aad18edf2a656..049ed2a22898b 100644
  
    os::Posix::init();
  }
-@@ -5190,7 +5238,20 @@ bool os::is_thread_cpu_time_supported() {
+@@ -5227,7 +5275,20 @@ bool os::is_thread_cpu_time_supported() {
  // Linux doesn't yet have a (official) notion of processor sets,
  // so just return the system wide load average.
  int os::loadavg(double loadavg[], int nelem) {
