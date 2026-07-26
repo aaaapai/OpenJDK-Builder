@@ -43,7 +43,7 @@ Set_C_CPPFLAGS -O3
 # Set_LDFLAGS -flto -Wl,--lto-O3
 #polly
 if [[ "${TARGET_ARCH}" != "arm32" ]]; then
-Set_C_CPPFLAGS -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-run-inliner -mllvm -polly-run-dce -mllvm -polly-detect-keep-going -mllvm -polly-ast-use-context -mllvm -polly-parallel
+Set_C_CPPFLAGS -mllvm -polly -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-run-inliner -mllvm -polly-run-dce -mllvm -polly-detect-keep-going -mllvm -polly-ast-use-context -mllvm -polly-parallel -mllvm -polly-omp-backend=LLVM
 fi
 
 # Set_C_CPPFLAGS -fexperimental-relative-c++-abi-vtables
@@ -87,7 +87,7 @@ case "${TARGET_OS}" in
 
         Set_CFLAGS -I${FREETYPE_DIR}/include/freetype2 -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
         Set_CPPFLAGS -I${FREETYPE_DIR}/include/freetype2 -I${CUPS_DIR} -I${DEPS_INCLUDE_DIR} -Wno-unknown-warning-option
-        Set_LDFLAGS -Wl,--as-needed -L${FREETYPE_DIR}/lib -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API} -Wl,--disable-new-dtags
+        Set_LDFLAGS -Wl,--as-needed -L${FREETYPE_DIR}/lib -L${DEPS_LIB_DIR} -L${NDK_TOOLCHAIN}/sysroot/usr/lib/${TARGET}/${ANDROID_API}
         ;;
     
     *)
