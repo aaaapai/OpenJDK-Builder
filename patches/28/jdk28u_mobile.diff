@@ -1,8 +1,8 @@
 diff --git a/make/Images.gmk b/make/Images.gmk
-index a09ac7e3bc629..f8a829b2e835c 100644
+index 9d4e93a1fd792..a0a73695fe5e0 100644
 --- a/make/Images.gmk
 +++ b/make/Images.gmk
-@@ -231,7 +231,7 @@ ifneq ($(filter jdk, $(MAKECMDGOALS)), )
+@@ -262,7 +262,7 @@ ifneq ($(filter jdk, $(MAKECMDGOALS)), )
        )
  
    ifeq ($(ZIP_EXTERNAL_DEBUG_SYMBOLS), true)
@@ -153,10 +153,10 @@ index c47947154c282..b71bde2358d2b 100644
          # https://bugs.llvm.org/show_bug.cgi?id=11503
          $1SYSROOT_CFLAGS="--sysroot=[$]$1SYSROOT"
 diff --git a/make/autoconf/jdk-options.m4 b/make/autoconf/jdk-options.m4
-index 465e06ab39d8a..3073e08d936ea 100644
+index 9abc849f0080f..65b75c8b4b15f 100644
 --- a/make/autoconf/jdk-options.m4
 +++ b/make/autoconf/jdk-options.m4
-@@ -207,8 +207,10 @@ AC_DEFUN_ONCE([JDKOPT_SETUP_JDK_OPTIONS],
+@@ -214,8 +214,10 @@ AC_DEFUN_ONCE([JDKOPT_SETUP_JDK_OPTIONS],
    # The only platform having this problem at the moment is Linux on aarch64, which may encounter
    # three different page sizes: 4K, 64K, and if run on Mac m1 hardware, 16K.
    COMPATIBLE_CDS_ALIGNMENT_DEFAULT=false
@@ -211,7 +211,7 @@ index e470cdbe66fe6..d123225c9924a 100644
      OLD_LIBS="$LIBS"
      LIBS="$STATIC_STDCXX_FLAGS"
 diff --git a/make/autoconf/libraries.m4 b/make/autoconf/libraries.m4
-index 5daacdc1ced54..c669b5191c7e0 100644
+index 99851bfd37605..057d6dc6ea65b 100644
 --- a/make/autoconf/libraries.m4
 +++ b/make/autoconf/libraries.m4
 @@ -44,6 +44,8 @@ AC_DEFUN_ONCE([LIB_DETERMINE_DEPENDENCIES],
@@ -293,10 +293,10 @@ index 28aea489f7ec4..df25a1facf9a5 100644
    AC_SUBST(RELEASE_FILE_OS_ARCH)
    AC_SUBST(RELEASE_FILE_LIBC)
 diff --git a/make/autoconf/spec.gmk.template b/make/autoconf/spec.gmk.template
-index ecfd5dd0a922e..deb8a8d91f797 100644
+index 3779ec32e45ff..4c21faf490d98 100644
 --- a/make/autoconf/spec.gmk.template
 +++ b/make/autoconf/spec.gmk.template
-@@ -601,8 +601,8 @@ LIBCXX := @LIBCXX@
+@@ -605,8 +605,8 @@ LIBCXX := @LIBCXX@
  
  # BUILD_CC/BUILD_LD is a compiler/linker that generates code that is runnable on the
  # build platform.
@@ -394,7 +394,7 @@ index 29001e09bd08a..fc762463be311 100644
  # modules.
  # Param 1 - module name
 diff --git a/make/common/Modules.gmk b/make/common/Modules.gmk
-index 1ec7bef6f98ad..d6bdba5e9e716 100644
+index f40921e243474..ae72f1c65e204 100644
 --- a/make/common/Modules.gmk
 +++ b/make/common/Modules.gmk
 @@ -55,7 +55,7 @@ ifeq ($(INCLUDE_SA), false)
@@ -406,7 +406,7 @@ index 1ec7bef6f98ad..d6bdba5e9e716 100644
    MODULES_FILTER += jdk.jpackage
  endif
  
-@@ -76,6 +76,12 @@ SRC_SUBDIRS += $(OPENJDK_TARGET_OS)/classes
+@@ -82,6 +82,12 @@ SRC_SUBDIRS += $(OPENJDK_TARGET_OS)/classes
  ifneq ($(OPENJDK_TARGET_OS), $(OPENJDK_TARGET_OS_TYPE))
    SRC_SUBDIRS += $(OPENJDK_TARGET_OS_TYPE)/classes
  endif
@@ -591,10 +591,10 @@ index 66ba18f2775ee..55598227ec44d 100644
    # hotspot sources if HOTSPOT_TARGET_CPU_ARCH is set to arm.
    # Exclude the aarch64 and 32 bit arm files for this build.
 diff --git a/make/hotspot/lib/JvmFeatures.gmk b/make/hotspot/lib/JvmFeatures.gmk
-index 7dc5fd676a113..147fd5c17e30d 100644
+index ced4f1f63504d..4b47a36cc6a96 100644
 --- a/make/hotspot/lib/JvmFeatures.gmk
 +++ b/make/hotspot/lib/JvmFeatures.gmk
-@@ -73,7 +73,7 @@ endif
+@@ -74,7 +74,7 @@ endif
  
  ifeq ($(call check-jvm-feature, minimal), true)
    JVM_CFLAGS_FEATURES += -DMINIMAL_JVM -DVMTYPE=\"Minimal\"
@@ -736,10 +736,10 @@ index 8a9b9dfee5c3a..3dcbc89902cd9 100644
  $(CHARSET_DONE_BASE)-stdcs: $(CHARSET_DATA_DIR)/charsets \
      $(wildcard $(CHARSET_DATA_DIR)/$(CHARSET_STANDARD_OS)) \
 diff --git a/make/modules/java.base/lib/CoreLibraries.gmk b/make/modules/java.base/lib/CoreLibraries.gmk
-index 87a4460a972a7..231ae44d8bb7a 100644
+index db7dd2911ce1f..201f4a7c18bc4 100644
 --- a/make/modules/java.base/lib/CoreLibraries.gmk
 +++ b/make/modules/java.base/lib/CoreLibraries.gmk
-@@ -188,8 +188,7 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJLI, \
+@@ -183,8 +183,7 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJLI, \
      LIBS_unix := $(LIBZ_LIBS), \
      LIBS_linux := $(LIBDL) $(LIBPTHREAD), \
      LIBS_macosx := \
@@ -789,27 +789,18 @@ index bab6186fb0d0b..25ede4efbb216 100644
    EXCLUDE_FILES += \
        sun/awt/X11/ScreenFormat.java \
 diff --git a/make/modules/java.desktop/Lib.gmk b/make/modules/java.desktop/Lib.gmk
-index 830e0553c39d9..d4fe64df5e0bb 100644
+index 1c43950480c42..d346328684742 100644
 --- a/make/modules/java.desktop/Lib.gmk
 +++ b/make/modules/java.desktop/Lib.gmk
-@@ -37,7 +37,7 @@ $(call FillFindCache, $(wildcard $(TOPDIR)/src/java.desktop/*/native))
- include lib/AwtLibraries.gmk
+@@ -38,7 +38,7 @@ include lib/AwtLibraries.gmk
  include lib/ClientLibraries.gmk
  
--ifeq ($(call isTargetOs, aix), false)
-+ifeq ($(call isTargetOs, aix android), false)
-   ##############################################################################
-   # Build libjsound
-   ##############################################################################
-@@ -71,7 +71,7 @@ ifeq ($(call isTargetOs, aix), false)
-       LIBS_linux := $(ALSA_LIBS), \
-       LIBS_macosx := \
-           -framework AudioToolbox \
--          -framework AudioUnit \
-+          -framework AVFoundation \
-           -framework CoreAudio \
-           -framework CoreFoundation \
-           -framework CoreMIDI \
+ ifeq ($(ENABLE_JSOUND), true)
+-  ifeq ($(call isTargetOs, aix), false)
++  ifeq ($(call isTargetOs, aix android), false)
+     ##############################################################################
+     # Build libjsound
+     ##############################################################################
 diff --git a/make/modules/java.desktop/gendata/GendataFontConfig.gmk b/make/modules/java.desktop/gendata/GendataFontConfig.gmk
 index 572adb4376ec7..8eb79b5509ddb 100644
 --- a/make/modules/java.desktop/gendata/GendataFontConfig.gmk
@@ -967,7 +958,7 @@ index b5cfa6d15fc7b..9f8949177dea7 100644
    MACH_EXC_HEADER := $(MIG_OUTPUT_DIR)/mach_exc.h
    MACH_EXC_USER := $(MIG_OUTPUT_DIR)/mach_excUser.c
 diff --git a/make/modules/jdk.hotspot.agent/Lib.gmk b/make/modules/jdk.hotspot.agent/Lib.gmk
-index da02e0dab3947..04ab59d27b33c 100644
+index 5c45065504647..b5d5ba85cfa6e 100644
 --- a/make/modules/jdk.hotspot.agent/Lib.gmk
 +++ b/make/modules/jdk.hotspot.agent/Lib.gmk
 @@ -31,7 +31,7 @@ include LibCommon.gmk
@@ -1115,7 +1106,7 @@ index 53e9824756a2e..fc8fc1cbfe9cc 100644
  }
  
 diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
-index e022dcb426285..68c3b8c6fdc35 100644
+index 43590e89c521c..0d96136ec15e6 100644
 --- a/src/hotspot/cpu/riscv/riscv.ad
 +++ b/src/hotspot/cpu/riscv/riscv.ad
 @@ -1010,6 +1010,7 @@ definitions %{
@@ -1126,65 +1117,11 @@ index e022dcb426285..68c3b8c6fdc35 100644
  #include "asm/macroAssembler.hpp"
  #include "gc/shared/barrierSetAssembler.hpp"
  #include "gc/shared/cardTable.hpp"
-@@ -7539,7 +7540,7 @@ instruct maxF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::single_precision, false /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::single_precision, false /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -7570,7 +7571,7 @@ instruct minF_reg_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::single_precision, true /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::single_precision, true /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -7601,7 +7602,7 @@ instruct maxD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::double_precision, false /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::double_precision, false /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -7632,7 +7633,7 @@ instruct minD_reg_reg(fRegD dst, fRegD src1, fRegD src2, rFlagsReg cr) %{
-   ins_encode %{
-     __ minmax_fp(as_FloatRegister($dst$$reg),
-                  as_FloatRegister($src1$$reg), as_FloatRegister($src2$$reg),
--                 __ FLOAT_TYPE::double_precision, true /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::double_precision, true /* is_min */);
-   %}
- 
-   ins_pipe(pipe_class_default);
-@@ -8686,7 +8687,7 @@ instruct min_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
- 
-   ins_encode %{
-     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
--                 __ FLOAT_TYPE::half_precision, true /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::half_precision, true /* is_min */);
-   %}
-   ins_pipe(pipe_class_default);
- %}
-@@ -8716,7 +8717,7 @@ instruct max_HF_reg(fRegF dst, fRegF src1, fRegF src2, rFlagsReg cr)
- 
-   ins_encode %{
-     __ minmax_fp($dst$$FloatRegister, $src1$$FloatRegister, $src2$$FloatRegister,
--                 __ FLOAT_TYPE::half_precision, false /* is_min */);
-+                 C2_MacroAssembler::FLOAT_TYPE::half_precision, false /* is_min */);
-   %}
-   ins_pipe(pipe_class_default);
- %}
 diff --git a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-index 9ad6663d0fa35..96414f7d1950e 100644
+index eee5184dfcace..cfe16acbd6971 100644
 --- a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
 +++ b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-@@ -776,6 +776,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
+@@ -920,6 +920,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
    }
  }
  
@@ -2056,10 +1993,10 @@ index 34897a0c75c1f..65bd07605688e 100644
  class outputStream;
  class CachedNMTInformation;
 diff --git a/src/hotspot/share/prims/whitebox.cpp b/src/hotspot/share/prims/whitebox.cpp
-index 2c389d37fecc3..4e49b55547ed2 100644
+index 7e9a97410bca1..1f3fe1d3915e2 100644
 --- a/src/hotspot/share/prims/whitebox.cpp
 +++ b/src/hotspot/share/prims/whitebox.cpp
-@@ -2521,12 +2521,14 @@ WB_END
+@@ -2628,12 +2628,14 @@ WB_END
  WB_ENTRY(jboolean, WB_CheckLibSpecifiesNoexecstack(JNIEnv* env, jobject o, jstring libfile))
    jboolean ret = false;
  #ifdef LINUX
@@ -2075,10 +2012,10 @@ index 2c389d37fecc3..4e49b55547ed2 100644
    return ret;
  WB_END
 diff --git a/src/hotspot/share/services/diagnosticCommand.cpp b/src/hotspot/share/services/diagnosticCommand.cpp
-index f2fa114133e76..fab5b940caecf 100644
+index 7d8d291641eb4..4f47a641a2030 100644
 --- a/src/hotspot/share/services/diagnosticCommand.cpp
 +++ b/src/hotspot/share/services/diagnosticCommand.cpp
-@@ -142,7 +142,7 @@ void DCmd::register_dcmds() {
+@@ -145,7 +145,7 @@ void DCmd::register_dcmds() {
    DCmdFactory::register_DCmdFactory(new DCmdFactoryImpl<TrimCLibcHeapDCmd>(full_export));
    DCmdFactory::register_DCmdFactory(new DCmdFactoryImpl<MallocInfoDcmd>(full_export));
  #endif // LINUX
@@ -2087,7 +2024,7 @@ index f2fa114133e76..fab5b940caecf 100644
    DCmdFactory::register_DCmdFactory(new DCmdFactoryImpl<SystemMapDCmd>(full_export));
    DCmdFactory::register_DCmdFactory(new DCmdFactoryImpl<SystemDumpMapDCmd>(full_export));
  #endif // LINUX or WINDOWS or MacOS
-@@ -1178,7 +1178,7 @@ void CompilationMemoryStatisticDCmd::execute(DCmdSource source, TRAPS) {
+@@ -1205,7 +1205,7 @@ void CompilationMemoryStatisticDCmd::execute(DCmdSource source, TRAPS) {
    CompilationMemoryStatistic::print_jcmd_report(output(), _verbose.value(), _legend.value(), minsize);
  }
  
@@ -2097,10 +2034,10 @@ index f2fa114133e76..fab5b940caecf 100644
  SystemMapDCmd::SystemMapDCmd(outputStream* output, bool heap) : DCmd(output, heap) {}
  
 diff --git a/src/hotspot/share/services/diagnosticCommand.hpp b/src/hotspot/share/services/diagnosticCommand.hpp
-index b720871c389f4..94747d4bf1fe1 100644
+index 7be85a5866209..6d28d7cc4d93a 100644
 --- a/src/hotspot/share/services/diagnosticCommand.hpp
 +++ b/src/hotspot/share/services/diagnosticCommand.hpp
-@@ -853,7 +853,7 @@ class CompilationMemoryStatisticDCmd: public DCmdWithParser {
+@@ -873,7 +873,7 @@ class CompilationMemoryStatisticDCmd: public DCmdWithParser {
    virtual void execute(DCmdSource source, TRAPS);
  };
  
@@ -2448,7 +2385,7 @@ index 9c2a2c84511fc..dc6b3333e4f24 100644
      // The Architecture value for the current architecture
      static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
 diff --git a/src/java.base/share/native/libjli/java.c b/src/java.base/share/native/libjli/java.c
-index 4c3b503b08a0b..c30eeda073244 100644
+index bf2d309e8e8f3..66faf7e2a43fa 100644
 --- a/src/java.base/share/native/libjli/java.c
 +++ b/src/java.base/share/native/libjli/java.c
 @@ -52,6 +52,31 @@
@@ -3330,7 +3267,7 @@ index decd3e35402eb..a372951e3147a 100644
              default -> UNKNOWN;
          };
 diff --git a/src/java.desktop/share/classes/sun/font/FontUtilities.java b/src/java.desktop/share/classes/sun/font/FontUtilities.java
-index a14214ab751e3..f41a89d108707 100644
+index d4c9a6c66a5b0..157b26e09aa42 100644
 --- a/src/java.desktop/share/classes/sun/font/FontUtilities.java
 +++ b/src/java.desktop/share/classes/sun/font/FontUtilities.java
 @@ -39,6 +39,9 @@
