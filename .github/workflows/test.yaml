@@ -8,17 +8,41 @@ on:
   workflow_dispatch:
     inputs:
       java_version:
-        description: 'JDK version to build'
+        description: 'JDK 版本（push/PR 时自动用 28）'
         required: true
         default: '28'
         type: choice
         options:
           - '28'
           - '26'
+      target_arch:
+        description: '目标架构（push/PR 时自动用 arm64）'
+        required: true
+        default: 'arm64'
+        type: choice
+        options:
+          - 'arm64'
+          - 'arm32'
+          - 'x86_64'
+          - 'x86'
+          - 'riscv64'
+      android_api:
+        description: '最低 Android API 等级（push/PR 时自动用 26；riscv64 自动抬升至 35；选 21/22 且构建 27/28 时自动应用 hash_style_android21.patch）'
+        required: true
+        default: '26'
+        type: choice
+        options:
+          - '21'
+          - '24'
+          - '26'
+          - '28'
+          - '30'
+          - '33'
+          - '34'
+          - '35'
+          - '36'
 
 env:
-  ANDROID_API: 26
-  TARGET_ARCH: arm64
   TARGET_OS: android
 
 jobs:
@@ -26,6 +50,8 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       TARGET_JAVA_VERSION: ${{ inputs.java_version || '28' }}
+      TARGET_ARCH: ${{ inputs.target_arch || 'arm64' }}
+      ANDROID_API: ${{ inputs.android_api || '26' }}
 
     steps:
       - name: Checkout repository
@@ -35,9 +61,9 @@ jobs:
         uses: hendrikmuhs/ccache-action@main
         with:
           max-size: "5G"
-          key: "android-${{ env.TARGET_ARCH }}-jdk${{ env.TARGET_JAVA_VERSION }}"
+          key: "android-${{ env.TARGET_ARCH }}-api${{ env.ANDROID_API }}-jdk${{ env.TARGET_JAVA_VERSION }}"
           restore-keys: |
-            android-${{ env.TARGET_ARCH }}-jdk
+            android-${{ env.TARGET_ARCH }}-api
             android-${{ env.TARGET_ARCH }}-
             android-
           create-symlink: true
@@ -64,20 +90,20 @@ jobs:
       - name: Upload JRE build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openjdk-jre-build
+          name: openjdk-jre-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/jre${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openjdk-jdk-build
+          name: openjdk-jdk-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/jdk${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openjdk-symbols-build
+          name: openjdk-symbols-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/symbols${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
