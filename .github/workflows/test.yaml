@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-jre-build
-          path: openjdk/build/**/images/jre28*.tar.xz
+          path: openjdk/build/**/images/jre${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
