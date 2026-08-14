@@ -47,7 +47,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
       TARGET_JAVA_VERSION: ${{ inputs.java_version || '28' }}
       TARGET_ARCH: ${{ inputs.target_arch || 'arm64' }}
@@ -88,21 +88,21 @@ jobs:
 
       # 第6步: 上传构建产物 (openjdk-build 文件夹)
       - name: Upload JRE build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: openjdk-jre-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/jre${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: openjdk-jdk-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/jdk${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: openjdk-symbols-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/symbols${{ env.TARGET_JAVA_VERSION }}*.tar.xz
