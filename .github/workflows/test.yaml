@@ -6,16 +6,26 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      java_version:
+        description: 'JDK version to build'
+        required: true
+        default: '28'
+        type: choice
+        options:
+          - '28'
+          - '26'
 
 env:
   ANDROID_API: 26
   TARGET_ARCH: arm64
   TARGET_OS: android
-  TARGET_JAVA_VERSION: 28
 
 jobs:
   build:
     runs-on: ubuntu-24.04
+    env:
+      TARGET_JAVA_VERSION: ${{ inputs.java_version || '28' }}
 
     steps:
       - name: Checkout repository
@@ -62,12 +72,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-jdk-build
-          path: openjdk/build/**/images/jdk28*.tar.xz
+          path: openjdk/build/**/images/jdk${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openjdk-symbols-build
-          path: openjdk/build/**/images/symbols28*.tar.xz
+          path: openjdk/build/**/images/symbols${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
