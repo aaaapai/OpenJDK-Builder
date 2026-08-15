@@ -23,10 +23,12 @@ echo ""
 
 if [[ "${TARGET_JAVA_VERSION}" = "latest" ]] || [[ "${TARGET_JAVA_VERSION}" = "${LATEST_JAVA_VERSION}" ]] || [[ "${TARGET_JAVA_VERSION}" = "main" ]] || [[ "${TARGET_JAVA_VERSION}" = "dev" ]]; then
    export VERSION_PRE="ea"
-   export DEBUG_SYMBOLS_LEVEL="--with-native-debug-symbols-level=1"
+   export DEBUG_SYMBOLS_LEVEL="--with-native-debug-symbols-level=1 \
+   "
 elif [[ "${TARGET_JAVA_VERSION}" -ge 27 ]]; then
    export VERSION_PRE="beta"
-   export DEBUG_SYMBOLS_LEVEL="--with-native-debug-symbols-level=1"
+   export DEBUG_SYMBOLS_LEVEL="--with-native-debug-symbols-level=1 \
+   "
 else
    export VERSION_PRE="Android"
    export DEBUG_SYMBOLS_LEVEL=""
@@ -55,6 +57,7 @@ bash ./configure \
       --disable-warnings-as-errors \
 	  --enable-headless-only=yes \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
+	  ${DEBUG_SYMBOLS_LEVEL} || \
       --with-fontconfig-include="${DEPS_INCLUDE_DIR}" \
       --with-devkit="${NDK_TOOLCHAIN}" \
       --with-debug-level=${JDK_DEBUG_LEVEL} \
