@@ -37,7 +37,7 @@ bash ./configure \
       --with-jvm-variants="server" \
 	  --with-jvm-features="" \
       --with-external-symbols-in-bundles=none \
-      --with-native-debug-symbols-level=1 \
+      --with-native-debug-symbols-level=external \
       --disable-precompiled-headers \
       --enable-option-checking=fatal \
       --enable-linktime-gc \
