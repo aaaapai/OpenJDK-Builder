@@ -49,7 +49,6 @@ bash ./configure \
       --with-jvm-variants="server" \
 	  --with-jvm-features="" \
       --with-external-symbols-in-bundles=none \
-      ${{DEBUG_SYMBOLS_LEVEL}} \
       --disable-precompiled-headers \
       --enable-option-checking=fatal \
       --enable-linktime-gc \
