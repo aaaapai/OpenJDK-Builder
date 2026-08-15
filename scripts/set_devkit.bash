@@ -1,6 +1,7 @@
 #!/bin/bash
 
-LATEST_JAVA_VERSION=28
+export LATEST_JAVA_VERSION=28
+
 if [[ -z "${JDK_DEBUG_LEVEL}" ]]
 then
   export JDK_DEBUG_LEVEL=release
