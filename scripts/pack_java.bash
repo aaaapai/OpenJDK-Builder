@@ -5,10 +5,10 @@ echo "Packing java..."
 
 
 cd ${CURRENT_DIR}/openjdk/build/${TARGET}/images/jre
-tar cJf ../jre28-${TARGET_OS}-${TARGET_ARCH}-${GITHUB_SHA}.tar.xz .
+tar cJf ../jre${TARGET_JAVA_VERSION}-${TARGET_OS}-${TARGET_ARCH}-${GITHUB_SHA}.tar.xz .
 
 cd ${CURRENT_DIR}/openjdk/build/${TARGET}/images/jdk
-tar cJf ../jdk28-${TARGET_OS}-${TARGET_ARCH}-${GITHUB_SHA}.tar.xz .
+tar cJf ../jdk${TARGET_JAVA_VERSION}-${TARGET_OS}-${TARGET_ARCH}-${GITHUB_SHA}.tar.xz .
 
 cd ${CURRENT_DIR}/openjdk/build/${TARGET}/images/symbols
-tar cJf ../symbols28-${TARGET_OS}-${TARGET_ARCH}-${GITHUB_SHA}.tar.xz .
+tar cJf ../symbols${TARGET_JAVA_VERSION}-${TARGET_OS}-${TARGET_ARCH}-${GITHUB_SHA}.tar.xz .
