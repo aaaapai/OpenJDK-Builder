@@ -90,20 +90,20 @@ jobs:
       - name: Upload JRE build artifacts
         uses: actions/upload-artifact@main
         with:
-          name: openjdk-jre-build-${{ env.TARGET_ARCH }}
+          name: openjdk-jre${{ env.TARGET_JAVA_VERSION }}-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/jre${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload JDK build artifacts
         uses: actions/upload-artifact@main
         with:
-          name: openjdk-jdk-build-${{ env.TARGET_ARCH }}
+          name: openjdk-jdk${{ env.TARGET_JAVA_VERSION }}-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/jdk${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
 
       - name: Upload debuginfo build artifacts
         uses: actions/upload-artifact@main
         with:
-          name: openjdk-symbols-build-${{ env.TARGET_ARCH }}
+          name: openjdk-symbols${{ env.TARGET_JAVA_VERSION }}-build-${{ env.TARGET_ARCH }}
           path: openjdk/build/**/images/symbols${{ env.TARGET_JAVA_VERSION }}*.tar.xz
           if-no-files-found: error
