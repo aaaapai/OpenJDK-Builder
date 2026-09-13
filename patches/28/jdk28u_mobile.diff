@@ -40,7 +40,7 @@ index 38483f0ec68de..8c782c4d46e7c 100644
  
  SLEEF_SUPPORT_DIR := $(MAKESUPPORT_OUTPUTDIR)/sleef
 diff --git a/make/autoconf/flags-cflags.m4 b/make/autoconf/flags-cflags.m4
-index 423654cd50ad8..189206b93d02f 100644
+index 04a475c65b637..6218712e840cf 100644
 --- a/make/autoconf/flags-cflags.m4
 +++ b/make/autoconf/flags-cflags.m4
 @@ -83,7 +83,7 @@ AC_DEFUN([FLAGS_SETUP_DEBUG_SYMBOLS],
@@ -52,7 +52,7 @@ index 423654cd50ad8..189206b93d02f 100644
      if test "x$ALLOW_ABSOLUTE_PATHS_IN_OUTPUT" = "xfalse"; then
        # Check if compiler supports -fdebug-prefix-map. If so, use that to make
        # the debug symbol paths resolve to paths relative to the workspace root.
-@@ -468,6 +468,12 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
+@@ -469,6 +469,12 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
    elif test "x$OPENJDK_TARGET_OS" = xmacosx; then
      CFLAGS_OS_DEF_JVM="-D_ALLBSD_SOURCE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE"
      CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE -D_DARWIN_UNLIMITED_SELECT"
@@ -65,7 +65,7 @@ index 423654cd50ad8..189206b93d02f 100644
    elif test "x$OPENJDK_TARGET_OS" = xaix; then
      CFLAGS_OS_DEF_JVM="-DAIX -D_LARGE_FILES"
      CFLAGS_OS_DEF_JDK="-D_LARGE_FILES"
-@@ -564,7 +570,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
+@@ -565,7 +571,7 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
      # works for all platforms.
      TOOLCHAIN_CFLAGS_JVM="$TOOLCHAIN_CFLAGS_JVM -mno-omit-leaf-frame-pointer -mstack-alignment=16"
  
@@ -74,7 +74,7 @@ index 423654cd50ad8..189206b93d02f 100644
        if test "x$DEBUG_LEVEL" = xrelease; then
          # Clang does not inline as much as GCC does for functions with "inline" keyword by default.
          # This causes noticeable slowdown in pause time for G1, and possibly in other areas.
-@@ -778,6 +784,13 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_CPU_DEP],
+@@ -779,6 +785,13 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_CPU_DEP],
        $1_CFLAGS_CPU="-mcpu=pwr8"
      fi
  
@@ -127,7 +127,7 @@ index 1da98f5cdebf7..128b8be93bff3 100644
  
    # Setup debug level-dependent LDFLAGS
 diff --git a/make/autoconf/flags-other.m4 b/make/autoconf/flags-other.m4
-index 4570f6ede78ac..72f966410c637 100644
+index df9fe66bb0d46..47d6e5e0abdba 100644
 --- a/make/autoconf/flags-other.m4
 +++ b/make/autoconf/flags-other.m4
 @@ -115,7 +115,7 @@ AC_DEFUN([FLAGS_SETUP_SVE],
@@ -153,7 +153,7 @@ index c47947154c282..b71bde2358d2b 100644
          # https://bugs.llvm.org/show_bug.cgi?id=11503
          $1SYSROOT_CFLAGS="--sysroot=[$]$1SYSROOT"
 diff --git a/make/autoconf/jdk-options.m4 b/make/autoconf/jdk-options.m4
-index 9abc849f0080f..65b75c8b4b15f 100644
+index aaac824ecddb0..3affead4dfb0c 100644
 --- a/make/autoconf/jdk-options.m4
 +++ b/make/autoconf/jdk-options.m4
 @@ -214,8 +214,10 @@ AC_DEFUN_ONCE([JDKOPT_SETUP_JDK_OPTIONS],
@@ -242,7 +242,7 @@ index 99851bfd37605..057d6dc6ea65b 100644
    AC_SUBST(ICONV_CFLAGS)
    AC_SUBST(ICONV_LDFLAGS)
 diff --git a/make/autoconf/platform.m4 b/make/autoconf/platform.m4
-index 28aea489f7ec4..df25a1facf9a5 100644
+index cdeae97c8ac8a..5cb0c87f0a5cf 100644
 --- a/make/autoconf/platform.m4
 +++ b/make/autoconf/platform.m4
 @@ -186,6 +186,14 @@ AC_DEFUN([PLATFORM_EXTRACT_VARS_FROM_CPU],
@@ -293,7 +293,7 @@ index 28aea489f7ec4..df25a1facf9a5 100644
    AC_SUBST(RELEASE_FILE_OS_ARCH)
    AC_SUBST(RELEASE_FILE_LIBC)
 diff --git a/make/autoconf/spec.gmk.template b/make/autoconf/spec.gmk.template
-index 3779ec32e45ff..4c21faf490d98 100644
+index 1cfaf1186d504..6108121e448e8 100644
 --- a/make/autoconf/spec.gmk.template
 +++ b/make/autoconf/spec.gmk.template
 @@ -605,8 +605,8 @@ LIBCXX := @LIBCXX@
@@ -574,7 +574,7 @@ index 14117421d1b7b..682d186c12027 100644
      ifeq ($(HOTSPOT_TARGET_CPU_ARCH), aarch64)
        ADLCFLAGS += -DR18_RESERVED
 diff --git a/make/hotspot/lib/CompileJvm.gmk b/make/hotspot/lib/CompileJvm.gmk
-index 66ba18f2775ee..55598227ec44d 100644
+index fd1591897c546..da7c47fc174ca 100644
 --- a/make/hotspot/lib/CompileJvm.gmk
 +++ b/make/hotspot/lib/CompileJvm.gmk
 @@ -121,10 +121,10 @@ DISABLED_WARNINGS_microsoft := 4624 4244 4291 4146 4127 4722
@@ -697,10 +697,10 @@ index bfae0925c0766..8d5ac049785a0 100644
        OUTPUT_DIR := $(SUPPORT_OUTPUTDIR)/modules_libs/$(MODULE), \
    ))
 diff --git a/make/modules/java.base/Lib.gmk b/make/modules/java.base/Lib.gmk
-index 41da22f8cb2f4..950f341d6f0db 100644
+index 095c2eb163b0c..a446714531a65 100644
 --- a/make/modules/java.base/Lib.gmk
 +++ b/make/modules/java.base/Lib.gmk
-@@ -162,9 +162,9 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBSYSLOOKUP, \
+@@ -160,9 +160,9 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBSYSLOOKUP, \
      NAME := syslookup, \
      EXTRA_HEADER_DIRS := java.base:libjava, \
      LD_SET_ORIGIN := false, \
@@ -712,7 +712,7 @@ index 41da22f8cb2f4..950f341d6f0db 100644
      LIBS_aix := -ldecNumber $(LIBM), \
  ))
  
-@@ -187,7 +187,7 @@ ifeq ($(ENABLE_FALLBACK_LINKER), true)
+@@ -185,7 +185,7 @@ ifeq ($(ENABLE_FALLBACK_LINKER), true)
    TARGETS += $(BUILD_LIBFALLBACKLINKER)
  endif
  
@@ -736,7 +736,7 @@ index 8a9b9dfee5c3a..3dcbc89902cd9 100644
  $(CHARSET_DONE_BASE)-stdcs: $(CHARSET_DATA_DIR)/charsets \
      $(wildcard $(CHARSET_DATA_DIR)/$(CHARSET_STANDARD_OS)) \
 diff --git a/make/modules/java.base/lib/CoreLibraries.gmk b/make/modules/java.base/lib/CoreLibraries.gmk
-index db7dd2911ce1f..201f4a7c18bc4 100644
+index 3c4af53fa1a26..e91f918d51365 100644
 --- a/make/modules/java.base/lib/CoreLibraries.gmk
 +++ b/make/modules/java.base/lib/CoreLibraries.gmk
 @@ -183,8 +183,7 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJLI, \
@@ -789,7 +789,7 @@ index bab6186fb0d0b..25ede4efbb216 100644
    EXCLUDE_FILES += \
        sun/awt/X11/ScreenFormat.java \
 diff --git a/make/modules/java.desktop/Lib.gmk b/make/modules/java.desktop/Lib.gmk
-index 1c43950480c42..d346328684742 100644
+index 9d2a82d60321b..9c2c9de9117f9 100644
 --- a/make/modules/java.desktop/Lib.gmk
 +++ b/make/modules/java.desktop/Lib.gmk
 @@ -38,7 +38,7 @@ include lib/AwtLibraries.gmk
@@ -819,7 +819,7 @@ index 572adb4376ec7..8eb79b5509ddb 100644
  
  FONTCONFIG_DEST_DIR := $(SUPPORT_OUTPUTDIR)/modules_libs/$(MODULE)
 diff --git a/make/modules/java.desktop/lib/AwtLibraries.gmk b/make/modules/java.desktop/lib/AwtLibraries.gmk
-index 887dfab01dff2..9b40ddb76a710 100644
+index ca98434d38301..a3a7469dd9a36 100644
 --- a/make/modules/java.desktop/lib/AwtLibraries.gmk
 +++ b/make/modules/java.desktop/lib/AwtLibraries.gmk
 @@ -61,11 +61,11 @@ ifeq ($(call isTargetOs, windows), true)
@@ -846,7 +846,7 @@ index 887dfab01dff2..9b40ddb76a710 100644
    LIBJAWT_EXCLUDE_SRC_PATTERNS := /unix/
  endif
 diff --git a/make/modules/java.desktop/lib/ClientLibraries.gmk b/make/modules/java.desktop/lib/ClientLibraries.gmk
-index 2326505d11c2b..fd7df2e9b1005 100644
+index a09e54ce5ab46..cbe1805ff99af 100644
 --- a/make/modules/java.desktop/lib/ClientLibraries.gmk
 +++ b/make/modules/java.desktop/lib/ClientLibraries.gmk
 @@ -196,7 +196,7 @@ ifeq ($(ENABLE_HEADLESS_ONLY), false)
@@ -1106,7 +1106,7 @@ index 53e9824756a2e..fc8fc1cbfe9cc 100644
  }
  
 diff --git a/src/hotspot/cpu/riscv/riscv.ad b/src/hotspot/cpu/riscv/riscv.ad
-index 43590e89c521c..0d96136ec15e6 100644
+index 361755ba2fc8c..0dcb6de0feb4f 100644
 --- a/src/hotspot/cpu/riscv/riscv.ad
 +++ b/src/hotspot/cpu/riscv/riscv.ad
 @@ -1010,6 +1010,7 @@ definitions %{
@@ -1118,10 +1118,10 @@ index 43590e89c521c..0d96136ec15e6 100644
  #include "gc/shared/barrierSetAssembler.hpp"
  #include "gc/shared/cardTable.hpp"
 diff --git a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-index eee5184dfcace..cfe16acbd6971 100644
+index 417bf442814c9..579d66a83c3f0 100644
 --- a/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
 +++ b/src/hotspot/cpu/riscv/sharedRuntime_riscv.cpp
-@@ -920,6 +920,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
+@@ -921,6 +921,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm, BasicType ret_ty
    }
  }
  
@@ -1681,7 +1681,7 @@ index bacf907389f32..ee72194022f52 100644
  };
  
 diff --git a/src/hotspot/os_cpu/bsd_aarch64/os_bsd_aarch64.cpp b/src/hotspot/os_cpu/bsd_aarch64/os_bsd_aarch64.cpp
-index 6f31bc284e354..c6146386e4fdf 100644
+index 90a61b7e8b63b..cf1a6216990ad 100644
 --- a/src/hotspot/os_cpu/bsd_aarch64/os_bsd_aarch64.cpp
 +++ b/src/hotspot/os_cpu/bsd_aarch64/os_bsd_aarch64.cpp
 @@ -23,7 +23,7 @@
@@ -1708,10 +1708,10 @@ index 6f31bc284e354..c6146386e4fdf 100644
    }
  }
 diff --git a/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp b/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp
-index a089d5981ca56..94d3260c484a4 100644
+index c9a537feacb5b..0cd209681db6a 100644
 --- a/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp
 +++ b/src/hotspot/os_cpu/bsd_zero/os_bsd_zero.cpp
-@@ -275,7 +275,9 @@ int os::extra_bang_size_in_bytes() {
+@@ -267,7 +267,9 @@ int os::extra_bang_size_in_bytes() {
  
  #if defined(AARCH64) && defined(__APPLE__)
  void os::current_thread_enable_wx(WXMode mode) {
@@ -1883,7 +1883,7 @@ index a866858dae520..db3a44c71c136 100644
          cmp     r2, #16
          blt	cl_b2f_copy_8
 diff --git a/src/hotspot/os_cpu/linux_arm/os_linux_arm.cpp b/src/hotspot/os_cpu/linux_arm/os_linux_arm.cpp
-index 41a4dbea3842a..6471f1194c998 100644
+index 3f158ad9cee4a..a376900539dcc 100644
 --- a/src/hotspot/os_cpu/linux_arm/os_linux_arm.cpp
 +++ b/src/hotspot/os_cpu/linux_arm/os_linux_arm.cpp
 @@ -70,7 +70,9 @@
@@ -1993,10 +1993,10 @@ index 34897a0c75c1f..65bd07605688e 100644
  class outputStream;
  class CachedNMTInformation;
 diff --git a/src/hotspot/share/prims/whitebox.cpp b/src/hotspot/share/prims/whitebox.cpp
-index 7e9a97410bca1..1f3fe1d3915e2 100644
+index f58d3cb3281eb..80f29190719dd 100644
 --- a/src/hotspot/share/prims/whitebox.cpp
 +++ b/src/hotspot/share/prims/whitebox.cpp
-@@ -2628,12 +2628,14 @@ WB_END
+@@ -2644,12 +2644,14 @@ WB_END
  WB_ENTRY(jboolean, WB_CheckLibSpecifiesNoexecstack(JNIEnv* env, jobject o, jstring libfile))
    jboolean ret = false;
  #ifdef LINUX
@@ -2385,7 +2385,7 @@ index 9c2a2c84511fc..dc6b3333e4f24 100644
      // The Architecture value for the current architecture
      static final String CURRENT_ARCH_STRING = "@@OPENJDK_TARGET_CPU@@";
 diff --git a/src/java.base/share/native/libjli/java.c b/src/java.base/share/native/libjli/java.c
-index bf2d309e8e8f3..66faf7e2a43fa 100644
+index 1236e7cbaf12b..656552b1c3397 100644
 --- a/src/java.base/share/native/libjli/java.c
 +++ b/src/java.base/share/native/libjli/java.c
 @@ -52,6 +52,31 @@
@@ -2420,7 +2420,7 @@ index bf2d309e8e8f3..66faf7e2a43fa 100644
  /*
   * A NOTE TO DEVELOPERS: For performance reasons it is important that
   * the program image remain relatively small until after
-@@ -251,6 +276,7 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argv */
+@@ -252,6 +277,7 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argv */
      _is_java_args = javaargs;
      _wc_enabled = cpwildcard;
  
@@ -3007,19 +3007,19 @@ index 5ed99f256d809..5b3bff3dab509 100644
  #include <string.h>
  #include <sys/ioctl.h>
 diff --git a/src/java.base/unix/native/libnet/net_util_md.c b/src/java.base/unix/native/libnet/net_util_md.c
-index f7b690f10324d..e1410740ce4c2 100644
+index 9bc1b1f899a93..feca38f67b191 100644
 --- a/src/java.base/unix/native/libnet/net_util_md.c
 +++ b/src/java.base/unix/native/libnet/net_util_md.c
-@@ -109,6 +109,8 @@ jint  IPv6_supported()
-     SOCKETADDRESS sa;
-     socklen_t sa_len = sizeof(SOCKETADDRESS);
+@@ -99,6 +99,8 @@ jint  IPv6_supported()
+     int fd;
+     void *ipv6_fn;
  
 +#ifndef __ANDROID__  // ANDROID: skip check, see libcore commit ae218d9b
 +
      fd = socket(AF_INET6, SOCK_STREAM, 0) ;
      if (fd < 0) {
          /*
-@@ -140,6 +142,8 @@ jint  IPv6_supported()
+@@ -130,6 +132,8 @@ jint  IPv6_supported()
      }
  #endif
  
@@ -3187,7 +3187,7 @@ index 36d4e897f608d..790a0c1d8a826 100644
 +#endif
  }
 diff --git a/src/java.desktop/macosx/native/libjsound/PLATFORM_API_MacOSX_PCM.cpp b/src/java.desktop/macosx/native/libjsound/PLATFORM_API_MacOSX_PCM.cpp
-index bae16cb0a9c04..bf37d92648a38 100644
+index 5364978a257c5..76bb06973a0ce 100644
 --- a/src/java.desktop/macosx/native/libjsound/PLATFORM_API_MacOSX_PCM.cpp
 +++ b/src/java.desktop/macosx/native/libjsound/PLATFORM_API_MacOSX_PCM.cpp
 @@ -41,6 +41,10 @@
@@ -4077,10 +4077,10 @@ index 5658760b4d66a..d95d403cef451 100644
                  return "JavaApp.png";
              }
 diff --git a/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java b/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java
-index 1cfdf32611052..c6cc3314630f4 100644
+index 1c74c7fb12ba2..79311401d6fd9 100644
 --- a/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java
 +++ b/src/jdk.jpackage/share/classes/jdk/jpackage/internal/cli/StandardOption.java
-@@ -793,6 +793,12 @@ private static BundleType parseBundleType(String str, OperatingSystem appImageOS
+@@ -802,6 +802,12 @@ private static BundleType parseBundleType(String str, OperatingSystem appImageOS
  
      private static String resourceKeySuffix(OperatingSystem os) {
          switch (os) {
